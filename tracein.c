@@ -1,11 +1,11 @@
 /*
  * Some glue for trace input handling for Dinero IV's command interface.
  * Written by Jan Edler
- * 
+ *
  * Copyright (C) 1997 NEC Research Institute, Inc. and Mark D. Hill.
  * All rights reserved.
  * Copyright (C) 1985, 1989 Mark D. Hill.  All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and
  * its associated documentation for non-commercial purposes is hereby
  * granted (for commercial purposes see below), provided that the above
@@ -25,12 +25,12 @@
  * to export control.  This software is experimental.  NECI and Mark D. Hill
  * make no representations regarding the suitability of this software for
  * any purpose and neither NECI nor Mark D. Hill will support the software.
- * 
+ *
  * Use of this software for commercial purposes is also possible, but only
  * if, in addition to the above requirements for non-commercial use, written
  * permission for such use is obtained by the commercial user from NECI or
  * Mark D. Hill prior to the fabrication and distribution of the software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED AS IS.  NECI AND MARK D. HILL DO NOT MAKE
  * ANY WARRANTEES EITHER EXPRESS OR IMPLIED WITH REGARD TO THE SOFTWARE.
  * NECI AND MARK D. HILL ALSO DISCLAIM ANY WARRANTY THAT THE SOFTWARE IS
@@ -67,25 +67,27 @@ d4memref (*input_function) (void);
 void
 verify_trace_format()
 {
-	switch (informat) {
-	default:  shorthelp ("unknown input format '%c'\n", informat);
-	case 0:	  shorthelp ("no input format specified\n");
-	case 'D':				/* extended "din" format */
-		  input_function = tracein_xdin;
-		  break;
-	case 'd':				/* traditional "din" format */
-		  input_function = tracein_din;
-		  break;
-	case 'p':				/* 32-bit pixie -idtrace format */
-		  input_function = tracein_pixie32;
-		  break;
-	case 'P':				/* 64-bit pixie -idtrace format */
-		  input_function = tracein_pixie64;
-		  break;
-	case 'b':				/* binary format, similar to din */
-		  input_function = tracein_binary;
-		  break;
-	}
+    switch (informat) {
+    default:
+        shorthelp ("unknown input format '%c'\n", informat);
+    case 0:
+        shorthelp ("no input format specified\n");
+    case 'D':				/* extended "din" format */
+        input_function = tracein_xdin;
+        break;
+    case 'd':				/* traditional "din" format */
+        input_function = tracein_din;
+        break;
+    case 'p':				/* 32-bit pixie -idtrace format */
+        input_function = tracein_pixie32;
+        break;
+    case 'P':				/* 64-bit pixie -idtrace format */
+        input_function = tracein_pixie64;
+        break;
+    case 'b':				/* binary format, similar to din */
+        input_function = tracein_binary;
+        break;
+    }
 }
 
 
@@ -93,6 +95,6 @@ verify_trace_format()
 void
 help_trace_format (int indent)
 {
-	printf ("\n %*s (D=extended din, d=traditional din, p=pixie32, P=pixie64,\n %*s b=binary)",
-		indent, " ", indent, " ");
+    printf ("\n %*s (D=extended din, d=traditional din, p=pixie32, P=pixie64,\n %*s b=binary)",
+            indent, " ", indent, " ");
 }

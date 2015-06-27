@@ -5,7 +5,7 @@
  * Copyright (C) 1997 NEC Research Institute, Inc. and Mark D. Hill.
  * All rights reserved.
  * Copyright (C) 1985, 1989 Mark D. Hill.  All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and
  * its associated documentation for non-commercial purposes is hereby
  * granted (for commercial purposes see below), provided that the above
@@ -25,12 +25,12 @@
  * to export control.  This software is experimental.  NECI and Mark D. Hill
  * make no representations regarding the suitability of this software for
  * any purpose and neither NECI nor Mark D. Hill will support the software.
- * 
+ *
  * Use of this software for commercial purposes is also possible, but only
  * if, in addition to the above requirements for non-commercial use, written
  * permission for such use is obtained by the commercial user from NECI or
  * Mark D. Hill prior to the fabrication and distribution of the software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED AS IS.  NECI AND MARK D. HILL DO NOT MAKE
  * ANY WARRANTEES EITHER EXPRESS OR IMPLIED WITH REGARD TO THE SOFTWARE.
  * NECI AND MARK D. HILL ALSO DISCLAIM ANY WARRANTY THAT THE SOFTWARE IS
@@ -52,30 +52,30 @@
  *
  * The arglist structure also supports the help message,
  * summary info, and option customization.
- */ 
+ */
 
 #ifndef MAX_LEV
 #define MAX_LEV	5		/* allow -ln prefix no larger than this */
 #endif
 
 struct arglist {
-	const char *optstring;	  /* string to match, without -ln-idu if applicable */
-	int pad;		  /* how many extra chars will help print? */
-	void *var;		  /* scalar variable or array to modify */
-	char *defstr;		  /* default value, as a string */
-	const char *customstring; /* arg to use for custom version */
-	const char *helpstring;	  /* string for help line */
+    const char *optstring;	  /* string to match, without -ln-idu if applicable */
+    int pad;		  /* how many extra chars will help print? */
+    void *var;		  /* scalar variable or array to modify */
+    char *defstr;		  /* default value, as a string */
+    const char *customstring; /* arg to use for custom version */
+    const char *helpstring;	  /* string for help line */
 
-				  /* function to recognize arg on command line */
-	int (*match)(const char *opt, const struct arglist *);
-				  /* valf is function to set value */
-	void (*valf)(const char *opt, const char *arg, const struct arglist *);
-				  /* customf produces definitions for custom version */
-	void (*customf)(const struct arglist *, FILE *);
-				  /* sumf prints summary line */
-	void (*sumf)(const struct arglist *, FILE *);
-				  /* help prints line for -help */
-	void (*help)(const struct arglist *);
+    /* function to recognize arg on command line */
+    int (*match)(const char *opt, const struct arglist *);
+    /* valf is function to set value */
+    void (*valf)(const char *opt, const char *arg, const struct arglist *);
+    /* customf produces definitions for custom version */
+    void (*customf)(const struct arglist *, FILE *);
+    /* sumf prints summary line */
+    void (*sumf)(const struct arglist *, FILE *);
+    /* help prints line for -help */
+    void (*help)(const struct arglist *);
 };
 
 /* Some globals, defined in cmdargs.c */

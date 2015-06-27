@@ -1,11 +1,11 @@
 /*
  * Code to read the extended ascii "din" format for Dinero IV.
  * Written by Jan Edler
- * 
+ *
  * Copyright (C) 1997 NEC Research Institute, Inc. and Mark D. Hill.
  * All rights reserved.
  * Copyright (C) 1985, 1989 Mark D. Hill.  All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and
  * its associated documentation for non-commercial purposes is hereby
  * granted (for commercial purposes see below), provided that the above
@@ -25,12 +25,12 @@
  * to export control.  This software is experimental.  NECI and Mark D. Hill
  * make no representations regarding the suitability of this software for
  * any purpose and neither NECI nor Mark D. Hill will support the software.
- * 
+ *
  * Use of this software for commercial purposes is also possible, but only
  * if, in addition to the above requirements for non-commercial use, written
  * permission for such use is obtained by the commercial user from NECI or
  * Mark D. Hill prior to the fabrication and distribution of the software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED AS IS.  NECI AND MARK D. HILL DO NOT MAKE
  * ANY WARRANTEES EITHER EXPRESS OR IMPLIED WITH REGARD TO THE SOFTWARE.
  * NECI AND MARK D. HILL ALSO DISCLAIM ANY WARRANTY THAT THE SOFTWARE IS
@@ -71,125 +71,137 @@
 d4memref
 tracein_xdin()
 {
-	static double tcount = 1;	/* double to increase range */
-	static char badatype[] = "xdin format error on trace record %.0f: unknown atype: %s"
-				 "Consider -informat d for Dinero III input format\n";
-	static char badaddr[] = "xdin format error on trace record %.0f: non hex digit (code 0x%x) in address\n";
-	static char shortline[] = "xdin format error on trace record %.0f: short line\n";
-	static char badsize[] = "xdin format error on trace record %.0f: non hex digit (code 0x%x) in size\n";
-	static char nosize[] = "xdin format error on trace record %.0f: missing size\n";
-	char errline[128];
-	d4addr addr;
-	int size, atype;
-	d4memref r;
-	int c, cc;
+    static double tcount = 1;	/* double to increase range */
+    static char badatype[] = "xdin format error on trace record %.0f: unknown atype: %s"
+                             "Consider -informat d for Dinero III input format\n";
+    static char badaddr[] = "xdin format error on trace record %.0f: non hex digit (code 0x%x) in address\n";
+    static char shortline[] = "xdin format error on trace record %.0f: short line\n";
+    static char badsize[] = "xdin format error on trace record %.0f: non hex digit (code 0x%x) in size\n";
+    static char nosize[] = "xdin format error on trace record %.0f: missing size\n";
+    char errline[128];
+    d4addr addr;
+    int size, atype;
+    d4memref r;
+    int c, cc;
 
-	/* skip initial whitespace */
-	do {
-		c = getchar();
-	} while (c == ' ' || c == '\t');
-	if (c == EOF) {
-		r.address = 0;
-		r.size = 0;
-		r.accesstype = D4TRACE_END;
-		return r;		/* this will trigger normal termination */
-	}
-	if (c == '\n')
-		die (shortline, tcount);
+    /* skip initial whitespace */
+    do {
+        c = getchar();
+    } while (c == ' ' || c == '\t');
+    if (c == EOF) {
+        r.address = 0;
+        r.size = 0;
+        r.accesstype = D4TRACE_END;
+        return r;		/* this will trigger normal termination */
+    }
+    if (c == '\n') {
+        die (shortline, tcount);
+    }
 
-	/* the accesstype is just 1 char */
-	switch (c) {
-	default:
-		errline[0] = c;
-		fgets (errline+1, sizeof(errline)-1, stdin);
-		errline[strlen(errline)-1] = '\n'; /* ensure trailing \n */
-		die (badatype, tcount, errline);
-		/* no return */
-	case 'r':
-	case 'R':
-		atype = D4XREAD;
-		break;
-	case 'w':
-	case 'W':
-		atype = D4XWRITE;
-		break;
-	case 'i':
-	case 'I':
-		atype = D4XINSTRN;
-		break;
-	case 'm':
-	case 'M':
-		atype = D4XMISC;
-		break;
-	case 'c':
-	case 'C':
-		atype = D4XCOPYB;
-		break;
-	case 'v':
-	case 'V':
-		atype = D4XINVAL;
-		break;
-	}
-	cc = getchar();
-	if (cc == '\n')
-		die (shortline, tcount);
-	if (cc != ' ' && cc != '\t') {
-		errline[0] = c;
-		errline[1] = cc;
-		fgets (errline+2, sizeof(errline)-2, stdin);
-		errline[strlen(errline)-1] = '\n'; /* ensure trailing \n */
-		die (badatype, tcount, errline);
-	}
+    /* the accesstype is just 1 char */
+    switch (c) {
+    default:
+        errline[0] = c;
+        fgets (errline + 1, sizeof(errline) - 1, stdin);
+        errline[strlen(errline) - 1] = '\n'; /* ensure trailing \n */
+        die (badatype, tcount, errline);
+        /* no return */
+    case 'r':
+    case 'R':
+        atype = D4XREAD;
+        break;
+    case 'w':
+    case 'W':
+        atype = D4XWRITE;
+        break;
+    case 'i':
+    case 'I':
+        atype = D4XINSTRN;
+        break;
+    case 'm':
+    case 'M':
+        atype = D4XMISC;
+        break;
+    case 'c':
+    case 'C':
+        atype = D4XCOPYB;
+        break;
+    case 'v':
+    case 'V':
+        atype = D4XINVAL;
+        break;
+    }
+    cc = getchar();
+    if (cc == '\n') {
+        die (shortline, tcount);
+    }
+    if (cc != ' ' && cc != '\t') {
+        errline[0] = c;
+        errline[1] = cc;
+        fgets (errline + 2, sizeof(errline) - 2, stdin);
+        errline[strlen(errline) - 1] = '\n'; /* ensure trailing \n */
+        die (badatype, tcount, errline);
+    }
 
-	/* skip whitespace between atype and address */
-	do {
-		c = getchar();
-	} while (c == ' ' || c == '\t');
-	if (c == '\n' || c == EOF)
-		die (shortline, tcount);
+    /* skip whitespace between atype and address */
+    do {
+        c = getchar();
+    } while (c == ' ' || c == '\t');
+    if (c == '\n' || c == EOF) {
+        die (shortline, tcount);
+    }
 
-	/* now get the address */
-	if (!isxdigit(c))
-		die (badaddr, tcount, c);
-	addr = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-	c = getchar(); 
-	if ((c == 'x' || c == 'X') && addr == 0)
-		c = getchar();	/* ignore leading 0x or 0X */
-	while (isxdigit(c)) {
-		addr *= 16;
-		addr += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-		c = getchar();
-	}
-	if (c != EOF && c != '\n' && c != ' ' && c != '\t')
-		die (badaddr, tcount, c);
+    /* now get the address */
+    if (!isxdigit(c)) {
+        die (badaddr, tcount, c);
+    }
+    addr = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
+    c = getchar();
+    if ((c == 'x' || c == 'X') && addr == 0) {
+        c = getchar();    /* ignore leading 0x or 0X */
+    }
+    while (isxdigit(c)) {
+        addr *= 16;
+        addr += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
+        c = getchar();
+    }
+    if (c != EOF && c != '\n' && c != ' ' && c != '\t') {
+        die (badaddr, tcount, c);
+    }
 
-	/* skip whitespace between addr and size */
-	while (c == ' ' || c == '\t')
-		c = getchar();
-	if (c == EOF || c == '\n')
-		die (nosize, tcount);
-	
-	/* now get the size */
-	if (!isxdigit(c))
-		die (badsize, tcount, c);
-	size = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-	c = getchar(); 
-	if ((c == 'x' || c == 'X') && size == 0)
-		c = getchar();	/* ignore leading 0x or 0X */
-	while (isxdigit(c)) {
-		size *= 16;
-		size += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-		c = getchar();
-	}
-	if (c != EOF && c != '\n' && c != ' ' && c != '\t')
-		die (badsize, tcount, c);
+    /* skip whitespace between addr and size */
+    while (c == ' ' || c == '\t') {
+        c = getchar();
+    }
+    if (c == EOF || c == '\n') {
+        die (nosize, tcount);
+    }
 
-	/* skip rest of line */
-	while (c != '\n' && c != EOF)
-		c = getchar();
-	r.accesstype = atype;
-	r.address = addr;
-	r.size = size;
-	tcount += 1;
-	return r;
+    /* now get the size */
+    if (!isxdigit(c)) {
+        die (badsize, tcount, c);
+    }
+    size = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
+    c = getchar();
+    if ((c == 'x' || c == 'X') && size == 0) {
+        c = getchar();    /* ignore leading 0x or 0X */
+    }
+    while (isxdigit(c)) {
+        size *= 16;
+        size += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
+        c = getchar();
+    }
+    if (c != EOF && c != '\n' && c != ' ' && c != '\t') {
+        die (badsize, tcount, c);
+    }
+
+    /* skip rest of line */
+    while (c != '\n' && c != EOF) {
+        c = getchar();
+    }
+    r.accesstype = atype;
+    r.address = addr;
+    r.size = size;
+    tcount += 1;
+    return r;
 }

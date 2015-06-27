@@ -1,11 +1,11 @@
 /*
  * Code to read the traditional ascii "din" format for Dinero IV.
  * Written by Jan Edler and Mark D. Hill
- * 
+ *
  * Copyright (C) 1997 NEC Research Institute, Inc. and Mark D. Hill.
  * All rights reserved.
  * Copyright (C) 1985, 1989 Mark D. Hill.  All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and
  * its associated documentation for non-commercial purposes is hereby
  * granted (for commercial purposes see below), provided that the above
@@ -25,12 +25,12 @@
  * to export control.  This software is experimental.  NECI and Mark D. Hill
  * make no representations regarding the suitability of this software for
  * any purpose and neither NECI nor Mark D. Hill will support the software.
- * 
+ *
  * Use of this software for commercial purposes is also possible, but only
  * if, in addition to the above requirements for non-commercial use, written
  * permission for such use is obtained by the commercial user from NECI or
  * Mark D. Hill prior to the fabrication and distribution of the software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED AS IS.  NECI AND MARK D. HILL DO NOT MAKE
  * ANY WARRANTEES EITHER EXPRESS OR IMPLIED WITH REGARD TO THE SOFTWARE.
  * NECI AND MARK D. HILL ALSO DISCLAIM ANY WARRANTY THAT THE SOFTWARE IS
@@ -67,77 +67,88 @@
 d4memref
 tracein_din()
 {
-	static double tcount = 1;	/* double to increase range */
-	static char badlabel[] = "din format error on trace record %.0f: non hex digit (code 0x%x) in label\n";
-	static char badaddr[] = "din format error on trace record %.0f: non hex digit (code 0x%x) in address\n";
-	static char shortline[] = "din format error on trace record %.0f: short line\n";
-	d4addr addr = 0;
-	int atype = 0;
-	d4memref r;
-	int c;
+    static double tcount = 1;	/* double to increase range */
+    static char badlabel[] = "din format error on trace record %.0f: non hex digit (code 0x%x) in label\n";
+    static char badaddr[] = "din format error on trace record %.0f: non hex digit (code 0x%x) in address\n";
+    static char shortline[] = "din format error on trace record %.0f: short line\n";
+    d4addr addr = 0;
+    int atype = 0;
+    d4memref r;
+    int c;
 
-	/* skip initial whitespace */
-	do {
-		c = getchar();
-	} while (c == ' ' || c == '\t');
-	if (c == EOF) {
-		r.address = 0;
-		r.size = 0;
-		r.accesstype = D4TRACE_END;
-		return r;		/* this will trigger normal termination */
-	}
-	if (c == '\n')
-		die (shortline, tcount);
+    /* skip initial whitespace */
+    do {
+        c = getchar();
+    } while (c == ' ' || c == '\t');
+    if (c == EOF) {
+        r.address = 0;
+        r.size = 0;
+        r.accesstype = D4TRACE_END;
+        return r;		/* this will trigger normal termination */
+    }
+    if (c == '\n') {
+        die (shortline, tcount);
+    }
 
-	/* typically the label is just 1 char */
-	if (!isxdigit(c))
-		die (badlabel, tcount, c);
-	atype = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-	c = getchar();
-	if (c != ' ' && c != '\t') {	/* rarely get rest of label */
-		if ((c == 'x' || c == 'X') && atype == 0)
-			c = getchar();	/* ignore leading 0x or 0X */
-		if (c == '\n' || c == EOF)
-			die (shortline, tcount);
-		while (isxdigit(c)) {
-			atype *= 16;
-			atype += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-			c = getchar();
-		}
-		if (c == '\n' || c == EOF)
-			die (shortline, tcount);
-		if (c != ' ' && c != '\t')
-			die (badlabel, tcount, c);
-	}
+    /* typically the label is just 1 char */
+    if (!isxdigit(c)) {
+        die (badlabel, tcount, c);
+    }
+    atype = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
+    c = getchar();
+    if (c != ' ' && c != '\t') {	/* rarely get rest of label */
+        if ((c == 'x' || c == 'X') && atype == 0) {
+            c = getchar();    /* ignore leading 0x or 0X */
+        }
+        if (c == '\n' || c == EOF) {
+            die (shortline, tcount);
+        }
+        while (isxdigit(c)) {
+            atype *= 16;
+            atype += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
+            c = getchar();
+        }
+        if (c == '\n' || c == EOF) {
+            die (shortline, tcount);
+        }
+        if (c != ' ' && c != '\t') {
+            die (badlabel, tcount, c);
+        }
+    }
 
-	/* skip whitespace between label and address */
-	do {
-		c = getchar();
-	} while (c == ' ' || c == '\t');
-	if (c == '\n' || c == EOF)
-		die (shortline, tcount);
+    /* skip whitespace between label and address */
+    do {
+        c = getchar();
+    } while (c == ' ' || c == '\t');
+    if (c == '\n' || c == EOF) {
+        die (shortline, tcount);
+    }
 
-	/* now get the address */
-	if (!isxdigit(c))
-		die (badaddr, tcount, c);
-	addr = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-	c = getchar(); 
-	if ((c == 'x' || c == 'X') && addr == 0)
-		c = getchar();	/* ignore leading 0x or 0X */
-	while (isxdigit(c)) {
-		addr *= 16;
-		addr += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-		c = getchar();
-	}
-	if (c != EOF && c != '\n' && c != ' ' && c != '\t')
-		die (badaddr, tcount, c);
+    /* now get the address */
+    if (!isxdigit(c)) {
+        die (badaddr, tcount, c);
+    }
+    addr = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
+    c = getchar();
+    if ((c == 'x' || c == 'X') && addr == 0) {
+        c = getchar();    /* ignore leading 0x or 0X */
+    }
+    while (isxdigit(c)) {
+        addr *= 16;
+        addr += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
+        c = getchar();
+    }
+    if (c != EOF && c != '\n' && c != ' ' && c != '\t') {
+        die (badaddr, tcount, c);
+    }
 
-	/* skip rest of line */
-	while (c != '\n' && c != EOF)
-		c = getchar();
-	r.accesstype = atype;
-	r.address = addr & ~3;	/* dineroIII is pretty much word-oriented */
-	r.size = 4;
-	tcount += 1;
-	return r;
+    /* skip rest of line */
+    while (c != '\n' && c != EOF) {
+        c = getchar();
+    }
+    r.accesstype = atype;
+    r.address = addr & ~3;	/* dineroIII is pretty much word-oriented */
+    r.size = 4;
+    tcount += 1;
+    return r;
 }
