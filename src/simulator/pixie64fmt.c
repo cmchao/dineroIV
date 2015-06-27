@@ -49,6 +49,7 @@
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+#include <limits.h>
 #include "d4.h"
 #include "cmdd4.h"
 #include "tracein.h"

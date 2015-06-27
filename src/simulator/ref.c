@@ -72,7 +72,7 @@
  * The first group of stuff in this file is only done once
  * if we are customizing
  */
-#if !D4CUSTOM || D4_REF_ONCE==0
+#if !defined(D4CUSTOM) || D4_REF_ONCE==0
 #include <stddef.h>
 #include <stdlib.h>
 #include <limits.h>
