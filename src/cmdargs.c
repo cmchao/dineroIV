@@ -125,7 +125,7 @@ extern void phelp_replacement (const struct arglist *);
 extern void phelp_fetch (const struct arglist *);
 extern void phelp_walloc (const struct arglist *);
 extern void phelp_wback (const struct arglist *);
-extern void unspec (int, int, char *, void *, char *);
+extern void unspec (int, int, const char *, void *, const char *);
 
 
 #if D4CUSTOM
@@ -382,7 +382,7 @@ phelp_wback (const struct arglist *adesc)
  * Complain about an unspecified option
  */
 void
-unspec (int lev, int idu, char *name, void *var, char *suggest)
+unspec (int lev, int idu, const char *name, void *var, const char *suggest)
 {
     int iduchar = idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd');
     struct arglist *argl;
