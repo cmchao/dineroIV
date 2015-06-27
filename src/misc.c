@@ -114,11 +114,11 @@ d4setup()
 
         /* Check some stuff the user shouldn't muck with */
         if (c->stack != NULL || c->pending != NULL ||
-            c->cacheid < 1 ||
-            (c->link == NULL && c->cacheid != 1) ||
-            (c->flags != D4F_MEM && c->downstream == NULL) ||
-            c->numsets != 0 ||
-            c->ranges != NULL || c->nranges != 0 || c->maxranges != 0) {
+                c->cacheid < 1 ||
+                (c->link == NULL && c->cacheid != 1) ||
+                (c->flags != D4F_MEM && c->downstream == NULL) ||
+                c->numsets != 0 ||
+                c->ranges != NULL || c->nranges != 0 || c->maxranges != 0) {
             goto fail1;
         }
 
@@ -514,8 +514,8 @@ d4_find (d4cache *c, int stacknum, d4addr blockaddr)
     if (c->stack[stacknum].n > D4HASH_THRESH) {
         int buck = D4HASH (blockaddr, stacknum, c->cacheid);
         for (ptr = d4stackhash.table[buck];
-             ptr != NULL && (ptr->blockaddr != blockaddr || ptr->cachep != c || ptr->onstack != stacknum);
-             ptr = ptr->bucket) {
+                ptr != NULL && (ptr->blockaddr != blockaddr || ptr->cachep != c || ptr->onstack != stacknum);
+                ptr = ptr->bucket) {
             assert (ptr->valid != 0);
         }
         return ptr;
@@ -527,8 +527,8 @@ d4_find (d4cache *c, int stacknum, d4addr blockaddr)
      * because the last node is guaranteed to have valid==0.
      */
     for (ptr = c->stack[stacknum].top;
-         ptr->blockaddr != blockaddr && ptr->valid != 0;
-         ptr = ptr->down) {
+            ptr->blockaddr != blockaddr && ptr->valid != 0;
+            ptr = ptr->down) {
         continue;
     }
 
@@ -854,7 +854,7 @@ d4invalidate (d4cache *c, const d4memref *m, int prop)
             d4_invblock (c, stacknum, ptr);
         }
         if ((c->flags & D4F_CCC) != 0 &&	/* fully assoc cache */
-            (ptr = d4_find (c, c->numsets, blockaddr)) != NULL) {
+                (ptr = d4_find (c, c->numsets, blockaddr)) != NULL) {
             d4_invblock (c, c->numsets, ptr);
         }
     } else for (stacknum = 0;  stacknum < c->numsets + ((c->flags & D4F_CCC) != 0);  stacknum++) {
@@ -911,8 +911,8 @@ d4_invinfcache (d4cache *c, const d4memref *m)
                 hi = i - 1;    /* need to look lower */
             } else {				/* found the right range */
                 for (nsb = c->lg2blocksize - c->lg2subblocksize;
-                     nsb-- > 0;
-                     bitoff++)
+                        nsb-- > 0;
+                        bitoff++)
                     c->ranges[i].bitmap[bitoff / CHAR_BIT] &=
                         ~(1 << (bitoff % CHAR_BIT));
                 break;

@@ -1793,7 +1793,7 @@ next_trace_item()
         }
         if (r.address != 0) {	/* valid triggers must be != 0 */
             if ((discard != 0 && on_trigger == r.address) ||
-                (discard == 0 && off_trigger == r.address)) {
+                    (discard == 0 && off_trigger == r.address)) {
                 discard ^= 1;	/* toggle */
                 hastoggled = 1;
                 continue;	/* discard the trigger itself */

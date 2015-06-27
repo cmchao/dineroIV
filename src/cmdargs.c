@@ -429,7 +429,7 @@ verify_options()
                 level_fetch[idu][lev] = DEFVAL_fetch;
             }
             if (level_size[idu][lev] != 0 &&
-                level_fetch[idu][lev] != 'd' && level_prefetch_distance[idu][lev] == 0) {
+                    level_fetch[idu][lev] != 'd' && level_prefetch_distance[idu][lev] == 0) {
                 level_prefetch_distance[idu][lev] = 1;
             }
             if (idu != 1 && level_size[idu][lev] != 0 && level_walloc[idu][lev] == 0) {
@@ -484,9 +484,9 @@ verify_options()
     for (lev = 0;  lev < maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
             if (level_replacement[idu][lev] != 0 &&
-                level_replacement[idu][lev] != 'l' &&	/* LRU */
-                level_replacement[idu][lev] != 'f' &&	/* FIFO */
-                level_replacement[idu][lev] != 'r')	/* random */
+                    level_replacement[idu][lev] != 'l' &&	/* LRU */
+                    level_replacement[idu][lev] != 'f' &&	/* FIFO */
+                    level_replacement[idu][lev] != 'r')	/* random */
                 shorthelp ("level %d %ccache replacement policy unrecognized\n",
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'));
         }
@@ -496,27 +496,27 @@ verify_options()
     for (lev = 0;  lev < maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
             if (level_fetch[idu][lev] != 0 &&
-                level_fetch[idu][lev] != 'd' &&	/* demand fetch */
-                level_fetch[idu][lev] != 'a' &&	/* always prefetch */
-                level_fetch[idu][lev] != 'm' &&	/* miss prefetch */
-                level_fetch[idu][lev] != 't' &&	/* tagged prefetch */
-                level_fetch[idu][lev] != 'l' &&	/* load forward prefetch */
-                level_fetch[idu][lev] != 's')		/* subblock prefetch */
+                    level_fetch[idu][lev] != 'd' &&	/* demand fetch */
+                    level_fetch[idu][lev] != 'a' &&	/* always prefetch */
+                    level_fetch[idu][lev] != 'm' &&	/* miss prefetch */
+                    level_fetch[idu][lev] != 't' &&	/* tagged prefetch */
+                    level_fetch[idu][lev] != 'l' &&	/* load forward prefetch */
+                    level_fetch[idu][lev] != 's')		/* subblock prefetch */
                 shorthelp ("level %d %ccache fetch policy unrecognized\n",
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'));
             if ((level_fetch[idu][lev] == 'l' || level_fetch[idu][lev] == 's') &&
-                level_prefetch_distance[idu][lev] >
-                level_blocksize[idu][lev] / (level_subblocksize[idu][lev]
-                                             ? level_subblocksize[idu][lev] : level_blocksize[idu][lev]))
+                    level_prefetch_distance[idu][lev] >
+                    level_blocksize[idu][lev] / (level_subblocksize[idu][lev]
+                                                 ? level_subblocksize[idu][lev] : level_blocksize[idu][lev]))
                 shorthelp ("level %d %ccache prefetch distance > block size\n",
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'));
             if (level_fetch[idu][lev] == 'd' &&
-                level_prefetch_abortpercent[idu][lev] != 0)
+                    level_prefetch_abortpercent[idu][lev] != 0)
                 shorthelp ("level %d %ccache abort %% not allowed "
                            "with demand fetch policy\n", lev + 1,
                            idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'));
             if (level_prefetch_abortpercent[idu][lev] < 0 ||
-                level_prefetch_abortpercent[idu][lev] > 100)
+                    level_prefetch_abortpercent[idu][lev] > 100)
                 shorthelp ("level %d %ccache abort %% out of range\n",
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'));
         }
@@ -529,9 +529,9 @@ verify_options()
         }
         for (idu = 0;  idu < 3;  idu++) {
             if (level_walloc[idu][lev] != 0 &&
-                level_walloc[idu][lev] != 'a' &&	/* always write allocate */
-                level_walloc[idu][lev] != 'n' &&	/* never write allocate */
-                level_walloc[idu][lev] != 'f')	/* walloc only w/o fetch */
+                    level_walloc[idu][lev] != 'a' &&	/* always write allocate */
+                    level_walloc[idu][lev] != 'n' &&	/* never write allocate */
+                    level_walloc[idu][lev] != 'f')	/* walloc only w/o fetch */
                 shorthelp ("level %d %ccache write allocate policy unrecognized\n",
                            lev + 1, idu == 0 ? 'u' : 'd');
         }
@@ -544,9 +544,9 @@ verify_options()
         }
         for (idu = 0;  idu < 3;  idu++) {
             if (level_wback[idu][lev] != 0 &&
-                level_wback[idu][lev] != 'a' &&	/* always write back */
-                level_wback[idu][lev] != 'n' &&	/* never write back (i.e., write through) */
-                level_wback[idu][lev] != 'f')		/* wback only w/o fetch */
+                    level_wback[idu][lev] != 'a' &&	/* always write back */
+                    level_wback[idu][lev] != 'n' &&	/* never write back (i.e., write through) */
+                    level_wback[idu][lev] != 'f')		/* wback only w/o fetch */
                 shorthelp ("level %d %ccache write back policy unrecognized\n",
                            lev + 1, idu == 0 ? 'u' : 'd');
         }
@@ -570,15 +570,15 @@ verify_options()
         for (idu = 0;  idu < 3;  idu++) {
             d4stacknode *xp;
             if (level_blocksize[idu][lev] != 0 &&
-                level_subblocksize[idu][lev] > level_blocksize[idu][lev])
+                    level_subblocksize[idu][lev] > level_blocksize[idu][lev])
                 shorthelp ("level %d %ccache has sub-blocksize > blocksize\n",
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'));
             if (level_subblocksize[idu][lev] != 0 &&
-                level_blocksize[idu][lev] / level_subblocksize[idu][lev] > sizeof(xp->valid)*CHAR_BIT)
+                    level_blocksize[idu][lev] / level_subblocksize[idu][lev] > sizeof(xp->valid)*CHAR_BIT)
                 shorthelp ("level %d %ccache must have no more than %u sub-blocks per block\n",
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'), sizeof(xp->valid)*CHAR_BIT);
             if (level_subblocksize[idu][lev] != 0 && level_doccc[idu][lev] != 0 &&
-                D4_BITMAP_RSIZE < level_blocksize[idu][lev] / level_subblocksize[idu][lev])
+                    D4_BITMAP_RSIZE < level_blocksize[idu][lev] / level_subblocksize[idu][lev])
                 shorthelp ("level %d %ccache must have no more than %u sub-blocks per block for CCC\n",
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'), D4_BITMAP_RSIZE);
         }
@@ -609,15 +609,15 @@ verify_options()
                   level_walloc[0][lev]       |
                   level_wback[0][lev]        |
                   level_doccc[0][lev]         ) &&
-            0 != (level_blocksize[1][lev]    | level_blocksize[2][lev]    |
-                  level_subblocksize[1][lev] | level_subblocksize[2][lev] |
-                  level_size[1][lev]         | level_size[2][lev]         |
-                  level_assoc[1][lev]        | level_assoc[2][lev]        |
-                  level_replacement[1][lev]  | level_replacement[2][lev]  |
-                  level_fetch[1][lev]        | level_fetch[2][lev]        |
-                  level_walloc[1][lev]       | level_walloc[2][lev]       |
-                  level_wback[1][lev]        | level_wback[2][lev]        |
-                  level_doccc[1][lev]        | level_doccc[2][lev]         ))
+                0 != (level_blocksize[1][lev]    | level_blocksize[2][lev]    |
+                      level_subblocksize[1][lev] | level_subblocksize[2][lev] |
+                      level_size[1][lev]         | level_size[2][lev]         |
+                      level_assoc[1][lev]        | level_assoc[2][lev]        |
+                      level_replacement[1][lev]  | level_replacement[2][lev]  |
+                      level_fetch[1][lev]        | level_fetch[2][lev]        |
+                      level_walloc[1][lev]       | level_walloc[2][lev]       |
+                      level_wback[1][lev]        | level_wback[2][lev]        |
+                      level_doccc[1][lev]        | level_doccc[2][lev]         ))
             shorthelp ("level %d has i or d together with u cache parameters\n",
                        lev + 1);
     }
@@ -626,7 +626,7 @@ verify_options()
     for (lev = 0;  lev < maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
             if (level_blocksize[idu][lev] != 0 &&
-                level_blocksize[idu][lev] * level_assoc[idu][lev] > level_size[idu][lev])
+                    level_blocksize[idu][lev] * level_assoc[idu][lev] > level_size[idu][lev])
                 shorthelp ("level %d %ccache size < blocksize * associativity\n",
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'));
         }
@@ -635,7 +635,7 @@ verify_options()
     /* check for no u->id split */
     for (lev = 1;  lev < maxlevel;  lev++) {
         if (level_blocksize[0][lev - 1] != 0 &&
-            level_blocksize[0][lev] == 0) {
+                level_blocksize[0][lev] == 0) {
             shorthelp ("level %d cache is unified, level %d is not\n", lev, lev + 1);
         }
     }

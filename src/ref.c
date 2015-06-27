@@ -242,7 +242,7 @@ d4rep_lru (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 {
     if (ptr != NULL) {	/* hits */
         if ((!D4CUSTOM || D4VAL (c, assoc) > 1 || (D4VAL (c, flags) & D4F_CCC) != 0) &&
-            ptr != c->stack[stacknum].top) {
+                ptr != c->stack[stacknum].top) {
             d4movetotop (c, stacknum, ptr);
         }
     } else {			/* misses */
@@ -250,7 +250,7 @@ d4rep_lru (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
         assert (ptr->valid == 0);
         ptr->blockaddr = D4ADDR2BLOCK (c, m.address);
         if ((!D4CUSTOM || D4VAL(c, assoc) >= D4HASH_THRESH || (D4VAL(c, flags)&D4F_CCC) != 0) &&
-            c->stack[stacknum].n > D4HASH_THRESH) {
+                c->stack[stacknum].n > D4HASH_THRESH) {
             d4hash (c, stacknum, ptr);
         }
         c->stack[stacknum].top = ptr;	/* quicker than d4movetotop */
@@ -718,12 +718,12 @@ d4ref (d4cache *c, d4memref mr)
          * Optionally, some percentage may be thrown away.
          */
         if ((!D4CUSTOM || !D4_OPT (prefetch_none)) &&
-            (m.accesstype == D4XREAD || m.accesstype == D4XINSTRN)) {
+                (m.accesstype == D4XREAD || m.accesstype == D4XINSTRN)) {
             d4pendstack *pf = D4VAL (c, prefetchf) (c, m, miss, ptr);
             if (pf != NULL) {
                 /* Note: 0 <= random() <= 2^31-1 and 0 <= random()/(INT_MAX/100) < 100. */
                 if (D4VAL (c, prefetch_abortpercent) > 0 &&
-                    random() / (INT_MAX / 100) < D4VAL (c, prefetch_abortpercent)) {
+                        random() / (INT_MAX / 100) < D4VAL (c, prefetch_abortpercent)) {
                     d4put_mref (pf);    /* throw it away */
                 } else {
                     pf->next = c->pending;	/* add to pending list */
@@ -816,7 +816,7 @@ d4ref (d4cache *c, d4memref mr)
          * simulation.
          */
         if ((D4CUSTOM && D4_OPT (ccc)) ||
-            (!D4CUSTOM && (c->flags & D4F_CCC) != 0)) {
+                (!D4CUSTOM && (c->flags & D4F_CCC) != 0)) {
             /* set to use for fully assoc cache */
             const int fullset = D4VAL(c, numsets);
             /* number of blocks in fully assoc cache */
