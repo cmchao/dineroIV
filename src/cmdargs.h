@@ -62,7 +62,7 @@ struct arglist {
     const char *optstring;	  /* string to match, without -ln-idu if applicable */
     int pad;		  /* how many extra chars will help print? */
     void *var;		  /* scalar variable or array to modify */
-    char *defstr;		  /* default value, as a string */
+    const char *defstr;		  /* default value, as a string */
     const char *customstring; /* arg to use for custom version */
     const char *helpstring;	  /* string for help line */
 
