@@ -107,6 +107,9 @@ static d4memref *sptr = stack;	/* stack pointer */
 
 #define pop_ref()	*--sptr
 
+#ifndef PIXIE_SWAB
+#define PIXIE_SWAB 0
+#endif
 
 d4memref
 tracein_pixie32()
