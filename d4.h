@@ -42,30 +42,20 @@
  *
  * $Header: /home/edler/dinero/d4/RCS/d4.h,v 1.10 1998/02/06 21:04:14 edler Exp $
  */
+#include <stdint.h>
 
 
 /*
  * Miscellaneous definitions
  */
 
-#include "config.h"
 #define D4VERSION	"7"
 
 #ifndef D4CUSTOM
 #define D4CUSTOM 0
 #endif
 
-/* Type of a simulated address */
-#ifndef D4ADDR
-#if SIZEOF_INT >= SIZEOF_VOIDP
-#define D4ADDR unsigned int
-#else
-#define D4ADDR unsigned long
-#endif
-#endif
-typedef D4ADDR d4addr;
-
-
+typedef uint32_t d4addr;
 
 
 /*
