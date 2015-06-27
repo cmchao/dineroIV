@@ -33,21 +33,21 @@ l1-ucache
  Demand Fetches		      265775	      188971	       76804	       70370	        6426	           8
   Fraction of total	      1.0000	      0.7110	      0.2890	      0.2648	      0.0242	      0.0000
 
- Demand Misses		       25210	         734	       24476	       23197	        1279	           0
-  Demand miss rate	      0.0949	      0.0039	      0.3187	      0.3296	      0.1990	      0.0000
+ Demand Misses		       25237	         732	       24505	       23248	        1257	           0
+  Demand miss rate	      0.0950	      0.0039	      0.3191	      0.3304	      0.1956	      0.0000
    Compulsory misses	        1795	         562	        1233	         133	        1100	           0
-   Capacity misses	        6242	           3	        6239	        6238	           1	           0
-   Conflict misses	       17173	         169	       17004	       16826	         178	           0
-   Compulsory fraction	      0.0712	      0.7657	      0.0504	      0.0057	      0.8600	      0.0000
-   Capacity fraction	      0.2476	      0.0041	      0.2549	      0.2689	      0.0008	      0.0000
-   Conflict fraction	      0.6812	      0.2302	      0.6947	      0.7254	      0.1392	      0.0000
+   Capacity misses	        6486	           4	        6482	        6478	           4	           0
+   Conflict misses	       16956	         166	       16790	       16637	         153	           0
+   Compulsory fraction	      0.0711	      0.7678	      0.0503	      0.0057	      0.8751	      0.0000
+   Capacity fraction	      0.2570	      0.0055	      0.2645	      0.2786	      0.0032	      0.0000
+   Conflict fraction	      0.6719	      0.2268	      0.6852	      0.7156	      0.1217	      0.0000
 
  Multi-block refs                 0
- Bytes From Memory	      403360
- ( / Demand Fetches)	      1.5177
- Bytes To Memory	       54272
- ( / Demand Writes)	      8.4457
- Total Bytes r/w Mem	      457632
- ( / Demand Fetches)	      1.7219
+ Bytes From Memory	      403792
+ ( / Demand Fetches)	      1.5193
+ Bytes To Memory	       54160
+ ( / Demand Writes)	      8.4283
+ Total Bytes r/w Mem	      457952
+ ( / Demand Fetches)	      1.7231
 
 ---Execution complete.
