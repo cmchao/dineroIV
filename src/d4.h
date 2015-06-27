@@ -234,10 +234,10 @@ typedef struct d4_cache_struct {
 
     int		prefetch_distance;	/* specific to built-in prefetch policies */
     int		prefetch_abortpercent;
-    char		*name_replacement;	/* for printing */
-    char		*name_prefetch;
-    char		*name_walloc;
-    char		*name_wback;
+    const char		*name_replacement;	/* for printing */
+    const char		*name_prefetch;
+    const char		*name_walloc;
+    const char		*name_wback;
 
 #ifdef D4CACHE_USERHOOK
     D4CACHE_USERHOOK	/* allow additional stuff for user policies */

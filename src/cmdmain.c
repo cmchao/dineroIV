@@ -68,7 +68,7 @@
 
 
 /* some global variables */
-char *progname = "dineroIV";		/* for error messages */
+const char *progname = "dineroIV";		/* for error messages */
 int optstringmax;			/* for help_* functions */
 d4cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
 d4cache *mem;				/* which cache represents simulated memory? */
@@ -1877,7 +1877,8 @@ customize_caches()
     struct arglist *adesc;
     struct stat st;
     char *cmdline = malloc(4096);	/* XXX add overflow checking or make this more dynamic */
-    char *psrc, *plib;
+    const char *psrc;
+    char *plib;
     int x;
 
     if (cmdline == NULL) {

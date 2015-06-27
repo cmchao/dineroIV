@@ -59,4 +59,4 @@ extern void shorthelp (const char *fmt, ...);
 #endif
 extern int clog2 (unsigned int);
 
-extern char *progname;	/* for error messages */
+extern const char *progname;	/* for error messages */
