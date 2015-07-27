@@ -58,7 +58,8 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
-#include "../d4.h"
+
+#include "d4.h"
 
 #if UINT_MAX < 0xffffffff
 #error "unsigned int is < 32 bits"
