@@ -5,7 +5,7 @@
  * Copyright (C) 1997 NEC Research Institute, Inc. and Mark D. Hill.
  * All rights reserved.
  * Copyright (C) 1985, 1989 Mark D. Hill.  All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and
  * its associated documentation for non-commercial purposes is hereby
  * granted (for commercial purposes see below), provided that the above
@@ -25,12 +25,12 @@
  * to export control.  This software is experimental.  NECI and Mark D. Hill
  * make no representations regarding the suitability of this software for
  * any purpose and neither NECI nor Mark D. Hill will support the software.
- * 
+ *
  * Use of this software for commercial purposes is also possible, but only
  * if, in addition to the above requirements for non-commercial use, written
  * permission for such use is obtained by the commercial user from NECI or
  * Mark D. Hill prior to the fabrication and distribution of the software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED AS IS.  NECI AND MARK D. HILL DO NOT MAKE
  * ANY WARRANTEES EITHER EXPRESS OR IMPLIED WITH REGARD TO THE SOFTWARE.
  * NECI AND MARK D. HILL ALSO DISCLAIM ANY WARRANTY THAT THE SOFTWARE IS
@@ -39,8 +39,6 @@
  * D. HILL SHALL NOT BE LIABLE FOR ANY DAMAGES, INCLUDING GENERAL, SPECIAL,
  * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, ARISING OUT OF THE USE OR INABILITY
  * TO USE THE SOFTWARE.
- *
- * $Header: /home/edler/dinero/d4/testing/RCS/p2b.c,v 1.4 1997/12/12 20:04:37 edler Exp $
  */
 
 /*
@@ -124,175 +122,182 @@ static int optr;
 void
 out(unsigned long addr, char atype, char size)
 {
-	if (addr == endaddr && addr != 0)
-		discard = 1;
-	else if (!discard) {
-		obuf[optr++] = addr & 0xff; addr >>= 8;
-		obuf[optr++] = addr & 0xff; addr >>= 8;
-		obuf[optr++] = addr & 0xff; addr >>= 8;
-		obuf[optr++] = addr & 0xff; addr >>= 8;
-		obuf[optr++] = size & 0xff; size >>= 8;
-		obuf[optr++] = size & 0xff;
-		obuf[optr++] = atype;
-		obuf[optr++] = 0; /* padding */
-		if (optr > BUFSIZ - RECORD_SIZE) {
-			(void) write (1, obuf, optr);
-			optr = 0;
-		}
-	}
-	if (addr == beginaddr && addr != 0)
-		discard = 0;
+    if (addr == endaddr && addr != 0)
+        discard = 1;
+    else if (!discard) {
+        obuf[optr++] = addr & 0xff;
+        addr >>= 8;
+        obuf[optr++] = addr & 0xff;
+        addr >>= 8;
+        obuf[optr++] = addr & 0xff;
+        addr >>= 8;
+        obuf[optr++] = addr & 0xff;
+        addr >>= 8;
+        obuf[optr++] = size & 0xff;
+        size >>= 8;
+        obuf[optr++] = size & 0xff;
+        obuf[optr++] = atype;
+        obuf[optr++] = 0; /* padding */
+        if (optr > BUFSIZ - RECORD_SIZE) {
+            (void) write (1, obuf, optr);
+            optr = 0;
+        }
+    }
+    if (addr == beginaddr && addr != 0)
+        discard = 0;
 }
 
 int
 main (int argc, char **argv)
 {
-	int i;
-	int nread;
-	char size;
-	unsigned long addr;		/* address from pixie */
-	unsigned long iaddr = ~0;	/* current instr address */
-	unsigned int reftype, count;	/* from pixie */
-	unsigned int c;			/* iterator for ifetching */
-	unsigned int icnt, dcnt;
-	extern int optind;
-	extern char *optarg;
+    int i;
+    int nread;
+    char size;
+    unsigned long addr;		/* address from pixie */
+    unsigned long iaddr = ~0;	/* current instr address */
+    unsigned int reftype, count;	/* from pixie */
+    unsigned int c;			/* iterator for ifetching */
+    unsigned int icnt, dcnt;
+    extern int optind;
+    extern char *optarg;
 
-	if (argc > 0)
-		progname = argv[0];
-	if (argc > 1) {
-		while ((i=getopt(argc,argv,"b:e:")) != EOF) {
-			switch (i) {
-			case 'b': beginaddr = strtoul (optarg, NULL, 0);
-				  break;
-			case 'e': endaddr = strtoul (optarg, NULL, 0);
-				  break;
-			case '?':
-				  fprintf (stderr, usage, progname);
-				  return 1;
-			}
-		}
-		if (optind < argc) {
-			fprintf (stderr, usage, progname);
-			return 1;
-		}
-		if (beginaddr != 0)
-			discard = 1;
-	}
-	icnt = 1;
-	dcnt = 1;
-	while ((nread = read (0, inbuf, sizeof inbuf)) > 0) {
-		if (nread % 4) {
-			fprintf (stderr, "%s: trace input not word aligned\n",
-					progname);
-			return 1;
-		}
-		for (i = 0;  i < nread;  i += 4) {
+    if (argc > 0)
+        progname = argv[0];
+    if (argc > 1) {
+        while ((i=getopt(argc,argv,"b:e:")) != EOF) {
+            switch (i) {
+            case 'b':
+                beginaddr = strtoul (optarg, NULL, 0);
+                break;
+            case 'e':
+                endaddr = strtoul (optarg, NULL, 0);
+                break;
+            case '?':
+                fprintf (stderr, usage, progname);
+                return 1;
+            }
+        }
+        if (optind < argc) {
+            fprintf (stderr, usage, progname);
+            return 1;
+        }
+        if (beginaddr != 0)
+            discard = 1;
+    }
+    icnt = 1;
+    dcnt = 1;
+    while ((nread = read (0, inbuf, sizeof inbuf)) > 0) {
+        if (nread % 4) {
+            fprintf (stderr, "%s: trace input not word aligned\n",
+                     progname);
+            return 1;
+        }
+        for (i = 0;  i < nread;  i += 4) {
 #ifndef SWAB
-			count = reftype = inbuf[i+0];
-			count >>= 4;
-			reftype &= 15;
-			addr = ((unsigned long)inbuf[i+1]<<16)+
-			       ((unsigned long)inbuf[i+2]<<8)+
-			       ((unsigned long)inbuf[i+3]<<0);
+            count = reftype = inbuf[i+0];
+            count >>= 4;
+            reftype &= 15;
+            addr = ((unsigned long)inbuf[i+1]<<16)+
+                   ((unsigned long)inbuf[i+2]<<8)+
+                   ((unsigned long)inbuf[i+3]<<0);
 #else
-			count = reftype = inbuf[i+3];
-			count >>= 4;
-			reftype &= 15;
-			addr = ((unsigned long)inbuf[i+2]<<16)+
-			       ((unsigned long)inbuf[i+1]<<8)+
-			       ((unsigned long)inbuf[i+0]<<0);
+            count = reftype = inbuf[i+3];
+            count >>= 4;
+            reftype &= 15;
+            addr = ((unsigned long)inbuf[i+2]<<16)+
+                   ((unsigned long)inbuf[i+1]<<8)+
+                   ((unsigned long)inbuf[i+0]<<0);
 #endif
-			if (reftype != BB)
-				count++;	/* allow for current instruction */
-			else {
-				iaddr = addr << 2; /* convert word address to type */
-				if (count == 0)
-					continue; /* 1st instr is load/store/whatever */
-			}
-			/*
-			 * Dinero bbrief input:
-			 * 4 bytes of little-endian address,
-			 * 1 byte of access type, and 1 byte for size.
-			 */
-			switch (reftype) {
-			default:
-				fprintf (stderr,
-					"%s: unknown pixie32 reftype=%u\n",
-					progname, reftype);
-				/* fall through */
-			case SYSCALL:
-			case LW:
-			case LWC1:
-			case SW:
-			case SWC1:
-			case ANNUL:	/* this one doesn't actually matter */
-			case BB:	/* this one doesn't actually matter */
-				size = 4;
-				addr &= ~3;
-				break;
-			case LD:
-			case LDC1:
-			case SD:
-			case SDC1:
-				size = 8;
-				addr &= ~7;
-				break;
-			case SH:
-				size = 2;
-				addr &= ~1;
-				break;
-			case SB:
-				size = 1;
-				break;
-			case SWL:	/* assume big endian */
-				size = (addr%4) + 1;
-				addr &= ~3;
-				break;
-			case SWR:	/* assume big endian */
-				size = 4 - (addr%4);
-				break;
-			}
-			out (iaddr, D4XINSTRN, 4);
-			switch (reftype) {
-			default:	/* warning already issued */
-				/* fall through */
-			case SYSCALL:
-				out (addr, D4XMISC, size);
-				break;
-			case LW:
-			case LD:
-			case LWC1:
-			case LDC1:
-				out (addr, D4XREAD, size);
-				break;
-			case SWL:
-			case SWR:
-			case SW:
-			case SD:
-			case SB:
-			case SH:
-			case SWC1:
-			case SDC1:
-				out (addr, D4XWRITE, size);
-				break;
-			case ANNUL:	/* annulled instruction; just do the ifetch */
-			case BB:	/* leading instruction of basic block */
-				break;
-			}
-			for (c = 1;  c < count;  c++)
-				out (iaddr + c*4, D4XINSTRN, 4);
-			iaddr += count*4;
-		}
-	}
-	if (optr != 0)
-		(void) write (1, obuf, optr);
-	if (nread < 0) {
-		perror (progname);
-		return 1;
-	}
-	if (endaddr != 0 && !discard)
-		fprintf (stderr, "%s: -e address not found in trace stream\n",
-			progname);
-	return 0;
+            if (reftype != BB)
+                count++;	/* allow for current instruction */
+            else {
+                iaddr = addr << 2; /* convert word address to type */
+                if (count == 0)
+                    continue; /* 1st instr is load/store/whatever */
+            }
+            /*
+             * Dinero bbrief input:
+             * 4 bytes of little-endian address,
+             * 1 byte of access type, and 1 byte for size.
+             */
+            switch (reftype) {
+            default:
+                fprintf (stderr,
+                         "%s: unknown pixie32 reftype=%u\n",
+                         progname, reftype);
+                /* fall through */
+            case SYSCALL:
+            case LW:
+            case LWC1:
+            case SW:
+            case SWC1:
+            case ANNUL:	/* this one doesn't actually matter */
+            case BB:	/* this one doesn't actually matter */
+                size = 4;
+                addr &= ~3;
+                break;
+            case LD:
+            case LDC1:
+            case SD:
+            case SDC1:
+                size = 8;
+                addr &= ~7;
+                break;
+            case SH:
+                size = 2;
+                addr &= ~1;
+                break;
+            case SB:
+                size = 1;
+                break;
+            case SWL:	/* assume big endian */
+                size = (addr%4) + 1;
+                addr &= ~3;
+                break;
+            case SWR:	/* assume big endian */
+                size = 4 - (addr%4);
+                break;
+            }
+            out (iaddr, D4XINSTRN, 4);
+            switch (reftype) {
+            default:	/* warning already issued */
+                /* fall through */
+            case SYSCALL:
+                out (addr, D4XMISC, size);
+                break;
+            case LW:
+            case LD:
+            case LWC1:
+            case LDC1:
+                out (addr, D4XREAD, size);
+                break;
+            case SWL:
+            case SWR:
+            case SW:
+            case SD:
+            case SB:
+            case SH:
+            case SWC1:
+            case SDC1:
+                out (addr, D4XWRITE, size);
+                break;
+            case ANNUL:	/* annulled instruction; just do the ifetch */
+            case BB:	/* leading instruction of basic block */
+                break;
+            }
+            for (c = 1;  c < count;  c++)
+                out (iaddr + c*4, D4XINSTRN, 4);
+            iaddr += count*4;
+        }
+    }
+    if (optr != 0)
+        (void) write (1, obuf, optr);
+    if (nread < 0) {
+        perror (progname);
+        return 1;
+    }
+    if (endaddr != 0 && !discard)
+        fprintf (stderr, "%s: -e address not found in trace stream\n",
+                 progname);
+    return 0;
 }
