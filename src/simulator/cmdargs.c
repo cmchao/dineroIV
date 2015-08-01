@@ -114,14 +114,88 @@ int stat_idcombine;
 
 
 /*
- * Other declarations local to this file
+ * Special help routine for -informat.
+ * List the choices on subsequent lines.
  */
-extern void help_informat (const struct arglist *);
-extern void phelp_replacement (const struct arglist *);
-extern void phelp_fetch (const struct arglist *);
-extern void phelp_walloc (const struct arglist *);
-extern void phelp_wback (const struct arglist *);
-extern void unspec (int, int, const char *, void *, const char *);
+static void
+help_informat (const struct arglist *adesc)
+{
+    help_char (adesc);
+    help_trace_format (optstringmax);	/* look for this in tracein.c */
+}
+
+
+/*
+ * Special help routine for -lN-Treplacement.
+ * List the choices on subsequent lines.
+ */
+static void
+phelp_replacement (const struct arglist *adesc)
+{
+    phelp_char (adesc);
+    printf ("\n %*s (l=LRU, f=FIFO, r=random)",
+            optstringmax, " ");
+}
+
+
+/*
+ * Special help routine for -lN-Tfetch.
+ * List the choices on subsequent lines.
+ */
+static void
+phelp_fetch (const struct arglist *adesc)
+{
+    phelp_char (adesc);
+    printf ("\n %*s (d=demand, a=always, m=miss, t=tagged,\n"
+            " %*s  l=load forward, s=subblock)",
+            optstringmax, " ", optstringmax, " ");
+}
+
+
+/*
+ * Special help routine for -lN-Twalloc.
+ * List the choices on subsequent lines.
+ */
+static void
+phelp_walloc (const struct arglist *adesc)
+{
+    phelp_char (adesc);
+    printf ("\n %*s (a=always, n=never, f=nofetch)",
+            optstringmax, " ");
+}
+
+
+/*
+ * Special help routine for -lN-Twback.
+ * List the choices on subsequent lines.
+ */
+static void
+phelp_wback (const struct arglist *adesc)
+{
+    phelp_char (adesc);
+    printf ("\n %*s (a=always, n=never, f=nofetch)",
+            optstringmax, " ");
+}
+
+
+/*
+ * Complain about an unspecified option
+ */
+static void
+unspec (int lev, int idu, const char *name, void *var, const char *suggest)
+{
+    int iduchar = idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd');
+    struct arglist *argl;
+
+    for (argl = args;  argl->var != var;  argl++)
+        if (argl->optstring == NULL) {
+            die ("internal problem with arglist table\n");
+        }
+
+    fprintf (stderr, "level %d %ccache %s must be specified, "
+             "e.g., -l%d-%c%s %s\n",
+             lev + 1, iduchar, name, lev + 1, iduchar, argl->optstring, suggest);
+}
 
 
 /* Initialize argument table to specify acceptable arguments */
@@ -347,91 +421,6 @@ doargs (int argc, char **argv)
         v += x;
         argc -= x;
     }
-}
-
-
-/*
- * Special help routine for -informat.
- * List the choices on subsequent lines.
- */
-void
-help_informat (const struct arglist *adesc)
-{
-    help_char (adesc);
-    help_trace_format (optstringmax);	/* look for this in tracein.c */
-}
-
-
-/*
- * Special help routine for -lN-Treplacement.
- * List the choices on subsequent lines.
- */
-void
-phelp_replacement (const struct arglist *adesc)
-{
-    phelp_char (adesc);
-    printf ("\n %*s (l=LRU, f=FIFO, r=random)",
-            optstringmax, " ");
-}
-
-
-/*
- * Special help routine for -lN-Tfetch.
- * List the choices on subsequent lines.
- */
-void
-phelp_fetch (const struct arglist *adesc)
-{
-    phelp_char (adesc);
-    printf ("\n %*s (d=demand, a=always, m=miss, t=tagged,\n"
-            " %*s  l=load forward, s=subblock)",
-            optstringmax, " ", optstringmax, " ");
-}
-
-
-/*
- * Special help routine for -lN-Twalloc.
- * List the choices on subsequent lines.
- */
-void
-phelp_walloc (const struct arglist *adesc)
-{
-    phelp_char (adesc);
-    printf ("\n %*s (a=always, n=never, f=nofetch)",
-            optstringmax, " ");
-}
-
-
-/*
- * Special help routine for -lN-Twback.
- * List the choices on subsequent lines.
- */
-void
-phelp_wback (const struct arglist *adesc)
-{
-    phelp_char (adesc);
-    printf ("\n %*s (a=always, n=never, f=nofetch)",
-            optstringmax, " ");
-}
-
-
-/*
- * Complain about an unspecified option
- */
-void
-unspec (int lev, int idu, const char *name, void *var, const char *suggest)
-{
-    int iduchar = idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd');
-    struct arglist *argl;
-
-    for (argl = args;  argl->var != var;  argl++)
-        if (argl->optstring == NULL) {
-            die ("internal problem with arglist table\n");
-        }
-
-    fprintf (stderr, "level %d %ccache %s must be specified, "
-             "e.g., -l%d-%c%s %s\n",
-             lev + 1, iduchar, name, lev + 1, iduchar, argl->optstring, suggest);
 }
 
 
