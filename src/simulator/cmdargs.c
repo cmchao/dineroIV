@@ -70,22 +70,17 @@
  * For those options subject to customization, the customized version
  * of the array is defined elsewhere.
  */
-#if D4CUSTOM
-#define D4_EXT extern
-#else
-#define D4_EXT
-#endif
-D4_EXT int maxlevel;	/* the highest level actually used */
-D4_EXT unsigned int level_blocksize[3][MAX_LEV];
-D4_EXT unsigned int level_subblocksize[3][MAX_LEV];
-D4_EXT unsigned int level_size[3][MAX_LEV];
-D4_EXT unsigned int level_assoc[3][MAX_LEV];
-D4_EXT int level_doccc[3][MAX_LEV];
-D4_EXT int level_replacement[3][MAX_LEV];
-D4_EXT int level_fetch[3][MAX_LEV];
-D4_EXT int level_walloc[3][MAX_LEV];
-D4_EXT int level_wback[3][MAX_LEV];
-D4_EXT int level_prefetch_abortpercent[3][MAX_LEV];
+int maxlevel;	/* the highest level actually used */
+unsigned int level_blocksize[3][MAX_LEV];
+unsigned int level_subblocksize[3][MAX_LEV];
+unsigned int level_size[3][MAX_LEV];
+unsigned int level_assoc[3][MAX_LEV];
+int level_doccc[3][MAX_LEV];
+int level_replacement[3][MAX_LEV];
+int level_fetch[3][MAX_LEV];
+int level_walloc[3][MAX_LEV];
+int level_wback[3][MAX_LEV];
+int level_prefetch_abortpercent[3][MAX_LEV];
 int level_prefetch_distance[3][MAX_LEV];
 
 /*
@@ -127,14 +122,6 @@ extern void phelp_wback (const struct arglist *);
 extern void unspec (int, int, const char *, void *, const char *);
 
 
-#if D4CUSTOM
-#define CUST_MATCH(x)	match_bogus
-#define CUST_X(x)	NULL
-#else
-#define CUST_MATCH(x)	x
-#define CUST_X(x)	x
-#endif
-
 /* Initialize argument table to specify acceptable arguments */
 struct arglist args[] = {
     {
@@ -158,7 +145,6 @@ struct arglist args[] = {
         match_0arg, val_helpw, NULL,
         NULL, help_0arg
     },
-#if !D4CUSTOM
     {
         "-dineroIII", 0, NULL, NULL,
         NULL,
@@ -167,89 +153,81 @@ struct arglist args[] = {
         NULL, help_0arg
     },
     {
-        "-custom", 2, &customname, NULL,
-        NULL,
-        "Generate and run custom simulator named F",
-        match_1arg, val_string, custom_custom,
-        NULL, help_string
-    },
-#endif
-    {
         "size", 7, &level_size[0][0], NULL,
         "level_size",
         "Size",
-        CUST_MATCH(pmatch_1arg), pval_scale_pow2, CUST_X(pcustom_uint),
-        psummary_luint, CUST_X(phelp_scale_pow2)
+        pmatch_1arg, pval_scale_pow2, pcustom_uint,
+        psummary_luint, phelp_scale_pow2
     },
     {
         "bsize", 7, &level_blocksize[0][0], NULL,
         "level_blocksize",
         "Block size",
-        CUST_MATCH(pmatch_1arg), pval_scale_pow2, CUST_X(pcustom_uint),
-        psummary_luint, CUST_X(phelp_scale_pow2)
+        pmatch_1arg, pval_scale_pow2, pcustom_uint,
+        psummary_luint, phelp_scale_pow2
     },
     {
         "sbsize", 7, &level_subblocksize[0][0], "same as block size",
         "level_subblocksize",
         "Sub-block size",
-        CUST_MATCH(pmatch_1arg), pval_scale_pow2, CUST_X(pcustom_uint),
-        psummary_luint, CUST_X(phelp_scale_pow2)
+        pmatch_1arg, pval_scale_pow2, pcustom_uint,
+        psummary_luint, phelp_scale_pow2
     },
     {
         "assoc", 7, &level_assoc[0][0], DEFSTR_assoc,
         "level_assoc",
         "Associativity",
-        CUST_MATCH(pmatch_1arg), pval_uint, CUST_X(pcustom_uint),
-        psummary_uint, CUST_X(phelp_uint)
+        pmatch_1arg, pval_uint, pcustom_uint,
+        psummary_uint, phelp_uint
     },
     {
         "repl", 7, &level_replacement[0][0], DEFSTR_repl,
         "level_replacement",
         "Replacement policy",
-        CUST_MATCH(pmatch_1arg), pval_char, CUST_X(pcustom_char),
-        psummary_char, CUST_X(phelp_replacement)
+        pmatch_1arg, pval_char, pcustom_char,
+        psummary_char, phelp_replacement
     },
     {
         "fetch", 7, &level_fetch[0][0], DEFSTR_fetch,
         "level_fetch",
         "Fetch policy",
-        CUST_MATCH(pmatch_1arg), pval_char, CUST_X(pcustom_char),
-        psummary_char, CUST_X(phelp_fetch)
+        pmatch_1arg, pval_char, pcustom_char,
+        psummary_char, phelp_fetch
     },
     {
         "pfdist", 7, &level_prefetch_distance[0][0], "1",
         NULL,
         "Prefetch distance (in sub-blocks)",
         pmatch_1arg, pval_uint, NULL,
-        psummary_uint, CUST_X(phelp_uint)
+        psummary_uint, phelp_uint
     },
     {
         "pfabort", 7, &level_prefetch_abortpercent[0][0], "0",
         "level_prefetch_abortpercent",
         "Prefetch abort percentage (0-100)",
-        CUST_MATCH(pmatch_1arg), pval_uint, CUST_X(pcustom_uint),
-        psummary_uint, CUST_X(phelp_uint)
+        pmatch_1arg, pval_uint, pcustom_uint,
+        psummary_uint, phelp_uint
     },
     {
         "walloc", 7, &level_walloc[0][0], DEFSTR_walloc,
         "level_walloc",
         "Write allocate policy",
-        CUST_MATCH(pmatch_1arg), pval_char, CUST_X(pcustom_char),
-        psummary_char, CUST_X(phelp_walloc)
+        pmatch_1arg, pval_char, pcustom_char,
+        psummary_char, phelp_walloc
     },
     {
         "wback", 7, &level_wback[0][0], DEFSTR_wback,
         "level_wback",
         "Write back policy",
-        CUST_MATCH(pmatch_1arg), pval_char, CUST_X(pcustom_char),
-        psummary_char, CUST_X(phelp_wback)
+        pmatch_1arg, pval_char, pcustom_char,
+        psummary_char, phelp_wback
     },
     {
         "ccc", 5, &level_doccc[0][0], NULL,
         "level_doccc",
         "Compulsory/Capacity/Conflict miss statistics",
-        CUST_MATCH(pmatch_0arg), pval_0arg, CUST_X(pcustom_0arg),
-        psummary_0arg, CUST_X(phelp_0arg)
+        pmatch_0arg, pval_0arg, pcustom_0arg,
+        psummary_0arg, phelp_0arg
     },
     {
         "-skipcount", 2, &skipcount, NULL,

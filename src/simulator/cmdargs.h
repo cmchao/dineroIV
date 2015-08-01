@@ -120,9 +120,6 @@ extern int match_0arg (const char *, const struct arglist *);
 extern int pmatch_0arg (const char *, const struct arglist *);
 extern int match_1arg (const char *, const struct arglist *);
 extern int pmatch_1arg (const char *, const struct arglist *); /* with -ln-idu prefix */
-#if D4CUSTOM
-extern int match_bogus (const char *, const struct arglist *);
-#endif
 
 /*
  * value functions -- actually consume the option and argument(s).
@@ -130,9 +127,7 @@ extern int match_bogus (const char *, const struct arglist *);
 extern void val_help (const char *opt, const char *arg, const struct arglist *);
 extern void val_helpcr (const char *opt, const char *arg, const struct arglist *);
 extern void val_helpw (const char *opt, const char *arg, const struct arglist *);
-#if !D4CUSTOM
 extern void val_helpd3 (const char *opt, const char *arg, const struct arglist *);
-#endif
 extern void val_0arg (const char *opt, const char *arg, const struct arglist *);
 extern void pval_0arg (const char *opt, const char *arg, const struct arglist *);
 extern void val_uint (const char *opt, const char *arg, const struct arglist *);
@@ -150,12 +145,10 @@ extern void val_addr (const char *opt, const char *arg, const struct arglist *);
 /*
  * custom functions -- help set up custom version of dineroIV.
  */
-#if !D4CUSTOM
 extern void custom_custom (const struct arglist *, FILE *);
 extern void pcustom_0arg (const struct arglist *, FILE *);
 extern void pcustom_uint (const struct arglist *, FILE *);
 extern void pcustom_char (const struct arglist *, FILE *);
-#endif
 
 /*
  * summary functions -- produce summary of parameter setting

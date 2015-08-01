@@ -71,7 +71,6 @@
  * The first group of stuff in this file is only done once
  * if we are customizing
  */
-#if !defined(D4CUSTOM) || D4_REF_ONCE==0
 #include <stddef.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -93,144 +92,6 @@ extern D4_RANDOM_DEF random(void);
 #define D4_OPT(spec)		D4_OPT_(D4_CACHEID,spec)
 
 
-#if !D4CUSTOM /* these are just dummies to avoid unresolved references */
-int d4_ncustom = 0;
-long *d4_cust_vals[1] = { NULL };
-#endif
-
-/* This is a general mechanism by which you can tell if we are customized */
-const int d4custom = D4CUSTOM;
-
-/*
- * We need some non-customized policy functions even in the customized
- * case.  These dummy functions aren't for actually calling, but
- * are needed to resolve references, e.g., when the user sets
- * the function pointers in d4cache before calling d4setup.
- * They also allow comparison to be done in obscure cases, e.g., to
- * see if a particular policy is in effect.
- */
-#if D4CUSTOM
-static void d4dummy_crash (char *name)
-{
-    fprintf (stderr, "Dinero IV: someone called dummy function %s!\n", name);
-    exit(9);
-}
-d4stacknode *d4rep_lru (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
-{
-    d4dummy_crash("d4rep_lru");
-    return NULL;
-}
-d4stacknode *d4rep_fifo (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
-{
-    d4dummy_crash("d4rep_fifo");
-    return NULL;
-}
-d4stacknode *d4rep_random (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
-{
-    d4dummy_crash("d4rep_random");
-    return NULL;
-}
-d4pendstack *d4prefetch_none (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
-{
-    d4dummy_crash("d4prefetch_none");
-    return NULL;
-}
-d4pendstack *d4prefetch_always (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
-{
-    d4dummy_crash("d4prefetch_always");
-    return NULL;
-}
-d4pendstack *d4prefetch_loadforw (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
-{
-    d4dummy_crash("d4prefetch_loadforw");
-    return NULL;
-}
-d4pendstack *d4prefetch_subblock (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
-{
-    d4dummy_crash("d4prefetch_subblock");
-    return NULL;
-}
-d4pendstack *d4prefetch_miss (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
-{
-    d4dummy_crash("d4prefetch_miss");
-    return NULL;
-}
-d4pendstack *d4prefetch_tagged (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
-{
-    d4dummy_crash("d4prefetch_tagged");
-    return NULL;
-}
-int d4walloc_always (d4cache *c, d4memref m)
-{
-    d4dummy_crash("d4walloc_always");
-    return 0;
-}
-int d4walloc_never (d4cache *c, d4memref m)
-{
-    d4dummy_crash("d4walloc_never");
-    return 0;
-}
-int d4walloc_nofetch (d4cache *c, d4memref m)
-{
-    d4dummy_crash("d4walloc_nofetch");
-    return 0;
-}
-int d4wback_always (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
-{
-    d4dummy_crash("d4wback_always");
-    return 0;
-}
-int d4wback_never (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
-{
-    d4dummy_crash("d4wback_never");
-    return 0;
-}
-int d4wback_nofetch (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
-{
-    d4dummy_crash("d4wback_nofetch");
-    return 0;
-}
-#endif
-
-
-#if D4CUSTOM
-/*
- * Dynamic stub for d4ref in customized case.
- * This routine will normally be called at most 1 time for each cache.
- * Remember, if D4CUSTOM is 1, the "real" d4ref, later in this file,
- * will appear multiple times, renamed to something else each time.
- */
-#undef d4ref /* defeat the macro from d4.h, which users normally invoke */
-extern void d4ref (d4cache *, d4memref); /* prototype to avoid compiler warnings */
-void
-d4ref (d4cache *c, d4memref m)
-{
-    extern int d4_ncustom;
-    extern void (*d4_custom[]) (d4cache *, d4memref);
-
-    if (c->cacheid <= 0 || c->cacheid > d4_ncustom) {
-        /* "can't happen" */
-        fprintf (stderr, "Dinero IV: d4_custom is messed up "
-                 "(d4_ncustom %d, cacheid %d)\n", d4_ncustom, c->cacheid);
-        exit (9);
-    }
-    c->ref = d4_custom[c->cacheid - 1];
-    c->ref (c, m);
-}
-#endif
-
-#define D4_REF_ONCE 1	/* don't do it again */
-#endif	/* !D4CUSTOM || D4_REF_ONCE==0 */
-
-
-/*
- * Everything else in this file may be done multiple times
- * if we're customizing.
- */
-#if !D4CUSTOM || D4_REF_ONCE>1	/* applies everything else except the last line */
-
-
-#if !D4CUSTOM || D4_OPT (rep_lru)
 /*
  * LRU replacement policy
  * With D4CUSTOM!=0 and inlining, this is also good for direct-mapped caches
@@ -256,10 +117,8 @@ d4rep_lru (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
     }
     return ptr;
 }
-#endif	/* !D4CUSTOM || D4_OPT (rep_lru) */
 
 
-#if !D4CUSTOM || D4_OPT (rep_fifo)
 /*
  * FIFO replacement policy
  */
@@ -278,10 +137,8 @@ d4rep_fifo (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
     }
     return ptr;
 }
-#endif	/* !D4CUSTOM || D4_OPT (rep_fifo) */
 
 
-#if !D4CUSTOM || D4_OPT (rep_random)
 /*
  * Random replacement policy.
  */
@@ -304,10 +161,8 @@ d4rep_random (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
     }
     return ptr;
 }
-#endif	/* !D4CUSTOM || D4_OPT (rep_random) */
 
 
-#if !D4CUSTOM || D4_OPT (prefetch_none)
 /*
  * Demand fetch only policy, no prefetching
  */
@@ -318,10 +173,8 @@ d4prefetch_none (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
     /* no prefetch, nothing to do */
     return NULL;
 }
-#endif	/* !D4CUSTOM || D4_OPT (prefetch_none) */
 
 
-#if !D4CUSTOM || D4_OPT (prefetch_always)
 /*
  * Always prefetch policy
  */
@@ -337,10 +190,8 @@ d4prefetch_always (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
     pf->m.size = 1 << D4VAL(c, lg2subblocksize);
     return pf;
 }
-#endif	/* !D4CUSTOM || D4_OPT (prefetch_always) */
 
 
-#if !D4CUSTOM || D4_OPT (prefetch_loadforw)
 /*
  * Load forward prefetch policy
  * Don't prefetch into next block.
@@ -361,10 +212,8 @@ d4prefetch_loadforw (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
     pf->m.size = 1 << D4VAL(c, lg2subblocksize);
     return pf;
 }
-#endif	/* !D4CUSTOM || D4_OPT (prefetch_loadforw) */
 
 
-#if !D4CUSTOM || D4_OPT (prefetch_subblock)
 /*
  * Subblock prefetch policy
  * Don't prefetch into next block; wrap around within block instead.
@@ -385,10 +234,8 @@ d4prefetch_subblock (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
     }
     return pf;
 }
-#endif	/* !D4CUSTOM || D4_OPT (prefetch_subblock) */
 
 
-#if !D4CUSTOM || D4_OPT (prefetch_miss)
 /*
  * Miss prefetch policy
  * Prefetch only on misses
@@ -409,10 +256,8 @@ d4prefetch_miss (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
     pf->m.size = 1 << D4VAL(c, lg2subblocksize);
     return pf;
 }
-#endif	/* !D4CUSTOM || D4_OPT (prefetch_miss) */
 
 
-#if !D4CUSTOM || D4_OPT (prefetch_tagged)
 /*
  * Tagged prefetch (see Smith, "cache Memories," ~p.20) initiates
  * a prefetch on the first demand reference to a (sub)-block.  Thus,
@@ -442,10 +287,8 @@ d4prefetch_tagged (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
     pf->m.size = 1 << D4VAL(c, lg2subblocksize);
     return pf;
 }
-#endif	/* !D4CUSTOM || D4_OPT (prefetch_tagged) */
 
 
-#if !D4CUSTOM || D4_OPT (walloc_always)
 /*
  * Always write allocate
  */
@@ -455,10 +298,8 @@ d4walloc_always (d4cache *c, d4memref m)
 {
     return 1;
 }
-#endif	/* !D4CUSTOM || D4_OPT (walloc_always) */
 
 
-#if !D4CUSTOM || D4_OPT (walloc_never)
 /*
  * Never write allocate
  */
@@ -468,10 +309,8 @@ d4walloc_never (d4cache *c, d4memref m)
 {
     return 0;
 }
-#endif	/* !D4CUSTOM || D4_OPT (walloc_never) */
 
 
-#if !D4CUSTOM || D4_OPT (walloc_nofetch)
 /*
  * Write allocate if no fetch is required
  * (write exactly fills an integral number of subblocks)
@@ -482,10 +321,8 @@ d4walloc_nofetch (d4cache *c, d4memref m)
 {
     return m.size == D4REFNSB(c, m) << D4VAL (c, lg2subblocksize);
 }
-#endif	/* !D4CUSTOM || D4_OPT (walloc_nofetch) */
 
 
-#if !D4CUSTOM || D4_OPT (wback_always)
 /*
  * Always write back
  */
@@ -495,10 +332,8 @@ d4wback_always (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int wal
 {
     return 1;
 }
-#endif	/* !D4CUSTOM || D4_OPT (wback_always) */
 
 
-#if !D4CUSTOM || D4_OPT (wback_never)
 /*
  * Never write back (i.e., always write through)
  */
@@ -508,10 +343,8 @@ d4wback_never (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int wall
 {
     return 0;
 }
-#endif	/* !D4CUSTOM || D4_OPT (wback_never) */
 
 
-#if !D4CUSTOM || D4_OPT (wback_nofetch)
 /*
  * Write back if no fetch is required
  * The actual test is for every affected subblock to be valid or
@@ -524,11 +357,9 @@ d4wback_nofetch (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int wa
     return (D4ADDR2SBMASK(c, m) & ~ptr->valid) == 0 ||
            m.size == (D4REFNSB(c, m) << D4VAL (c, lg2subblocksize));
 }
-#endif	/* !D4CUSTOM || D4_OPT (wback_nofetch) */
 
 
 
-#if !D4CUSTOM || D4_OPT (ccc)
 /*
  * This function implements an infinite-sized cache, used
  * when classifying cache misses into compulsory, capacity,
@@ -628,7 +459,6 @@ d4infcache (d4cache *c, d4memref m)
     }
     return 1; /* we've not seen it before */
 }
-#endif /* !D4CUSTOM || D4_OPT (ccc) */
 
 
 /*
@@ -893,7 +723,3 @@ d4ref (d4cache *c, d4memref mr)
         }
     }
 }
-
-#endif /* !D4CUSTOM || D4_REF_ONCE>1 */
-#undef D4_REF_ONCE
-#define D4_REF_ONCE 2	/* from now on, skip the first stuff and do the rest */

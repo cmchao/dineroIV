@@ -71,11 +71,6 @@ const char *progname = "dineroIV";		/* for error messages */
 int optstringmax;			/* for help_* functions */
 d4cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
 d4cache *mem;				/* which cache represents simulated memory? */
-#if !D4CUSTOM
-const char **cust_argv;			/* for args to pass to custom version */
-int cust_argc = 1;			/* how many args for custom version */
-char *customname;			/* for -custom, name of executable */
-#endif
 
 /* private prototypes for this file */
 extern int do1arg (const char *, const char *);
@@ -84,10 +79,6 @@ extern void summarize_caches (d4cache *, d4cache *);
 extern void dostats (void);
 extern void do1stats (d4cache *);
 extern d4memref next_trace_item (void);
-#if !D4CUSTOM
-extern void customize_caches (void);
-#endif
-
 
 /*
  * Generic functions for handling command line arguments.
@@ -111,24 +102,17 @@ do1arg (const char *opt, const char *arg)
                 shorthelp ("\"%s\" option requires additional argument\n", opt);
             }
             adesc->valf (opt, arg, adesc);
-#if !D4CUSTOM
-            if (adesc->customf == NULL) {
-                cust_argv[cust_argc++] = opt;
-                if (eaten > 1) {
-                    cust_argv[cust_argc++] = arg;
-                }
-            }
-#endif
+
             return eaten;
         }
     }
-#if !D4CUSTOM
+
     /* does it look like a possible Dinero III option? */
     if (opt[0] == '-' && strchr ("uidbSarfpPwAQzZ", opt[1]) != NULL)
         shorthelp ("\"%s\" option not recognized for Dinero IV;\n"
                    "try \"%s -dineroIII\" for Dinero III --> IV option correspondence.\n",
                    opt, progname);
-#endif
+
     shorthelp ("\"%s\" option not recognized.\n", opt);
     return 0;	/* can't really get here, but some compilers get upset if we don't have a return value */
 }
@@ -144,12 +128,6 @@ doargs (int argc, char **argv)
     char **v = argv + 1;
     int x;
 
-#if !D4CUSTOM
-    cust_argv = malloc ((argc + 1) * sizeof(argv[0]));
-    if (cust_argv == NULL) {
-        die ("no memory to copy args for possible -custom\n");
-    }
-#endif
     for (adesc = args;  adesc->optstring != NULL;  adesc++)
         if (optstringmax < (int)strlen(adesc->optstring) + adesc->pad) {
             optstringmax = strlen(adesc->optstring) + adesc->pad;
@@ -376,20 +354,6 @@ pmatch_1arg (const char *opt, const struct arglist *adesc)
     return 2 * (strcmp (nextc, adesc->optstring) == 0);
 }
 
-
-#if D4CUSTOM
-/*
- * Recognize no option; used as a bogus match function for options
- * which have been customized.
- */
-int
-match_bogus (const char *opt, const struct arglist *adesc)
-{
-    return 0;
-}
-#endif
-
-
 /*
  * Produce help message in response to -help
  */
@@ -498,7 +462,6 @@ val_helpw (const char *opt, const char *arg, const struct arglist *adesc)
 }
 
 
-#if !D4CUSTOM
 /*
  * Explain DineroIII->DineroIV option mappings
  */
@@ -526,7 +489,6 @@ val_helpd3 (const char *opt, const char *arg, const struct arglist *adesc)
     printf ("DineroIII input format: -informat d\n");
     exit(0);
 }
-#endif
 
 
 /*
@@ -743,18 +705,6 @@ val_addr (const char *opt, const char *arg, const struct arglist *adesc)
 }
 
 
-#if !D4CUSTOM	/* a customized program can't be further customized */
-/*
- * Do nothing.  This is just to provide a non-null function for -custom
- * so do1arg will not think this option should be passed on to the
- * custom program itself.
- */
-void
-custom_custom (const struct arglist *adesc, FILE *hfile)
-{
-}
-
-
 /*
  * Output an array initializer for the level/idu array whose name is given
  * in the customstring field of the arglist structure,
@@ -825,7 +775,6 @@ pcustom_char (const struct arglist *adesc, FILE *hfile)
     }
     fprintf (hfile, "};\n");
 }
-#endif	/* !D4CUSTOM */
 
 
 /*
@@ -1855,101 +1804,6 @@ initialize_caches (d4cache **icachep, d4cache **dcachep)
 }
 
 
-#if !D4CUSTOM	/* a customized version cannot be further customized */
-/*
- * Create a customized version of dineroIV.  This is called after everything
- * is all set up and we would otherwise be ready to begin simulation.
- *
- * We create a temporary .c file, containing initializers for the
- * command line argument arrays (level_*, etc.), handled mostly by
- * args[].customf.  We also call d4customize to add customized
- * d4ref code for all of our caches in the same file.
- * We rebuild dineroIV by running $D4_SRC/make with extra arguments,
- * and finally exec the new program.
- */
-void
-customize_caches()
-{
-    FILE *f = NULL;
-    char fname[100];
-    int pid = getpid();
-    struct arglist *adesc;
-    struct stat st;
-    char *cmdline = malloc(4096);	/* XXX add overflow checking or make this more dynamic */
-    const char *psrc;
-    char *plib;
-    int x;
-
-    if (cmdline == NULL) {
-        die ("no memory for custom make command line\n");
-    }
-    sprintf (fname, "/tmp/d4custom%d.c", pid);
-    f = fopen (fname, "w");
-    if (f == NULL) {
-        die ("can't create file %s for writing (%s)\n", fname, strerror(errno));
-    }
-    d4customize(f);
-
-    /* call all customf functions */
-    fprintf (f, "\n#include \"cmdargs.h\"\n");
-    for (adesc = args;  adesc->optstring != NULL;  adesc++) {
-        if (adesc->customf != NULL) {
-            adesc->customf (adesc, f);
-        }
-    }
-    fprintf (f, "int maxlevel = %d;\n", maxlevel);
-
-    fclose (f);
-
-    /* run make */
-    psrc = getenv ("D4_SRC");
-    if (psrc == NULL || *psrc == 0) {
-        psrc = ".";
-    }
-    plib = getenv ("D4_LIB");
-    if (plib == NULL || *plib == 0) {
-        plib = malloc (strlen(psrc) + strlen("/libd4.a") + 1);
-        if (plib == NULL) {
-            die ("no memory for libd4.a pathname\n");
-        }
-        strcpy (plib, psrc);
-        strcat (plib, "/libd4.a");
-    }
-
-    /* try to catch common errors */
-    sprintf (cmdline, "%s/Makefile", psrc);
-    if (stat (cmdline, &st) < 0)
-        die ("There is no %s%s\n", cmdline,
-             getenv("D4_SRC") == NULL ? "; try setting D4_SRC" : "");
-    sprintf (cmdline, "%s/d4.h", psrc);
-    if (stat (cmdline, &st) < 0)
-        die ("There is no %s%s\n", cmdline,
-             getenv("D4_SRC") == NULL ? "; try setting D4_SRC" : "");
-    if (stat (plib, &st) < 0)
-        die ("There is no %s%s\n", plib,
-             getenv("D4_LIB") == NULL ? "; try setting D4_LIB" : "");
-
-    sprintf (cmdline, "make -s -f %s/Makefile %s CUSTOM_NAME=%s "
-             "CUSTOM_C=%s D4_SRC=%s D4_LIB=%s\n",
-             psrc, customname, customname, fname, psrc, plib);
-    x = system (cmdline);
-
-#if 1	/* remove custom source file */
-    (void)unlink(fname);
-#endif
-    if (x != 0) {
-        die ("can't make %s: %s returned %d\n", customname, cmdline, x);
-    }
-
-    /* exec customname using cust_argc, cust_argv */
-    cust_argv[0] = customname;
-    cust_argv[cust_argc++] = NULL;
-    x = execv (customname, (char**)cust_argv); /* cast avoids warnings */
-    die ("cannot exec custom version %s: %s\n", customname, strerror(x));
-}
-#endif	/* !D4CUSTOM */
-
-
 /*
  * Complain and terminate
  */
@@ -2026,12 +1880,7 @@ main (int argc, char **argv)
     doargs (argc, argv);
     verify_options();
     initialize_caches (&ci, &cd);
-#if !D4CUSTOM
-    if (customname != NULL) {
-        customize_caches();
-        /* never returns */
-    }
-#endif
+
     if (cd == NULL) {
         cd = ci;    /* for unified L1 cache */
     }
