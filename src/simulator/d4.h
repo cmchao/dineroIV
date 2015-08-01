@@ -274,56 +274,10 @@ typedef struct d4_cache_struct {
 #define D4F_USERFLAG1		0x8	/* first available flag bit */
 
 
-
-
-/*
- * This macro provides access to certain fields of the
- * d4cache structure in a way that allows the references to be
- * replaced by constants if D4CUSTOM is true.  With suitable
- * definitions of D4_CACHE_* macros, partial evaluation in the
- * compiler can simplify and speed up simulation.
- */
-#define D4VAL(cache,field)	((cache)->field)
-/* Some additional internal macros help get around ## wierdness */
-#define D4_VAL__(cache,cacheid,field)	D4_CACHE_ ## cacheid ## _ ## field
-#define D4_VAL_(cache,cacheid,field)	D4_VAL__(cache,cacheid,field)
-#define D4_TRIGGER_FIELD_(cacheid,field)	D4_TRIGGER_ ## cacheid ## _ ## field
-#define D4_TRIGGER_FIELD(cacheid,field)	D4_TRIGGER_FIELD_(cacheid,field)
-
-/* define something to avoid undeclared identifiers when !D4CUSTOM */
-#define D4_CACHEID bogus
-#define D4_CACHE_bogus_flags 0
-#define D4_TRIGGER_bogus_flags 0
-#define D4_CACHE_bogus_lg2blocksize 0
-#define D4_TRIGGER_bogus_lg2blocksize 0
-#define D4_CACHE_bogus_lg2subblocksize 0
-#define D4_TRIGGER_bogus_lg2subblocksize 0
-#define D4_CACHE_bogus_lg2size 0
-#define D4_TRIGGER_bogus_lg2size 0
-#define D4_CACHE_bogus_assoc 0
-#define D4_TRIGGER_bogus_assoc 0
-#define D4_CACHE_bogus_numsets 0
-#define D4_TRIGGER_bogus_numsets 0
-#define D4_CACHE_bogus_replacementf NULL
-#define D4_TRIGGER_bogus_replacementf 0
-#define D4_CACHE_bogus_prefetchf NULL
-#define D4_TRIGGER_bogus_prefetchf 0
-#define D4_CACHE_bogus_wallocf NULL
-#define D4_TRIGGER_bogus_wallocf 0
-#define D4_CACHE_bogus_wbackf NULL
-#define D4_TRIGGER_bogus_wbackf 0
-#define D4_CACHE_bogus_prefetch_abortpercent 0
-#define D4_TRIGGER_bogus_prefetch_abortpercent 0
-
-#define D4_OPTS_bogus_ccc 0
-#define D4_OPTS_bogus_prefetch_none 0
-
-
-
-
 /*
  * Miscellaneous pseudo-functions
  */
+#define D4VAL(cache,field)	((cache)->field)
 #define D4LG2MASK(n)		 /* make an n-bit mask */		      \
 		((((d4addr)1)<<(n))-1)
 
@@ -346,8 +300,6 @@ typedef struct d4_cache_struct {
 	  D4VAL(cache,lg2subblocksize)))
 
 
-
-
 /*
  * Global data declarations
  */
@@ -356,8 +308,6 @@ extern const int d4custom; /* how to tell if this program was customized */
 extern struct d4_stackhash_struct d4stackhash; /* hash table for all caches */
 extern d4stacknode d4freelist; /* free list for stack nodes of all caches */
 extern int d4nnodes;	/* total number of stack nodes allocated */
-
-
 
 
 /*
