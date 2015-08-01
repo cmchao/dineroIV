@@ -3,10 +3,10 @@ compiler:
     - gcc
     - clang
 script:
-    - make build
+    - mkdir build
     - cd build
     - cmake ../
     - make install
-    - cd ../install
+    - cd ../install/testing
     - ./testscript
 
