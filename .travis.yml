@@ -5,7 +5,7 @@ compiler:
 script:
     - mkdir build
     - cd build
-    - cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install ../
+    - cmake -DDINEROIV_UNIT_TEST=ON -DCMAKE_INSTALL_PREFIX=$PWD/../install ../
     - make install
     - cd ../install/testing
     - ./testscript
