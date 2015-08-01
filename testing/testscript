@@ -79,6 +79,7 @@ fi
 if [ ! -e log ]; then
     mkdir log
 fi
+cat /dev/null > runlog
 
 for tp in "$tag_patterns"; do
 	grep "^$tp[ 	]" $PARAM_FILE
@@ -121,9 +122,9 @@ done | while read tag parms; do
 
 		if [ $oktodo = yes ]; then
             outname=$config_name.good.$tag
-            echo $outname 2>&1 | tee runlog
+            echo $outname 2>&1 | tee -a runlog
 		    $p2d <$item | ../bin/dineroIV $parms | sed 's/version [0-9]*$/version XXX/' > log/$outname
-            diff -a -b ref/$outname log/$outname 2>&1 | tee runlog
+            diff -a -b ref/$outname log/$outname 2>&1 | tee -a runlog
 		fi
 
 		if [ -n "$custfile" ]; then
@@ -134,7 +135,9 @@ done
 echo ====================== done `date`
 grep -q "< ---" runlog
 if [ $? ]; then
+    echo "test success"
     exit 0
 else
+    echo "test failed"
     exit 1
 fi
