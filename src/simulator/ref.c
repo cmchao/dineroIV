@@ -68,12 +68,6 @@
 #include <assert.h>
 #include "d4.h"
 
-
-/* some systems don't provide a proper declaration for random() */
-#ifdef D4_RANDOM_DEF
-extern D4_RANDOM_DEF random(void);
-#endif
-
 /*
  * LRU replacement policy
  * With inlining, this is also good for direct-mapped caches
