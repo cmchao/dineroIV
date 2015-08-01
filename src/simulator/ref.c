@@ -96,7 +96,7 @@ extern D4_RANDOM_DEF random(void);
  * LRU replacement policy
  * With inlining, this is also good for direct-mapped caches
  */
-D4_INLINE
+inline
 d4stacknode *
 d4rep_lru (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 {
@@ -120,7 +120,7 @@ d4rep_lru (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 /*
  * FIFO replacement policy
  */
-D4_INLINE
+inline
 d4stacknode *
 d4rep_fifo (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 {
@@ -140,7 +140,7 @@ d4rep_fifo (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 /*
  * Random replacement policy.
  */
-D4_INLINE
+inline
 d4stacknode *
 d4rep_random (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 {
@@ -164,7 +164,7 @@ d4rep_random (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 /*
  * Demand fetch only policy, no prefetching
  */
-D4_INLINE
+inline
 d4pendstack *
 d4prefetch_none (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
@@ -176,7 +176,7 @@ d4prefetch_none (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
 /*
  * Always prefetch policy
  */
-D4_INLINE
+inline
 d4pendstack *
 d4prefetch_always (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
@@ -194,7 +194,7 @@ d4prefetch_always (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  * Load forward prefetch policy
  * Don't prefetch into next block.
  */
-D4_INLINE
+inline
 d4pendstack *
 d4prefetch_loadforw (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
@@ -216,7 +216,7 @@ d4prefetch_loadforw (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  * Subblock prefetch policy
  * Don't prefetch into next block; wrap around within block instead.
  */
-D4_INLINE
+inline
 d4pendstack *
 d4prefetch_subblock (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
@@ -238,7 +238,7 @@ d4prefetch_subblock (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  * Miss prefetch policy
  * Prefetch only on misses
  */
-D4_INLINE
+inline
 d4pendstack *
 d4prefetch_miss (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
@@ -267,7 +267,7 @@ d4prefetch_miss (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  * in the cache entry.  A prefetch is started on a demand miss and
  * on a refernce to a (sub)-block whose reference bit was not previously set.
  */
-D4_INLINE
+inline
 d4pendstack *
 d4prefetch_tagged (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
@@ -290,7 +290,7 @@ d4prefetch_tagged (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
 /*
  * Always write allocate
  */
-D4_INLINE
+inline
 int
 d4walloc_always (d4cache *c, d4memref m)
 {
@@ -301,7 +301,7 @@ d4walloc_always (d4cache *c, d4memref m)
 /*
  * Never write allocate
  */
-D4_INLINE
+inline
 int
 d4walloc_never (d4cache *c, d4memref m)
 {
@@ -313,7 +313,7 @@ d4walloc_never (d4cache *c, d4memref m)
  * Write allocate if no fetch is required
  * (write exactly fills an integral number of subblocks)
  */
-D4_INLINE
+inline
 int
 d4walloc_nofetch (d4cache *c, d4memref m)
 {
@@ -324,7 +324,7 @@ d4walloc_nofetch (d4cache *c, d4memref m)
 /*
  * Always write back
  */
-D4_INLINE
+inline
 int
 d4wback_always (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
 {
@@ -335,7 +335,7 @@ d4wback_always (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int wal
 /*
  * Never write back (i.e., always write through)
  */
-D4_INLINE
+inline
 int
 d4wback_never (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
 {
@@ -348,7 +348,7 @@ d4wback_never (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int wall
  * The actual test is for every affected subblock to be valid or
  * for the write to completely cover all affected subblocks.
  */
-D4_INLINE
+inline
 int
 d4wback_nofetch (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
 {
@@ -463,7 +463,7 @@ d4infcache (d4cache *c, d4memref m)
  * Split a memory reference if it crosses a block boundary.
  * The remainder, if any, is queued for processing later.
  */
-D4_INLINE
+inline
 d4memref
 d4_splitm (d4cache *c, d4memref mr, d4addr ba)
 {

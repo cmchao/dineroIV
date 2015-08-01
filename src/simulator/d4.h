@@ -348,9 +348,6 @@ typedef struct d4_cache_struct {
 
 
 
-#define D4_INLINE inline
-
-
 /*
  * Global data declarations
  */
