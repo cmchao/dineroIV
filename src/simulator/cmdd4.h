@@ -40,7 +40,6 @@
  * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, ARISING OUT OF THE USE OR INABILITY
  * TO USE THE SOFTWARE.
  *
- * $Header: /home/edler/dinero/d4/RCS/cmdd4.h,v 1.3 1997/12/08 19:35:24 edler Exp $
  */
 
 

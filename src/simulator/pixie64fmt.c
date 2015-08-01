@@ -40,7 +40,6 @@
  * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, ARISING OUT OF THE USE OR INABILITY
  * TO USE THE SOFTWARE.
  *
- * $Header: /home/edler/dinero/d4/RCS/pixie64fmt.c,v 1.4 1997/12/11 16:59:49 edler Exp $
  */
 
 #include <stddef.h>

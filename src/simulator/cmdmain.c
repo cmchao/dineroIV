@@ -47,7 +47,6 @@
  * All the really hard stuff is in the callable Dinero IV subroutines,
  * which may be used independently of this program.
  *
- * $Header: /home/edler/dinero/d4/RCS/cmdmain.c,v 1.14 1998/02/06 20:58:11 edler Exp $
  */
 
 #include <stddef.h>

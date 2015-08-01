@@ -40,7 +40,6 @@
  * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, ARISING OUT OF THE USE OR INABILITY
  * TO USE THE SOFTWARE.
  *
- * $Header: /home/edler/dinero/d4/RCS/d4.h,v 1.10 1998/02/06 21:04:14 edler Exp $
  */
 #include <stdint.h>
 

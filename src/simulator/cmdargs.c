@@ -40,7 +40,6 @@
  * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, ARISING OUT OF THE USE OR INABILITY
  * TO USE THE SOFTWARE.
  *
- * $Header: /home/edler/dinero/d4/RCS/cmdargs.c,v 1.11 1997/12/12 20:36:39 edler Exp $
  */
 
 #include <stddef.h>
