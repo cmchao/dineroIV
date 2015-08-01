@@ -50,10 +50,6 @@
 
 #define D4VERSION	"7"
 
-#ifndef D4CUSTOM
-#define D4CUSTOM 0
-#endif
-
 typedef uint32_t d4addr;
 
 
@@ -287,10 +283,7 @@ typedef struct d4_cache_struct {
  * definitions of D4_CACHE_* macros, partial evaluation in the
  * compiler can simplify and speed up simulation.
  */
-#define D4VAL(cache,field)						      \
-	((D4CUSTOM && D4_TRIGGER_FIELD(D4_CACHEID,field)) ?		      \
-	 D4_VAL_(cache,D4_CACHEID,field) :				      \
-         ((cache)->field))
+#define D4VAL(cache,field)	((cache)->field)
 /* Some additional internal macros help get around ## wierdness */
 #define D4_VAL__(cache,cacheid,field)	D4_CACHE_ ## cacheid ## _ ## field
 #define D4_VAL_(cache,cacheid,field)	D4_VAL__(cache,cacheid,field)
@@ -355,16 +348,7 @@ typedef struct d4_cache_struct {
 
 
 
-/*
- * Compiler support
- */
-#if D4CUSTOM && __GNUC__
-#define D4_INLINE static inline
-#else
-#define D4_INLINE
-#endif
-
-
+#define D4_INLINE inline
 
 
 /*
@@ -387,11 +371,7 @@ extern int d4nnodes;	/* total number of stack nodes allocated */
 /* top level user-callable functions */
 extern d4cache	*d4new (d4cache *);
 extern int	d4setup (void);
-#if D4CUSTOM && !defined(d4ref)
-#define		d4ref(c,m) (*(c)->ref)(c,m) /* call customized version */
-#else
 void		d4ref (d4cache *, d4memref); /* call generic version */
-#endif
 void		d4copyback (d4cache *, const d4memref *, int);
 void		d4invalidate (d4cache *, const d4memref *, int);
 void		d4customize (FILE *);
