@@ -11,9 +11,7 @@
 #	-ttag	specify tag
 #	-iinp	specify test input
 
-PARAM_FILE=test-parms
-INPUT_FILES="mm.32 mm.64"
-
+PARAM_FILE=test-parms INPUT_FILES="img/mm.32 img/mm.64" 
 usage="Usage: `basename $0` [-r] [-t param_tags] [-i input_files]"
 tag_patterns='.*'	# default: match any tag
 action=diff
@@ -78,57 +76,65 @@ if [ $docustom = yes ]; then
 fi
 
 # try each test input with a bunch of test parameters
+if [ ! -e log ]; then
+    mkdir log
+fi
+
 for tp in "$tag_patterns"; do
 	grep "^$tp[ 	]" $PARAM_FILE
 done | while read tag parms; do
 	if [ $docustom = yes ]; then
 		parms="-custom $custfile $parms"
 	fi
-	for i in $INPUT_FILES; do
+	for item in $INPUT_FILES; do
+        config_name=${item##*/}
 		p2d=./p2d
 		oktodo=yes
 		case "$tag" in
 		'#'|'')	# comment and blank lines
 			oktodo=no;;
 		*p)	# 32-bit pixie input format
-			case $i in
+			case $config_name in
 			*.64)	oktodo=no;;	# skip this input file
 			esac
 			p2d=cat;;
 		*P)	# 64-bit pixie input format
-			case $i in
+			case $config_name in
 			*.32)	oktodo=no;;	# skip this input file
 			esac
 			p2d=cat;;
 		*b)	# convert to binary format
-			case $i in
+			case $config_name in
 			*.64)	oktodo=no;;	# skip this input file
 			esac
 			p2d=./p2b;;
 		*D)	# convert to extended din format
-			case $i in
+			case $config_name in
 			*.64)	oktodo=no;;	# skip this input file
 			esac
 			p2d="./p2d -4";;
 		*)	# original ascii dinero input format
-			case $i in
+			case $config_name in
 			*.64)	oktodo=no;;	# skip this input file
 			esac;;
 		esac
 
 		if [ $oktodo = yes ]; then
-		 $p2d <$i | dineroIV $parms | sed 's/version [0-9]*$/version XXX/' |
-		  if [ $action = diff -a -s $i.good.$tag ]; then
-			echo ================== `date` ==== diff with $i.good.$tag for $parms
-			diff -b $i.good.$tag -
-		  else
-			echo ================== `date` ==== creating $i.good.$tag for $parms
-			cat >$i.good.$tag
-		  fi
+            outname=$config_name.good.$tag
+            echo $outname 2>&1 | tee runlog
+		    $p2d <$item | ../bin/dineroIV $parms | sed 's/version [0-9]*$/version XXX/' > log/$outname
+            diff -a -b ref/$outname log/$outname 2>&1 | tee runlog
 		fi
+
 		if [ -n "$custfile" ]; then
 			rm -f $custfile
 		fi
 	done
 done
 echo ====================== done `date`
+grep -q "< ---" runlog
+if [ $? ]; then
+    exit 1
+else
+    exit 0
+fi
