@@ -1,0 +1,12 @@
+language: c
+compiler:
+    - gcc
+    - clang
+script:
+    - make build
+    - cd build
+    - cmake ../
+    - make install
+    - cd ../install
+    - ./testscript
+
