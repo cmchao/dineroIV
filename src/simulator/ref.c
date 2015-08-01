@@ -53,17 +53,6 @@
  *	Write allocate and back/through policy functions
  *	Other support functions
  *	Primary user-callable function: d4ref
- *
- * These functions are grouped together to allow customization
- * on a per-cache basis to be performed,
- * with macros such as D4_CACHE_*, and D4_OPTS_*.
- * In such a case, this file is #include'd into some other file
- * multiple times (see d4customize in misc.c).
- * The first time, we do only some stuff that must be done just one time.
- * Each additional time, we define all the customized functions for one cache.
- *
- * If you add new policy functions to this file, you also need to add
- * some code to d4customize in misc.c!
  */
 
 
@@ -84,13 +73,6 @@
 #ifdef D4_RANDOM_DEF
 extern D4_RANDOM_DEF random(void);
 #endif
-
-
-/* some silly macros to cope with ## wierdness */
-#define D4_OPT__(cacheid,spec)	D4_OPTS_ ## cacheid ## _ ## spec
-#define D4_OPT_(cacheid,spec)	D4_OPT__(cacheid,spec)
-#define D4_OPT(spec)		D4_OPT_(D4_CACHEID,spec)
-
 
 /*
  * LRU replacement policy

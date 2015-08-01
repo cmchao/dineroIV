@@ -303,8 +303,6 @@ typedef struct d4_cache_struct {
 /*
  * Global data declarations
  */
-
-extern const int d4custom; /* how to tell if this program was customized */
 extern struct d4_stackhash_struct d4stackhash; /* hash table for all caches */
 extern d4stacknode d4freelist; /* free list for stack nodes of all caches */
 extern int d4nnodes;	/* total number of stack nodes allocated */
@@ -321,7 +319,6 @@ extern int	d4setup (void);
 void		d4ref (d4cache *, d4memref); /* call generic version */
 void		d4copyback (d4cache *, const d4memref *, int);
 void		d4invalidate (d4cache *, const d4memref *, int);
-void		d4customize (FILE *);
 
 /* replacement policies */
 extern d4stacknode *d4rep_lru (d4cache *, int stacknum, d4memref, d4stacknode *ptr);
@@ -391,5 +388,3 @@ extern void d4_dopending (d4cache *, d4pendstack *);
 extern void d4_unhash (d4cache *c, int stacknum, d4stacknode *);
 extern d4stacknode *d4_find (d4cache *, int stacknum, d4addr blockaddr);
 extern void d4_wbblock (d4cache *, d4stacknode *, const int);
-extern int d4_ncustom;
-extern long *d4_cust_vals[];
