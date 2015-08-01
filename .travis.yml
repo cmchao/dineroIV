@@ -5,7 +5,7 @@ compiler:
 script:
     - mkdir build
     - cd build
-    - cmake ../
+    - cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install ../
     - make install
     - cd ../install/testing
     - ./testscript
