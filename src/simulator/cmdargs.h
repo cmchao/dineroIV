@@ -181,6 +181,7 @@ extern void help_addr (const struct arglist *);
 /*
  * Set argument-related things up after seeing all args
  */
-extern void verify_options (void);
+void doargs (int argc, char **argv);
+void verify_options (void);
 extern void initialize_caches (d4cache **icachep, d4cache **dcachep);
 extern void init_1cache (d4cache *, int, int);

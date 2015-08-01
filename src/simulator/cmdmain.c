@@ -73,8 +73,6 @@ d4cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
 d4cache *mem;				/* which cache represents simulated memory? */
 
 /* private prototypes for this file */
-extern int do1arg (const char *, const char *);
-extern void doargs (int, char **);
 extern void summarize_caches (d4cache *, d4cache *);
 extern void dostats (void);
 extern void do1stats (d4cache *);
@@ -84,64 +82,6 @@ extern d4memref next_trace_item (void);
  * Generic functions for handling command line arguments.
  * Most argument-specific knowledge is in cmdargs.c.
  */
-
-/*
- * Internal function to handle one command line option.
- * Return number of command line args consumed.
- * (Doesn't really support more than 1 or 2 consumed.)
- */
-int
-do1arg (const char *opt, const char *arg)
-{
-    struct arglist *adesc;
-
-    for (adesc = args;  adesc->optstring != NULL;  adesc++) {
-        int eaten = adesc->match (opt, adesc);
-        if (eaten > 0) {
-            if (eaten > 1 && (arg == NULL || *arg == '-')) {
-                shorthelp ("\"%s\" option requires additional argument\n", opt);
-            }
-            adesc->valf (opt, arg, adesc);
-
-            return eaten;
-        }
-    }
-
-    /* does it look like a possible Dinero III option? */
-    if (opt[0] == '-' && strchr ("uidbSarfpPwAQzZ", opt[1]) != NULL)
-        shorthelp ("\"%s\" option not recognized for Dinero IV;\n"
-                   "try \"%s -dineroIII\" for Dinero III --> IV option correspondence.\n",
-                   opt, progname);
-
-    shorthelp ("\"%s\" option not recognized.\n", opt);
-    return 0;	/* can't really get here, but some compilers get upset if we don't have a return value */
-}
-
-
-/*
- * Process all the command line args
- */
-void
-doargs (int argc, char **argv)
-{
-    struct arglist *adesc;
-    char **v = argv + 1;
-    int x;
-
-    for (adesc = args;  adesc->optstring != NULL;  adesc++)
-        if (optstringmax < (int)strlen(adesc->optstring) + adesc->pad) {
-            optstringmax = strlen(adesc->optstring) + adesc->pad;
-        }
-    while (argc > 1) {
-        const char *opt = v[0];
-        const char *arg = (argc > 1) ? v[1] : NULL;
-        x = do1arg (opt, arg);
-        v += x;
-        argc -= x;
-    }
-    verify_options();
-}
-
 
 /*
  * Get the level and idu portion of a -ln-idu prefix.
