@@ -56,7 +56,7 @@
  *
  * These functions are grouped together to allow customization
  * on a per-cache basis to be performed,
- * with macros such as D4CUSTOM, D4_CACHE_*, and D4_OPTS_*.
+ * with macros such as D4_CACHE_*, and D4_OPTS_*.
  * In such a case, this file is #include'd into some other file
  * multiple times (see d4customize in misc.c).
  * The first time, we do only some stuff that must be done just one time.
@@ -94,23 +94,21 @@ extern D4_RANDOM_DEF random(void);
 
 /*
  * LRU replacement policy
- * With D4CUSTOM!=0 and inlining, this is also good for direct-mapped caches
+ * With inlining, this is also good for direct-mapped caches
  */
 D4_INLINE
 d4stacknode *
 d4rep_lru (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 {
     if (ptr != NULL) {	/* hits */
-        if ((!D4CUSTOM || D4VAL (c, assoc) > 1 || (D4VAL (c, flags) & D4F_CCC) != 0) &&
-                ptr != c->stack[stacknum].top) {
+        if (ptr != c->stack[stacknum].top) {
             d4movetotop (c, stacknum, ptr);
         }
     } else {			/* misses */
         ptr = c->stack[stacknum].top->up;
         assert (ptr->valid == 0);
         ptr->blockaddr = D4ADDR2BLOCK (c, m.address);
-        if ((!D4CUSTOM || D4VAL(c, assoc) >= D4HASH_THRESH || (D4VAL(c, flags)&D4F_CCC) != 0) &&
-                c->stack[stacknum].n > D4HASH_THRESH) {
+        if (c->stack[stacknum].n > D4HASH_THRESH) {
             d4hash (c, stacknum, ptr);
         }
         c->stack[stacknum].top = ptr;	/* quicker than d4movetotop */
@@ -513,7 +511,7 @@ d4ref (d4cache *c, d4memref mr)
         const d4memref m = d4_splitm (c, mr, blockaddr);
         const int atype = D4BASIC_ATYPE (m.accesstype);
         const int setnumber = D4ADDR2SET (c, m.address);
-        const int ronly = D4CUSTOM && (D4VAL (c, flags) & D4F_RO) != 0; /* conservative */
+        const int ronly = 0; /* conservative */
         const int walloc = !ronly && atype == D4XWRITE && D4VAL (c, wallocf) (c, m);
         const int sbbits = D4ADDR2SBMASK (c, m);
         int miss, blockmiss, wback;
@@ -532,10 +530,8 @@ d4ref (d4cache *c, d4memref mr)
         ptr = c->stack[setnumber].top;
         if (ptr->blockaddr == blockaddr && ptr->valid != 0)
             ; /* found it */
-        else if (!D4CUSTOM || D4VAL (c, assoc) > 1) {
+        else {
             ptr = d4_find (c, setnumber, blockaddr);
-        } else {
-            ptr = NULL;
         }
 
         blockmiss = (ptr == NULL);
@@ -546,8 +542,7 @@ d4ref (d4cache *c, d4memref mr)
          * writes, misc, and prefetch references.
          * Optionally, some percentage may be thrown away.
          */
-        if ((!D4CUSTOM || !D4_OPT (prefetch_none)) &&
-                (m.accesstype == D4XREAD || m.accesstype == D4XINSTRN)) {
+        if ((m.accesstype == D4XREAD || m.accesstype == D4XINSTRN)) {
             d4pendstack *pf = D4VAL (c, prefetchf) (c, m, miss, ptr);
             if (pf != NULL) {
                 /* Note: 0 <= random() <= 2^31-1 and 0 <= random()/(INT_MAX/100) < 100. */
@@ -644,8 +639,7 @@ d4ref (d4cache *c, d4memref mr)
          * An extra "set" is provided (==c->numsets) for the fully associative
          * simulation.
          */
-        if ((D4CUSTOM && D4_OPT (ccc)) ||
-                (!D4CUSTOM && (c->flags & D4F_CCC) != 0)) {
+        if ((c->flags & D4F_CCC) != 0) {
             /* set to use for fully assoc cache */
             const int fullset = D4VAL(c, numsets);
             /* number of blocks in fully assoc cache */
