@@ -100,7 +100,7 @@
 #define SYSCALL	14	/* system call */
 
 unsigned char inbuf[8192];
-char *progname = "p2d";
+const char *progname = "p2d";
 char usage[] = "Usage: %s [-4] [-b beginaddr] [-e endaddr]\n";
 
 int flag4;	/* set if we are to produce extended din format */
@@ -122,8 +122,6 @@ main (int argc, char **argv)
     unsigned int icnt, dcnt;
     int size = 0;
     int discard = 0;
-    extern int optind;
-    extern char *optarg;
 
     if (argc > 0)
         progname = argv[0];

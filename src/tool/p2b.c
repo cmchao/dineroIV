@@ -100,7 +100,7 @@
 #define D4XMISC 3
 
 unsigned char inbuf[8192];
-char *progname = "p2b";
+const char *progname = "p2b";
 char usage[] = "Usage: %s [-b beginaddr] [-e endaddr]\n";
 
 unsigned long beginaddr = 0;	/* discard before seeing this */
@@ -119,7 +119,7 @@ static int optr;
 #error "BUFSIZ is way too small"
 #endif
 
-void
+static void
 out(unsigned long addr, char atype, char size)
 {
     if (addr == endaddr && addr != 0)
@@ -157,9 +157,6 @@ main (int argc, char **argv)
     unsigned long iaddr = ~0;	/* current instr address */
     unsigned int reftype, count;	/* from pixie */
     unsigned int c;			/* iterator for ifetching */
-    unsigned int icnt, dcnt;
-    extern int optind;
-    extern char *optarg;
 
     if (argc > 0)
         progname = argv[0];
@@ -184,8 +181,7 @@ main (int argc, char **argv)
         if (beginaddr != 0)
             discard = 1;
     }
-    icnt = 1;
-    dcnt = 1;
+
     while ((nread = read (0, inbuf, sizeof inbuf)) > 0) {
         if (nread % 4) {
             fprintf (stderr, "%s: trace input not word aligned\n",
