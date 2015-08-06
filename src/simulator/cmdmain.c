@@ -67,7 +67,7 @@
 
 
 /* some global variables */
-const char *progname = "dineroIV";		/* for error messages */
+const char *progname;		/* for error messages */
 int optstringmax;			/* for help_* functions */
 d4cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
 d4cache *mem;				/* which cache represents simulated memory? */
@@ -876,17 +876,7 @@ main (int argc, char **argv)
     double tmaxcount = 0, tintcount;
     double flcount;
 
-    if (argc > 0) {
-        char *cp;
-        progname = argv[0];
-        while ((cp = strrchr (progname, '/')) != NULL) {
-            if (cp[1] == 0) {
-                cp[0] = 0;    /* trim trailing '/' */
-            } else {
-                progname = cp + 1;
-            }
-        }
-    }
+    progname = basename(argv[0]);
 
     doargs (argc, argv);
     verify_options();
