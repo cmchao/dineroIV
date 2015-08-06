@@ -105,5 +105,6 @@ extern unsigned int level_size[3][MAX_LEV];
  */
 void doargs (int argc, char **argv);
 void verify_options (void);
+void summarize_caches (void);
 extern void initialize_caches (d4cache **icachep, d4cache **dcachep);
 extern void init_1cache (d4cache *, int, int);

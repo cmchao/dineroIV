@@ -1380,6 +1380,23 @@ doargs (int argc, char **argv)
     }
 }
 
+/*
+ * @brief Print info about how the caches are set up
+ */
+void
+summarize_caches (void)
+{
+    struct arglist *adesc;
+
+    printf ("\n---Summary of options "
+            "(-help option gives usage information).\n\n");
+
+    for (adesc = args;  adesc->optstring != NULL;  adesc++)
+        if (adesc->sumf != (void (*)())NULL) {
+            adesc->sumf (adesc, stdout);
+        }
+}
+
 
 /*
  * Called after all the options and args are consumed.

@@ -73,28 +73,9 @@ d4cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
 d4cache *mem;				/* which cache represents simulated memory? */
 
 /* private prototypes for this file */
-extern void summarize_caches (d4cache *, d4cache *);
 extern void dostats (void);
 extern void do1stats (d4cache *);
 extern d4memref next_trace_item (void);
-
-/*
- * Print info about how the caches are set up
- */
-void
-summarize_caches (d4cache *ci, d4cache *cd)
-{
-    struct arglist *adesc;
-
-    printf ("\n---Summary of options "
-            "(-help option gives usage information).\n\n");
-
-    for (adesc = args;  adesc->optstring != NULL;  adesc++)
-        if (adesc->sumf != (void (*)())NULL) {
-            adesc->sumf (adesc, stdout);
-        }
-}
-
 
 /*
  * Print out the stuff the user really wants
@@ -893,7 +874,7 @@ main (int argc, char **argv)
     printf ("---Copyright (C) 1985, 1989 Mark D. Hill.  All rights reserved.\n");
     printf ("---See -copyright option for details\n");
 
-    summarize_caches (ci, cd);
+    summarize_caches();
 
     printf ("\n---Simulation begins.\n");
     tintcount = stat_interval;
