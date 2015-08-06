@@ -907,22 +907,6 @@ phelp_uint (const struct arglist *adesc)
 
 /*
  * Produce a help line for a possible command line option with
- * level/idu prefix and scaled unsigned int value.
- * We don't bother trying to show the default values; there are too many.
- */
-#if 0
-static void
-phelp_scale_uint (const struct arglist *adesc)
-{
-    printf ("-lN-T%s %-*s %s", adesc->optstring,
-            optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "S",
-            adesc->helpstring);
-}
-#endif
-
-
-/*
- * Produce a help line for a possible command line option with
  * level/idu prefix and scaled power-of-2 unsigned int value.
  * We don't bother trying to show the default values; there are too many.
  */
@@ -947,23 +931,6 @@ phelp_char (const struct arglist *adesc)
             optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "C",
             adesc->helpstring);
 }
-
-
-/*
- * Produce a help line for a possible command line option taking a string.
- */
-#if 0
-static void
-help_string (const struct arglist *adesc)
-{
-    printf ("%s %-*s %s", adesc->optstring,
-            optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "F",
-            adesc->helpstring);
-    if (*(char **)adesc->var != NULL) {
-        printf (" (\"%s\")", *(char **)adesc->var);
-    }
-}
-#endif
 
 
 /*
@@ -1541,6 +1508,27 @@ verify_options()
         }
     }
 }
+
+
+/**
+ * @brief Ceiling of log base 2
+ *
+ * @param[in] x input value
+ *
+ * @return -1 for clog2(0)
+ */
+static inline int
+clog2 (unsigned int x)
+{
+    int i;
+
+    for (i = -1;  x != 0;  i++) {
+        x >>= 1;
+    }
+    return i;
+}
+
+
 
 
 /*

@@ -56,6 +56,5 @@ extern void shorthelp (const char *fmt, ...) __attribute__((noreturn));
 extern void die (const char *fmt, ...);
 extern void shorthelp (const char *fmt, ...);
 #endif
-extern int clog2 (unsigned int);
 
 extern const char *progname;	/* for error messages */

@@ -831,22 +831,6 @@ shorthelp (const char *fmt, ...)
 
 
 /*
- * Ceiling of log base 2
- * Return -1 for clog2(0)
- */
-int
-clog2 (unsigned int x)
-{
-    int i;
-
-    for (i = -1;  x != 0;  i++) {
-        x >>= 1;
-    }
-    return i;
-}
-
-
-/*
  * Everything starts here
  */
 int
