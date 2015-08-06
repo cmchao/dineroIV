@@ -728,7 +728,7 @@ next_trace_item()
             discard = 1;    /* initially discard until trigger address seen */
         }
         if (skipcount > 0) {
-            double tskipcount = skipcount;
+            uint64_t tskipcount = skipcount;
             do {
                 r = input_function();
                 if (r.accesstype == D4TRACE_END) {
@@ -873,8 +873,8 @@ main (int argc, char **argv)
 {
     d4memref r;
     d4cache *ci, *cd;
-    double tmaxcount = 0, tintcount;
-    double flcount;
+    uint64_t tmaxcount = 0, tintcount;
+    uint64_t flcount;
 
     progname = basename(argv[0]);
 

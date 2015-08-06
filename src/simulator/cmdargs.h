@@ -84,10 +84,10 @@ extern int maxlevel;		/* largest cache level specified */
 extern int optstringmax;	/* longest option string */
 
 extern char *customname;	/* for -custom, name of executable */
-extern double skipcount;	/* for -skipcount */
-extern double flushcount;	/* for -flushcount */
-extern double maxcount;		/* for -maxcount */
-extern double stat_interval;	/* for -stat-interval */
+extern uint64_t skipcount;        /* for -skipcount */
+extern uint64_t flushcount;       /* for -flushcount */
+extern uint64_t maxcount;         /* for -maxcount */
+extern uint64_t stat_interval;    /* for -stat-interval */
 extern long on_trigger;		/* for -on-trigger */
 extern long off_trigger;	/* for -off-trigger */
 extern int stat_idcombine;	/* for -stat-idcombine */

@@ -45,6 +45,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -106,10 +107,10 @@ int level_prefetch_distance[3][MAX_LEV];
 #define DEFVAL_informat 'D'
 #define  DEFSTR_informat "D"
 
-double skipcount;
-double flushcount;
-double maxcount;
-double stat_interval;
+uint64_t skipcount;
+uint64_t flushcount;
+uint64_t maxcount;
+uint64_t stat_interval;
 int informat = DEFVAL_informat;
 long on_trigger;
 long off_trigger;
@@ -248,15 +249,17 @@ argscale_uint (const char *arg, unsigned int *var)
 }
 
 
-/*
- * Helper for scaled unsigned integer arguments, but using double for extra range
- * We go through various difficulties just to allow use of strtod
- * while still preventing non-integer use.
- * XXX We should probably use autoconf to help us use long or long long
- * or whatever, if sufficient.
+/**
+ * @brief Helper for scaled unsigned integer arguments, but using double for extra range
+ *        We go through various difficulties just to allow use of strtod
+ *        while still preventing non-integer use.
+ * @param[in] arg argument string
+ * @param[in,out] var pointer to keep the value
+ *
+ * @return  0 -> success !0 -> failed
  */
-static double
-argscale_uintd (const char *arg, double *var)
+static int
+argscale_uintd (const char *arg, uint64_t *var)
 {
     char *nextc;
     double x, ipart;
@@ -264,29 +267,32 @@ argscale_uintd (const char *arg, double *var)
     errno = 0;
     x = strtod (arg, &nextc);
     if (nextc == arg) {
-        return 0;    /* no good: no chars consumed */
+        return 1;    /* no good: no chars consumed */
     }
     if (x == HUGE_VAL && errno == ERANGE) {
-        return 0;    /* no good: overflow */
+        return 1;    /* no good: overflow */
     }
     /* make sure value is an integer */
     switch (nextc[0]) {
-    default:
-        return 0;		/* no good; some other trailing char */
-    case 0:
-        break;		/* ok: no scale factor */
-    case 'k':
-    case 'K':
-        x *= (1 << 10);
-        break;
-    case 'm':
-    case 'M':
-        x *= (1 << 20);
-        break;
+    case 'T':
+        x *= 1024;
+        /* fall through */
     case 'g':
     case 'G':
-        x *= (1 << 30);
-        break;
+        x *= 1024;
+        /* fall through */
+    case 'm':
+    case 'M':
+        x *= 1024;
+        /* fall through */
+    case 'k':
+    case 'K':
+        x *= 1024;
+        /* fall through */
+    case 0:
+        break;		/* ok: no scale factor */
+    default:
+        return 1;		/* no good; some other trailing char */
     }
     if (nextc[0] != 0 && nextc[1] != 0) {
         return 0;    /* no good: trailing junk */
@@ -294,14 +300,15 @@ argscale_uintd (const char *arg, double *var)
     /* make sure number was unsigned integer; no decimal pt, exponent, or sign */
     for (;  arg < nextc;  arg++)
         if (!isdigit ((int)*arg)) {
-            return 0;    /* no good: non-digits */
+            return 1;    /* no good: non-digits */
         }
     /* make sure we don't have a fractional part due to scaling */
     if (modf (x, &ipart) != 0) {
         return 0;    /* no good: fraction != 0 */
     }
+
     *var = x;
-    return 1;
+    return 0;
 }
 
 
@@ -579,7 +586,7 @@ val_scale_uint (const char *opt, const char *arg, const struct arglist *adesc)
 static void
 val_scale_uintd (const char *opt, const char *arg, const struct arglist *adesc)
 {
-    if (!argscale_uintd (arg, adesc->var)) {
+    if (argscale_uintd (arg, adesc->var)) {
         shorthelp ("bad option: %s %s\n", opt, arg);
     }
 }
@@ -840,7 +847,7 @@ summary_uint (const struct arglist *adesc, FILE *f)
 static void
 summary_uintd (const struct arglist *adesc, FILE *f)
 {
-    fprintf (f, "%s %.0f\n", adesc->optstring, *(double *)adesc->var);
+    fprintf (f, "%s %" PRIu64 "\n", adesc->optstring, *(uint64_t *)adesc->var);
 }
 
 

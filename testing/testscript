@@ -133,11 +133,11 @@ done | while read tag parms; do
 	done
 done
 echo ====================== done `date`
-grep -q "< ---" runlog
-if [ $? ]; then
-    echo "test success"
-    exit 0
-else
+grep -q "< " runlog
+if [ $? -eq 0 ]; then
     echo "test failed"
     exit 1
+else
+    echo "test success"
+    exit 0
 fi
