@@ -68,7 +68,6 @@
 
 /* some global variables */
 const char *progname;		/* for error messages */
-int optstringmax;			/* for help_* functions */
 d4cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
 d4cache *mem;				/* which cache represents simulated memory? */
 

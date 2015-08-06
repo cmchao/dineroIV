@@ -89,6 +89,8 @@ int level_wback[3][MAX_LEV];
 int level_prefetch_abortpercent[3][MAX_LEV];
 int level_prefetch_distance[3][MAX_LEV];
 
+static int optstringmax;     /** the max length of string in help_* functions */
+
 /*
  * command line defaults.
  * Make sure the DEFVAL and DEFSTR versions match

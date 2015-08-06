@@ -81,7 +81,6 @@ struct arglist {
 extern struct arglist args[];	/* defined in cmdargs.c */
 extern int nargs;		/* num entries in args[] */
 extern int maxlevel;		/* largest cache level specified */
-extern int optstringmax;	/* longest option string */
 
 extern char *customname;	/* for -custom, name of executable */
 extern uint64_t skipcount;        /* for -skipcount */
