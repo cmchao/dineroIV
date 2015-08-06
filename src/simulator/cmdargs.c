@@ -526,23 +526,6 @@ pval_0arg (const char *opt, const char *arg, const struct arglist *adesc)
 
 
 /*
- * Handle unsigned integer arg.
- */
-#if 0
-static void
-val_uint (const char *opt, const char *arg, const struct arglist *adesc)
-{
-    char *nextc;
-
-    *(unsigned int *)adesc->var = strtoul (arg, &nextc, 10);
-    if (*nextc != 0) {
-        shorthelp ("bad option: %s %s\n", opt, arg);
-    }
-}
-#endif
-
-
-/*
  * Handle -ln-idu-stuff with unsigned integer arg.
  * Note the match function has already verified the form,
  * so level_idu() can't return NULL.
@@ -567,20 +550,6 @@ pval_uint (const char *opt, const char *arg, const struct arglist *adesc)
 
 /*
  * Handle unsigned integer arg with optional scaling (k,m,g, etc).
- */
-#if 0
-static void
-val_scale_uint (const char *opt, const char *arg, const struct arglist *adesc)
-{
-    if (!argscale_uint (arg, adesc->var)) {
-        shorthelp ("bad option: %s %s\n", opt, arg);
-    }
-}
-#endif
-
-
-/*
- * Handle unsigned integer arg with optional scaling (k,m,g, etc).
  * Here we use double for extra integer range.
  */
 static void
@@ -590,50 +559,6 @@ val_scale_uintd (const char *opt, const char *arg, const struct arglist *adesc)
         shorthelp ("bad option: %s %s\n", opt, arg);
     }
 }
-
-
-/*
- * Handle -ln-idu-stuff with unsigned integer arg with
- * optional scaling (k,m,g, etc).
- * Note the match function has already verified the form,
- * so level_idu() can't return NULL.
- */
-#if 0
-static void
-pval_scale_uint (const char *opt, const char *arg, const struct arglist *adesc)
-{
-    unsigned int (*var)[3][MAX_LEV] = adesc->var;
-    unsigned int argui;
-    int level;
-    int idu;
-
-    (void) level_idu (opt, &level, &idu);
-    if (!argscale_uint (arg, &argui)) {
-        shorthelp ("bad option: %s %s\n", opt, arg);
-    }
-    (*var)[idu][level] = argui;
-}
-#endif
-
-
-/*
- * Handle unsigned integer arg restricted to a power of 2 and
- * with optional scaling (k,m,g, etc).
- */
-#if 0
-static void
-val_scale_pow2 (const char *opt, const char *arg, const struct arglist *adesc)
-{
-    unsigned int *ui = adesc->var;
-
-    if (!argscale_uint (arg, ui)) {
-        shorthelp ("bad option: %s %s\n", opt, arg);
-    }
-    if (*ui == 0 || (*ui & (*ui - 1)) != 0) {
-        shorthelp ("option %s arg must be power of 2\n", opt);
-    }
-}
-#endif
 
 
 /*
@@ -692,18 +617,6 @@ pval_char (const char *opt, const char *arg, const struct arglist *adesc)
     }
     (*var)[idu][level] = *arg;
 }
-
-
-/*
- * Handle an option with a string as arg
- */
-#if 0
-static void
-val_string (const char *opt, const char *arg, const struct arglist *adesc)
-{
-    *(const char **)adesc->var = arg;
-}
-#endif
 
 
 /*
@@ -826,18 +739,6 @@ psummary_0arg (const struct arglist *adesc, FILE *f)
         }
     }
 }
-
-
-/*
- * Produce a summary line for parameters with typical unsigned integer value.
- */
-#if 0
-static void
-summary_uint (const struct arglist *adesc, FILE *f)
-{
-    fprintf (f, "%s %u\n", adesc->optstring, *(unsigned int *)adesc->var);
-}
-#endif
 
 
 /*
