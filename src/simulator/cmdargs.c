@@ -1522,15 +1522,8 @@ verify_options()
 static inline int
 clog2 (unsigned int x)
 {
-    int i;
-
-    for (i = -1;  x != 0;  i++) {
-        x >>= 1;
-    }
-    return i;
+    return x ? 31 - __builtin_clz(x) : -1;
 }
-
-
 
 
 /*
