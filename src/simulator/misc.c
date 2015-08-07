@@ -64,7 +64,7 @@ D4Cache *d4_allcaches;
  * Private prototypes for this file
  */
 extern void d4_invblock (D4Cache *, int stacknum, d4stacknode *);
-extern void d4_invinfcache (D4Cache *, const d4memref *);
+extern void d4_invinfcache (D4Cache *, const D4MemRef *);
 
 
 /*
@@ -379,7 +379,7 @@ d4init_wback_nofetch (D4Cache *c)
 
 /* this is for the walloc policy of an icache */
 int
-d4walloc_impossible (D4Cache *c, d4memref m)
+d4walloc_impossible (D4Cache *c, D4MemRef m)
 {
     fprintf (stderr, "Dinero IV: impossible walloc policy routine called for %s!!!\n",
              c->name);
@@ -389,7 +389,7 @@ d4walloc_impossible (D4Cache *c, d4memref m)
 
 /* this is for the wback policy of an icache */
 int
-d4wback_impossible (D4Cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
+d4wback_impossible (D4Cache *c, D4MemRef m, int setnumber, d4stacknode *ptr, int walloc)
 {
     fprintf (stderr, "Dinero IV: impossible wback policy routine called for %s!!!\n",
              c->name);
@@ -709,7 +709,7 @@ d4_invblock (D4Cache *c, int stacknum, d4stacknode *ptr)
  * NOTE: this function does not invalidate!
  */
 void
-d4copyback (D4Cache *c, const d4memref *m, int prop)
+d4copyback (D4Cache *c, const D4MemRef *m, int prop)
 {
     int stacknum;
     d4stacknode *ptr;
@@ -763,7 +763,7 @@ d4copyback (D4Cache *c, const d4memref *m, int prop)
  *	you have to call d4copyback first for that.
  */
 void
-d4invalidate (D4Cache *c, const d4memref *m, int prop)
+d4invalidate (D4Cache *c, const D4MemRef *m, int prop)
 {
     int stacknum;
     d4stacknode *ptr;
@@ -818,7 +818,7 @@ d4invalidate (D4Cache *c, const d4memref *m, int prop)
  * Handle invalidation for infinite cache
  */
 void
-d4_invinfcache (D4Cache *c, const d4memref *m)
+d4_invinfcache (D4Cache *c, const D4MemRef *m)
 {
     int i;
 

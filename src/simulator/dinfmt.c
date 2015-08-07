@@ -63,7 +63,7 @@
  * all but the first tuple will be ignored.
  */
 
-d4memref
+D4MemRef
 tracein_din()
 {
     static double tcount = 1;	/* double to increase range */
@@ -72,7 +72,7 @@ tracein_din()
     static char shortline[] = "din format error on trace record %.0f: short line\n";
     d4addr addr = 0;
     int atype = 0;
-    d4memref r;
+    D4MemRef r;
     int c;
 
     /* skip initial whitespace */

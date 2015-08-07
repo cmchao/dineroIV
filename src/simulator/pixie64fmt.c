@@ -129,8 +129,8 @@
 
 /* We need a way to keep deferred references */
 #define NSTACK 300
-static d4memref stack[NSTACK];	/* to store deferred references */
-static d4memref *sptr = stack;	/* stack pointer */
+static D4MemRef stack[NSTACK];	/* to store deferred references */
+static D4MemRef *sptr = stack;	/* stack pointer */
 
 #define push_ref(atype,addr,sz) do {					\
 		assert (sptr < &stack[NSTACK]);				\
@@ -141,7 +141,7 @@ static d4memref *sptr = stack;	/* stack pointer */
 
 #define pop_ref()	*--sptr
 
-d4memref
+D4MemRef
 tracein_pixie64()
 {
     static char dynlib[] = "pixie64 input (reftype %d): dynamically linked executable not supported\n";
@@ -155,7 +155,7 @@ tracein_pixie64()
     int reftype, count;		/* from pixie */
     int c;				/* iterator for ifetching */
     int size;
-    d4memref r;
+    D4MemRef r;
 
     if (sptr > stack) {
         return pop_ref();

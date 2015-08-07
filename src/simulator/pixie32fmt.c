@@ -94,8 +94,8 @@
 #define SYSCALL	14	/* system call */
 
 /* We need a way to keep deferred references */
-static d4memref stack[16];	/* to store deferred references */
-static d4memref *sptr = stack;	/* stack pointer */
+static D4MemRef stack[16];	/* to store deferred references */
+static D4MemRef *sptr = stack;	/* stack pointer */
 
 #define push_ref(atype,addr,sz) do {					\
 		assert (sptr < &stack[15]);				\
@@ -110,7 +110,7 @@ static d4memref *sptr = stack;	/* stack pointer */
 #define PIXIE_SWAB 0
 #endif
 
-d4memref
+D4MemRef
 tracein_pixie32()
 {
     static unsigned char inbuf[4096];
@@ -121,7 +121,7 @@ tracein_pixie32()
     unsigned int reftype, count;	/* from pixie */
     unsigned int c;			/* iterator for ifetching */
     int size;
-    d4memref r;
+    D4MemRef r;
 
     if (sptr > stack) {
         r = pop_ref();

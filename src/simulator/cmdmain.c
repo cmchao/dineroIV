@@ -74,7 +74,7 @@ D4Cache *mem;				/* which cache represents simulated memory? */
 /* private prototypes for this file */
 extern void dostats (void);
 extern void do1stats (D4Cache *);
-extern d4memref next_trace_item (void);
+extern D4MemRef next_trace_item (void);
 
 /*
  * Print out the stuff the user really wants
@@ -694,10 +694,10 @@ do1stats (D4Cache *c)
 /*
  * Called to produce each address trace record
  */
-d4memref
+D4MemRef
 next_trace_item()
 {
-    d4memref r;
+    D4MemRef r;
     static int once = 1;
     static int discard = 0;
     static int hastoggled = 0;
@@ -801,7 +801,7 @@ initialize_caches (D4Cache **icachep, D4Cache **dcachep)
 int
 main (int argc, char **argv)
 {
-    d4memref r;
+    D4MemRef r;
     D4Cache *ci, *cd;
     uint64_t tmaxcount = 0, tintcount;
     uint64_t flcount;

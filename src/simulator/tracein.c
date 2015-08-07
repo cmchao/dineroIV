@@ -57,7 +57,7 @@
 #include "cmdd4.h"
 #include "tracein.h"
 
-d4memref (*input_function) (void);
+D4MemRef (*input_function) (void);
 
 /*
  * This function is called to get each trace record

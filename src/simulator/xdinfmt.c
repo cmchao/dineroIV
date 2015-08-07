@@ -67,7 +67,7 @@
  * Address and size are hexadecimal, with optional 0x or 0X prefix.
  */
 
-d4memref
+D4MemRef
 tracein_xdin()
 {
     static double tcount = 1;	/* double to increase range */
@@ -80,7 +80,7 @@ tracein_xdin()
     char errline[128];
     d4addr addr;
     int size, atype;
-    d4memref r;
+    D4MemRef r;
     int c, cc;
 
     /* skip initial whitespace */

@@ -1425,7 +1425,7 @@ verify_options()
     /* the sub-block size is limited by size specified in memory reference */
     for (lev = 0;  lev < maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
-            d4memref x;
+            D4MemRef x;
             /* put a 1 in MSB position; x.size is unsigned */
             x.size = ~0;
             x.size = ~(x.size >> 1);

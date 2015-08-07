@@ -44,14 +44,14 @@
 
 
 /* One of the following functions is called to generate each trace record */
-extern d4memref tracein_xdin (void);
-extern d4memref tracein_din (void);
-extern d4memref tracein_pixie32 (void);
-extern d4memref tracein_pixie64 (void);
-extern d4memref tracein_binary (void);
+extern D4MemRef tracein_xdin (void);
+extern D4MemRef tracein_din (void);
+extern D4MemRef tracein_pixie32 (void);
+extern D4MemRef tracein_pixie64 (void);
+extern D4MemRef tracein_binary (void);
 
 /* A pointer to one of the above functions */
-extern d4memref (*input_function) (void);
+extern D4MemRef (*input_function) (void);
 
 /* the accesstype returned by next_trace_item when the trace is exhausted */
 #define D4TRACE_END	D4NUMACCESSTYPES

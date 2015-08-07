@@ -67,13 +67,13 @@
 #error "binary format code assumes 8 bit chars"
 #endif
 
-d4memref
+D4MemRef
 tracein_binary()
 {
     static unsigned char inbuf[RECORD_SIZE * 1024];
     static int hiwater = 0;
     static int inptr = 0;
-    d4memref r;
+    D4MemRef r;
 
     if (inptr > hiwater - RECORD_SIZE) {	/* need to fill inbuf */
         int nread;
