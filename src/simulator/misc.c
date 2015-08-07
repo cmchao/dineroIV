@@ -54,7 +54,7 @@
  * Global variable definitions
  */
 struct d4_stackhash_struct d4stackhash;
-d4stacknode d4freelist;
+D4StackNode d4freelist;
 int d4nnodes;
 D4PendStack *d4pendfree;
 D4Cache *d4_allcaches;
@@ -63,7 +63,7 @@ D4Cache *d4_allcaches;
 /*
  * Private prototypes for this file
  */
-extern void d4_invblock (D4Cache *, int stacknum, d4stacknode *);
+extern void d4_invblock (D4Cache *, int stacknum, D4StackNode *);
 extern void d4_invinfcache (D4Cache *, const D4MemRef *);
 
 
@@ -107,7 +107,7 @@ d4setup()
     int i, nnodes;
     int r = 0;
     D4Cache *c, *cc;
-    d4stacknode *nodes = NULL, *ptr;
+    D4StackNode *nodes = NULL, *ptr;
 
     for (c = d4_allcaches;  c != NULL;  c = c->link) {
 
@@ -162,7 +162,7 @@ d4setup()
             }
             nnodes = c->numsets * (1 + c->assoc) +
                      (c->numsets * c->assoc + 1) * ((c->flags & D4F_CCC) != 0);
-            nodes = calloc (nnodes, sizeof(d4stacknode));
+            nodes = calloc (nnodes, sizeof(D4StackNode));
             if (nodes == NULL) {
                 goto fail11;
             }
@@ -209,7 +209,7 @@ d4setup()
 #if D4_HASHSIZE > 0
     d4stackhash.size = D4_HASHSIZE;
 #endif
-    d4stackhash.table = calloc (d4stackhash.size, sizeof(d4stacknode*));
+    d4stackhash.table = calloc (d4stackhash.size, sizeof(D4StackNode*));
     if (d4stackhash.table == NULL) {
         goto fail13;
     }
@@ -389,7 +389,7 @@ d4walloc_impossible (D4Cache *c, D4MemRef m)
 
 /* this is for the wback policy of an icache */
 int
-d4wback_impossible (D4Cache *c, D4MemRef m, int setnumber, d4stacknode *ptr, int walloc)
+d4wback_impossible (D4Cache *c, D4MemRef m, int setnumber, D4StackNode *ptr, int walloc)
 {
     fprintf (stderr, "Dinero IV: impossible wback policy routine called for %s!!!\n",
              c->name);
@@ -406,7 +406,7 @@ void d4checkstack (D4Cache *, int, char *); /* prototype avoids warnings */
 void
 d4checkstack (D4Cache *c, int stacknum, char *msg)
 {
-    d4stacknode *sp, *top;
+    D4StackNode *sp, *top;
     int i, ii;
     static int tentimes = 10;
 
@@ -444,10 +444,10 @@ d4checkstack (D4Cache *c, int stacknum, char *msg)
 /*
  * Find address in stack.
  */
-d4stacknode *
+D4StackNode *
 d4_find (D4Cache *c, int stacknum, d4addr blockaddr)
 {
-    d4stacknode *ptr;
+    D4StackNode *ptr;
 
     if (c->stack[stacknum].n > D4HASH_THRESH) {
         int buck = D4HASH (blockaddr, stacknum, c->cacheid);
@@ -479,10 +479,10 @@ d4_find (D4Cache *c, int stacknum, d4addr blockaddr)
 
 
 /* find the nth element from the top (1 origin) */
-d4stacknode *
+D4StackNode *
 d4findnth (D4Cache *c, int stacknum, int n)
 {
-    d4stacknode *p;
+    D4StackNode *p;
     int i, stacksize;
 
     stacksize = c->stack[stacknum].n;
@@ -504,10 +504,10 @@ d4findnth (D4Cache *c, int stacknum, int n)
 
 /* Move node to top (most recently used position) of stack */
 void
-d4movetotop (D4Cache *c, int stacknum, d4stacknode *ptr)
+d4movetotop (D4Cache *c, int stacknum, D4StackNode *ptr)
 {
-    d4stacknode *top = c->stack[stacknum].top;
-    d4stacknode *bot;
+    D4StackNode *top = c->stack[stacknum].top;
+    D4StackNode *bot;
 
     /* nothing to do if node is already at top */
     if (ptr != top) {
@@ -527,10 +527,10 @@ d4movetotop (D4Cache *c, int stacknum, d4stacknode *ptr)
 
 /* Move node to bottom (least recently used, actually spare) position */
 void
-d4movetobot (D4Cache *c, int stacknum, d4stacknode *ptr)
+d4movetobot (D4Cache *c, int stacknum, D4StackNode *ptr)
 {
-    d4stacknode *top = c->stack[stacknum].top;
-    d4stacknode *bot = top->up;
+    D4StackNode *top = c->stack[stacknum].top;
+    D4StackNode *bot = top->up;
 
     /* nothing to do if node is already at bottom */
     if (ptr != bot) {
@@ -550,7 +550,7 @@ d4movetobot (D4Cache *c, int stacknum, d4stacknode *ptr)
 
 /* Insert the indicated node into the hash table */
 void
-d4hash (D4Cache *c, int stacknum, d4stacknode *s)
+d4hash (D4Cache *c, int stacknum, D4StackNode *s)
 {
     int buck = D4HASH (s->blockaddr, stacknum, s->cachep->cacheid);
 
@@ -562,10 +562,10 @@ d4hash (D4Cache *c, int stacknum, d4stacknode *s)
 
 /* Remove the indicated node from the hash table */
 void
-d4_unhash (D4Cache *c, int stacknum, d4stacknode *s)
+d4_unhash (D4Cache *c, int stacknum, D4StackNode *s)
 {
     int buck = D4HASH (s->blockaddr, stacknum, c->cacheid);
-    d4stacknode *p = d4stackhash.table[buck];
+    D4StackNode *p = d4stackhash.table[buck];
 
     assert (c->stack[stacknum].n > D4HASH_THRESH);
     if (p == s) {
@@ -654,7 +654,7 @@ d4_dopending (D4Cache *c, D4PendStack *newm)
  * Each contiguous bunch of subblocks is written in one operation.
  */
 void
-d4_wbblock (D4Cache *c, d4stacknode *ptr, const int lg2sbsize)
+d4_wbblock (D4Cache *c, D4StackNode *ptr, const int lg2sbsize)
 {
     d4addr a;
     unsigned int b, dbits;
@@ -685,7 +685,7 @@ d4_wbblock (D4Cache *c, d4stacknode *ptr, const int lg2sbsize)
 
 /* invalidate and deallocate a block, as indicated by ptr */
 void
-d4_invblock (D4Cache *c, int stacknum, d4stacknode *ptr)
+d4_invblock (D4Cache *c, int stacknum, D4StackNode *ptr)
 {
     assert (ptr->valid != 0);
     ptr->valid = 0;
@@ -712,7 +712,7 @@ void
 d4copyback (D4Cache *c, const D4MemRef *m, int prop)
 {
     int stacknum;
-    d4stacknode *ptr;
+    D4StackNode *ptr;
     D4PendStack *newm;
 
     if (m != NULL) {
@@ -736,7 +736,7 @@ d4copyback (D4Cache *c, const D4MemRef *m, int prop)
             d4_wbblock (c, ptr, c->lg2subblocksize);
         }
     } else for (stacknum = 0;  stacknum < c->numsets;  stacknum++) {
-            d4stacknode *top = c->stack[stacknum].top;
+            D4StackNode *top = c->stack[stacknum].top;
             assert (top->up->valid == 0); /* this loop skips the bottom node */
             for (ptr = top;  ptr->down != top;  ptr = ptr->down)
                 if ((ptr->dirty & ptr->valid) != 0) {
@@ -766,7 +766,7 @@ void
 d4invalidate (D4Cache *c, const D4MemRef *m, int prop)
 {
     int stacknum;
-    d4stacknode *ptr;
+    D4StackNode *ptr;
     D4PendStack *newm;
 
     if (m != NULL) {
@@ -796,7 +796,7 @@ d4invalidate (D4Cache *c, const D4MemRef *m, int prop)
             d4_invblock (c, c->numsets, ptr);
         }
     } else for (stacknum = 0;  stacknum < c->numsets + ((c->flags & D4F_CCC) != 0);  stacknum++) {
-            d4stacknode *top = c->stack[stacknum].top;
+            D4StackNode *top = c->stack[stacknum].top;
             assert (top->up->valid == 0); /* all invalid nodes are at bottom; at least 1 */
             for (ptr = top;  ptr->down != top;  ptr = ptr->down) {
                 if (ptr->valid == 0) {

@@ -1438,7 +1438,7 @@ verify_options()
     /* block size/sub-block size */
     for (lev = 0;  lev < maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
-            d4stacknode *xp;
+            D4StackNode *xp;
             if (level_blocksize[idu][lev] != 0 &&
                     level_subblocksize[idu][lev] > level_blocksize[idu][lev])
                 shorthelp ("level %d %ccache has sub-blocksize > blocksize\n",

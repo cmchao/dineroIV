@@ -73,8 +73,8 @@
  * With inlining, this is also good for direct-mapped caches
  */
 inline
-d4stacknode *
-d4rep_lru (D4Cache *c, int stacknum, D4MemRef m, d4stacknode *ptr)
+D4StackNode *
+d4rep_lru (D4Cache *c, int stacknum, D4MemRef m, D4StackNode *ptr)
 {
     if (ptr != NULL) {	/* hits */
         if (ptr != c->stack[stacknum].top) {
@@ -97,8 +97,8 @@ d4rep_lru (D4Cache *c, int stacknum, D4MemRef m, d4stacknode *ptr)
  * FIFO replacement policy
  */
 inline
-d4stacknode *
-d4rep_fifo (D4Cache *c, int stacknum, D4MemRef m, d4stacknode *ptr)
+D4StackNode *
+d4rep_fifo (D4Cache *c, int stacknum, D4MemRef m, D4StackNode *ptr)
 {
     if (ptr == NULL) {	/* misses */
         ptr = c->stack[stacknum].top->up;
@@ -117,8 +117,8 @@ d4rep_fifo (D4Cache *c, int stacknum, D4MemRef m, d4stacknode *ptr)
  * Random replacement policy.
  */
 inline
-d4stacknode *
-d4rep_random (D4Cache *c, int stacknum, D4MemRef m, d4stacknode *ptr)
+D4StackNode *
+d4rep_random (D4Cache *c, int stacknum, D4MemRef m, D4StackNode *ptr)
 {
     if (ptr == NULL) {	/* misses */
         int setsize = c->stack[stacknum].n - 1;
@@ -142,7 +142,7 @@ d4rep_random (D4Cache *c, int stacknum, D4MemRef m, d4stacknode *ptr)
  */
 inline
 D4PendStack *
-d4prefetch_none (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
+d4prefetch_none (D4Cache *c, D4MemRef m, int miss, D4StackNode *stackptr)
 {
     /* no prefetch, nothing to do */
     return NULL;
@@ -154,7 +154,7 @@ d4prefetch_none (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  */
 inline
 D4PendStack *
-d4prefetch_always (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
+d4prefetch_always (D4Cache *c, D4MemRef m, int miss, D4StackNode *stackptr)
 {
     D4PendStack *pf;
 
@@ -172,7 +172,7 @@ d4prefetch_always (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  */
 inline
 D4PendStack *
-d4prefetch_loadforw (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
+d4prefetch_loadforw (D4Cache *c, D4MemRef m, int miss, D4StackNode *stackptr)
 {
     D4PendStack *pf;
 
@@ -194,7 +194,7 @@ d4prefetch_loadforw (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  */
 inline
 D4PendStack *
-d4prefetch_subblock (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
+d4prefetch_subblock (D4Cache *c, D4MemRef m, int miss, D4StackNode *stackptr)
 {
     D4PendStack *pf;
 
@@ -216,7 +216,7 @@ d4prefetch_subblock (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  */
 inline
 D4PendStack *
-d4prefetch_miss (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
+d4prefetch_miss (D4Cache *c, D4MemRef m, int miss, D4StackNode *stackptr)
 {
     D4PendStack *pf;
 
@@ -245,7 +245,7 @@ d4prefetch_miss (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  */
 inline
 D4PendStack *
-d4prefetch_tagged (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
+d4prefetch_tagged (D4Cache *c, D4MemRef m, int miss, D4StackNode *stackptr)
 {
     D4PendStack *pf;
     int sbbits;
@@ -302,7 +302,7 @@ d4walloc_nofetch (D4Cache *c, D4MemRef m)
  */
 inline
 int
-d4wback_always (D4Cache *c, D4MemRef m, int setnumber, d4stacknode *ptr, int walloc)
+d4wback_always (D4Cache *c, D4MemRef m, int setnumber, D4StackNode *ptr, int walloc)
 {
     return 1;
 }
@@ -313,7 +313,7 @@ d4wback_always (D4Cache *c, D4MemRef m, int setnumber, d4stacknode *ptr, int wal
  */
 inline
 int
-d4wback_never (D4Cache *c, D4MemRef m, int setnumber, d4stacknode *ptr, int walloc)
+d4wback_never (D4Cache *c, D4MemRef m, int setnumber, D4StackNode *ptr, int walloc)
 {
     return 0;
 }
@@ -326,7 +326,7 @@ d4wback_never (D4Cache *c, D4MemRef m, int setnumber, d4stacknode *ptr, int wall
  */
 inline
 int
-d4wback_nofetch (D4Cache *c, D4MemRef m, int setnumber, d4stacknode *ptr, int walloc)
+d4wback_nofetch (D4Cache *c, D4MemRef m, int setnumber, D4StackNode *ptr, int walloc)
 {
     return (D4ADDR2SBMASK(c, m) & ~ptr->valid) == 0 ||
            m.size == (D4REFNSB(c, m) << D4VAL (c, lg2subblocksize));
@@ -491,7 +491,7 @@ d4ref (D4Cache *c, D4MemRef mr)
         const int walloc = !ronly && atype == D4XWRITE && D4VAL (c, wallocf) (c, m);
         const int sbbits = D4ADDR2SBMASK (c, m);
         int miss, blockmiss, wback;
-        d4stacknode *ptr;
+        D4StackNode *ptr;
 
         if ((D4VAL (c, flags) & D4F_RO) != 0 && atype == D4XWRITE) {
             fprintf (stderr, "Dinero IV: write to read-only cache %d (%s)\n",
@@ -571,7 +571,7 @@ d4ref (D4Cache *c, D4MemRef mr)
              * including write-back if necessary
              */
             if (blockmiss) {
-                d4stacknode *rptr = c->stack[setnumber].top->up;
+                D4StackNode *rptr = c->stack[setnumber].top->up;
                 if (rptr->valid != 0) {
                     if (!ronly && (rptr->valid & rptr->dirty) != 0) {
                         d4_wbblock (c, rptr, D4VAL (c, lg2subblocksize));
@@ -664,7 +664,7 @@ d4ref (D4Cache *c, D4MemRef mr)
 
             /* take care of replaced block */
             if (fullblockmiss) {
-                d4stacknode *rptr = c->stack[fullset].top->up;
+                D4StackNode *rptr = c->stack[fullset].top->up;
                 if (rptr->valid != 0) {
                     if (c->stack[fullset].n > D4HASH_THRESH) {
                         d4_unhash (c, fullset, rptr);
