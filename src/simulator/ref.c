@@ -141,7 +141,7 @@ d4rep_random (D4Cache *c, int stacknum, D4MemRef m, d4stacknode *ptr)
  * Demand fetch only policy, no prefetching
  */
 inline
-d4pendstack *
+D4PendStack *
 d4prefetch_none (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
 {
     /* no prefetch, nothing to do */
@@ -153,10 +153,10 @@ d4prefetch_none (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  * Always prefetch policy
  */
 inline
-d4pendstack *
+D4PendStack *
 d4prefetch_always (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
 {
-    d4pendstack *pf;
+    D4PendStack *pf;
 
     pf = d4get_mref();
     pf->m.address = D4ADDR2SUBBLOCK (c, m.address + c->prefetch_distance);
@@ -171,10 +171,10 @@ d4prefetch_always (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  * Don't prefetch into next block.
  */
 inline
-d4pendstack *
+D4PendStack *
 d4prefetch_loadforw (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
 {
-    d4pendstack *pf;
+    D4PendStack *pf;
 
     if (D4ADDR2BLOCK(c, m.address + c->prefetch_distance) != D4ADDR2BLOCK(c, m.address)) {
         return NULL;
@@ -193,10 +193,10 @@ d4prefetch_loadforw (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  * Don't prefetch into next block; wrap around within block instead.
  */
 inline
-d4pendstack *
+D4PendStack *
 d4prefetch_subblock (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
 {
-    d4pendstack *pf;
+    D4PendStack *pf;
 
     pf = d4get_mref();
     pf->m.address = D4ADDR2SUBBLOCK (c, m.address + c->prefetch_distance);
@@ -215,10 +215,10 @@ d4prefetch_subblock (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  * Prefetch only on misses
  */
 inline
-d4pendstack *
+D4PendStack *
 d4prefetch_miss (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
 {
-    d4pendstack *pf;
+    D4PendStack *pf;
 
     if (!miss) {
         return NULL;
@@ -244,10 +244,10 @@ d4prefetch_miss (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
  * on a refernce to a (sub)-block whose reference bit was not previously set.
  */
 inline
-d4pendstack *
+D4PendStack *
 d4prefetch_tagged (D4Cache *c, D4MemRef m, int miss, d4stacknode *stackptr)
 {
-    d4pendstack *pf;
+    D4PendStack *pf;
     int sbbits;
 
     sbbits = D4ADDR2SBMASK(c, m);
@@ -446,7 +446,7 @@ d4_splitm (D4Cache *c, D4MemRef mr, d4addr ba)
     const int bsize = 1 << D4VAL (c, lg2blocksize);
     const int bmask = bsize - 1;
     int newsize;
-    d4pendstack *pf;
+    D4PendStack *pf;
 
     if (ba == D4ADDR2BLOCK (c, mr.address + mr.size - 1)) {
         return mr;
@@ -519,7 +519,7 @@ d4ref (D4Cache *c, D4MemRef mr)
          * Optionally, some percentage may be thrown away.
          */
         if ((m.accesstype == D4XREAD || m.accesstype == D4XINSTRN)) {
-            d4pendstack *pf = D4VAL (c, prefetchf) (c, m, miss, ptr);
+            D4PendStack *pf = D4VAL (c, prefetchf) (c, m, miss, ptr);
             if (pf != NULL) {
                 /* Note: 0 <= random() <= 2^31-1 and 0 <= random()/(INT_MAX/100) < 100. */
                 if (D4VAL (c, prefetch_abortpercent) > 0 &&
@@ -593,14 +593,14 @@ d4ref (D4Cache *c, D4MemRef mr)
          * a fetch to load the complete subblock and a write-through store.
          */
         if (!ronly && atype == D4XWRITE && !wback) {
-            d4pendstack *newm = d4get_mref();
+            D4PendStack *newm = d4get_mref();
             newm->m = m;
             newm->next = c->pending;
             c->pending = newm;
         }
         if (miss && (ronly || atype != D4XWRITE ||
                      (walloc && m.size != D4REFNSB (c, m) << D4VAL (c, lg2subblocksize)))) {
-            d4pendstack *newm = d4get_mref();
+            D4PendStack *newm = d4get_mref();
             /* note, we drop prefetch attribute */
             newm->m.accesstype = (atype == D4XWRITE) ? D4XREAD : atype;
             newm->m.address = D4ADDR2SUBBLOCK (c, m.address);

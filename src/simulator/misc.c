@@ -56,7 +56,7 @@
 struct d4_stackhash_struct d4stackhash;
 d4stacknode d4freelist;
 int d4nnodes;
-d4pendstack *d4pendfree;
+D4PendStack *d4pendfree;
 D4Cache *d4_allcaches;
 
 
@@ -581,10 +581,10 @@ d4_unhash (D4Cache *c, int stacknum, d4stacknode *s)
 
 
 /* Allocate a structure describing a pending memory reference */
-d4pendstack *
+D4PendStack *
 d4get_mref()
 {
-    d4pendstack *m;
+    D4PendStack *m;
 
     m = d4pendfree;
     if (m != NULL) {
@@ -603,7 +603,7 @@ d4get_mref()
 
 /* Deallocate the structure used to describe a pending memory reference */
 void
-d4put_mref (d4pendstack *m)
+d4put_mref (D4PendStack *m)
 {
     m->next = d4pendfree;
     d4pendfree = m;
@@ -615,7 +615,7 @@ d4put_mref (d4pendstack *m)
  * to own cache or towards memory
  */
 void
-d4_dopending (D4Cache *c, d4pendstack *newm)
+d4_dopending (D4Cache *c, D4PendStack *newm)
 {
     do {
         c->pending = newm->next;
@@ -658,7 +658,7 @@ d4_wbblock (D4Cache *c, d4stacknode *ptr, const int lg2sbsize)
 {
     d4addr a;
     unsigned int b, dbits;
-    d4pendstack *newm;
+    D4PendStack *newm;
     const int sbsize = 1 << lg2sbsize;
 
     b = 1;
@@ -713,7 +713,7 @@ d4copyback (D4Cache *c, const D4MemRef *m, int prop)
 {
     int stacknum;
     d4stacknode *ptr;
-    d4pendstack *newm;
+    D4PendStack *newm;
 
     if (m != NULL) {
         assert (m->accesstype == D4XCOPYB);
@@ -767,7 +767,7 @@ d4invalidate (D4Cache *c, const D4MemRef *m, int prop)
 {
     int stacknum;
     d4stacknode *ptr;
-    d4pendstack *newm;
+    D4PendStack *newm;
 
     if (m != NULL) {
         assert (m->accesstype == D4XINVAL);
