@@ -68,12 +68,12 @@
 
 /* some global variables */
 const char *progname;		/* for error messages */
-d4cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
-d4cache *mem;				/* which cache represents simulated memory? */
+D4Cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
+D4Cache *mem;				/* which cache represents simulated memory? */
 
 /* private prototypes for this file */
 extern void dostats (void);
-extern void do1stats (d4cache *);
+extern void do1stats (D4Cache *);
 extern d4memref next_trace_item (void);
 
 /*
@@ -87,7 +87,7 @@ dostats()
 
     for (lev = 0;  lev < maxlevel;  lev++) {
         if (stat_idcombine && levcache[0][lev] == NULL) {
-            d4cache cc;	/* a bogus cache structure */
+            D4Cache cc;	/* a bogus cache structure */
             char ccname[30];
 
             cc.name = ccname;
@@ -143,7 +143,7 @@ dostats()
  * Print stats for 1 cache
  */
 void
-do1stats (d4cache *c)
+do1stats (D4Cache *c)
 {
     double	demand_fetch_data,
             demand_fetch_alltype;
@@ -750,11 +750,11 @@ next_trace_item()
  * Die with an error message if there are serious problems.
  */
 void
-initialize_caches (d4cache **icachep, d4cache **dcachep)
+initialize_caches (D4Cache **icachep, D4Cache **dcachep)
 {
     static char memname[] = "memory";
     int i, lev, idu;
-    d4cache	*c = NULL,	/* avoid `may be used uninitialized' warning in gcc */
+    D4Cache	*c = NULL,	/* avoid `may be used uninitialized' warning in gcc */
              *ci,
              *cd;
 
@@ -802,7 +802,7 @@ int
 main (int argc, char **argv)
 {
     d4memref r;
-    d4cache *ci, *cd;
+    D4Cache *ci, *cd;
     uint64_t tmaxcount = 0, tintcount;
     uint64_t flcount;
 

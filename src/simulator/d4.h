@@ -114,7 +114,7 @@ typedef struct d4_stacknode_struct {
     unsigned int	referenced;	    /* bit for each subblock */
     unsigned int	dirty;		    /* bit for each subblock */
     int		onstack;	    /* which stack is node on? */
-    struct d4_cache_struct *cachep;	    /* which cache is this a part of */
+    struct D4Cache *cachep;	    /* which cache is this a part of */
     struct d4_stacknode_struct *down;   /* ptr to less recently used node */
     struct d4_stacknode_struct *up;     /* ptr to more recently used node */
     struct d4_stacknode_struct *bucket; /* singly-linked for hash collisions */
@@ -182,13 +182,13 @@ typedef struct {
 /*
  * full specification of a cache
  */
-typedef struct d4_cache_struct {
+typedef struct D4Cache {
     char *name;		/* mostly for printing */
     int cacheid;		/* unique for each cache */
     int flags;
     d4stackhead *stack;	/* the priority stacks for this cache */
     d4pendstack *pending;	/* stack for prefetch etc. */
-    struct d4_cache_struct *link; /* linked list of all caches */
+    struct D4Cache *link; /* linked list of all caches */
 
     /*
      * Cache parameters
@@ -206,8 +206,8 @@ typedef struct d4_cache_struct {
      * being memory and the leaves being closest
      * to the processors.
      */
-    struct d4_cache_struct *downstream;
-    void (*ref)(struct d4_cache_struct *, d4memref);	/* d4ref or custom version */
+    struct D4Cache *downstream;
+    void (*ref)(struct D4Cache *, d4memref);	/* d4ref or custom version */
 
     /*
      * Cache policy functions and data:
@@ -216,15 +216,15 @@ typedef struct d4_cache_struct {
      * (normally, each policy should have an initialization routine)
      */
     /* adjust priority stack */
-    d4stacknode	*(*replacementf) (struct d4_cache_struct *, int stacknum,
+    d4stacknode	*(*replacementf) (struct D4Cache *, int stacknum,
                                   d4memref, d4stacknode *ptr);
     /* indicate a prefetch with prefetch_pending */
-    d4pendstack	*(*prefetchf) (struct d4_cache_struct *, d4memref,
+    d4pendstack	*(*prefetchf) (struct D4Cache *, d4memref,
                                int miss, d4stacknode *ptr);
     /* walloc returns true for write-allocate */
-    int		(*wallocf) (struct d4_cache_struct *, d4memref);
+    int		(*wallocf) (struct D4Cache *, d4memref);
     /* wback returns true for write-back */
-    int		(*wbackf) (struct d4_cache_struct *, d4memref, int,
+    int		(*wbackf) (struct D4Cache *, d4memref, int,
                        d4stacknode *ptr, int);
 
     int		prefetch_distance;	/* specific to built-in prefetch policies */
@@ -265,9 +265,9 @@ typedef struct d4_cache_struct {
     double multiblock;
     double bytes_read;
     double bytes_written;
-} d4cache;
+} D4Cache;
 
-/* flags for d4cache */
+/* flags for D4Cache */
 #define D4F_MEM			0x1	/* for simulated memory only */
 #define D4F_CCC			0x2	/* compulsory/capacity/conflict classification */
 #define D4F_RO			0x4	/* cache is read-only (e.g., an instruction cache) */
@@ -314,67 +314,67 @@ extern int d4nnodes;	/* total number of stack nodes allocated */
  */
 
 /* top level user-callable functions */
-extern d4cache	*d4new (d4cache *);
+extern D4Cache	*d4new (D4Cache *);
 extern int	d4setup (void);
-void		d4ref (d4cache *, d4memref); /* call generic version */
-void		d4copyback (d4cache *, const d4memref *, int);
-void		d4invalidate (d4cache *, const d4memref *, int);
+void		d4ref (D4Cache *, d4memref); /* call generic version */
+void		d4copyback (D4Cache *, const d4memref *, int);
+void		d4invalidate (D4Cache *, const d4memref *, int);
 
 /* replacement policies */
-extern d4stacknode *d4rep_lru (d4cache *, int stacknum, d4memref, d4stacknode *ptr);
-extern d4stacknode *d4rep_fifo (d4cache *, int stacknum, d4memref, d4stacknode *ptr);
-extern d4stacknode *d4rep_random (d4cache *, int stacknum, d4memref, d4stacknode *ptr);
+extern d4stacknode *d4rep_lru (D4Cache *, int stacknum, d4memref, d4stacknode *ptr);
+extern d4stacknode *d4rep_fifo (D4Cache *, int stacknum, d4memref, d4stacknode *ptr);
+extern d4stacknode *d4rep_random (D4Cache *, int stacknum, d4memref, d4stacknode *ptr);
 
 /* prefetch policies */
-extern d4pendstack *d4prefetch_none (d4cache *, d4memref, int miss, d4stacknode *);
-extern d4pendstack *d4prefetch_always (d4cache *, d4memref, int miss, d4stacknode *);
-extern d4pendstack *d4prefetch_loadforw (d4cache *, d4memref, int miss, d4stacknode *);
-extern d4pendstack *d4prefetch_subblock (d4cache *, d4memref, int miss, d4stacknode *);
-extern d4pendstack *d4prefetch_miss (d4cache *, d4memref, int miss, d4stacknode *);
-extern d4pendstack *d4prefetch_tagged (d4cache *, d4memref, int miss, d4stacknode *);
+extern d4pendstack *d4prefetch_none (D4Cache *, d4memref, int miss, d4stacknode *);
+extern d4pendstack *d4prefetch_always (D4Cache *, d4memref, int miss, d4stacknode *);
+extern d4pendstack *d4prefetch_loadforw (D4Cache *, d4memref, int miss, d4stacknode *);
+extern d4pendstack *d4prefetch_subblock (D4Cache *, d4memref, int miss, d4stacknode *);
+extern d4pendstack *d4prefetch_miss (D4Cache *, d4memref, int miss, d4stacknode *);
+extern d4pendstack *d4prefetch_tagged (D4Cache *, d4memref, int miss, d4stacknode *);
 
 /* write allocate policies */
-extern int d4walloc_always (d4cache *, d4memref);
-extern int d4walloc_never (d4cache *, d4memref);
-extern int d4walloc_nofetch (d4cache *, d4memref);
-extern int d4walloc_impossible (d4cache *, d4memref); /* for icaches */
+extern int d4walloc_always (D4Cache *, d4memref);
+extern int d4walloc_never (D4Cache *, d4memref);
+extern int d4walloc_nofetch (D4Cache *, d4memref);
+extern int d4walloc_impossible (D4Cache *, d4memref); /* for icaches */
 
 /* write back/through policies */
-extern int d4wback_always (d4cache *, d4memref, int, d4stacknode *, int);
-extern int d4wback_never (d4cache *, d4memref, int, d4stacknode *, int);
-extern int d4wback_nofetch (d4cache *, d4memref, int, d4stacknode *, int);
-extern int d4wback_impossible (d4cache *, d4memref, int, d4stacknode *, int); /* for icaches */
+extern int d4wback_always (D4Cache *, d4memref, int, d4stacknode *, int);
+extern int d4wback_never (D4Cache *, d4memref, int, d4stacknode *, int);
+extern int d4wback_nofetch (D4Cache *, d4memref, int, d4stacknode *, int);
+extern int d4wback_impossible (D4Cache *, d4memref, int, d4stacknode *, int); /* for icaches */
 
 /* initialization routines */
-extern void d4init_rep_lru (d4cache *);
-extern void d4init_rep_fifo (d4cache *);
-extern void d4init_rep_random (d4cache *);
+extern void d4init_rep_lru (D4Cache *);
+extern void d4init_rep_fifo (D4Cache *);
+extern void d4init_rep_random (D4Cache *);
 
-extern void d4init_prefetch_none (d4cache *);
-extern void d4init_prefetch_always (d4cache *, int, int);
-extern void d4init_prefetch_loadforw (d4cache *, int, int);
-extern void d4init_prefetch_subblock (d4cache *, int, int);
-extern void d4init_prefetch_miss (d4cache *, int, int);
-extern void d4init_prefetch_tagged (d4cache *, int, int);
+extern void d4init_prefetch_none (D4Cache *);
+extern void d4init_prefetch_always (D4Cache *, int, int);
+extern void d4init_prefetch_loadforw (D4Cache *, int, int);
+extern void d4init_prefetch_subblock (D4Cache *, int, int);
+extern void d4init_prefetch_miss (D4Cache *, int, int);
+extern void d4init_prefetch_tagged (D4Cache *, int, int);
 
-extern void d4init_walloc_always (d4cache *);
-extern void d4init_walloc_never (d4cache *);
-extern void d4init_walloc_nofetch (d4cache *);
+extern void d4init_walloc_always (D4Cache *);
+extern void d4init_walloc_never (D4Cache *);
+extern void d4init_walloc_nofetch (D4Cache *);
 
-extern void d4init_wback_always (d4cache *);
-extern void d4init_wback_never (d4cache *);
-extern void d4init_wback_nofetch (d4cache *);
+extern void d4init_wback_always (D4Cache *);
+extern void d4init_wback_never (D4Cache *);
+extern void d4init_wback_nofetch (D4Cache *);
 
 
 /* Miscellaneous functions users may or may not need */
 extern d4pendstack *d4get_mref(void);	/* allocate struct for pending mref */
 extern void d4put_mref (d4pendstack *);	/* deallocate pending mref */
-extern void d4init_prefetch_generic (d4cache *); /* helper routine for prefetch */
+extern void d4init_prefetch_generic (D4Cache *); /* helper routine for prefetch */
 
-extern d4stacknode *d4findnth (d4cache *, int stacknum, int n);
-extern void d4movetotop (d4cache *, int stacknum, d4stacknode *);
-extern void d4movetobot (d4cache *, int stacknum, d4stacknode *);
-extern void d4hash (d4cache *, int stacknum, d4stacknode *);
+extern d4stacknode *d4findnth (D4Cache *, int stacknum, int n);
+extern void d4movetotop (D4Cache *, int stacknum, d4stacknode *);
+extern void d4movetobot (D4Cache *, int stacknum, d4stacknode *);
+extern void d4hash (D4Cache *, int stacknum, d4stacknode *);
 
 
 
@@ -382,9 +382,9 @@ extern void d4hash (d4cache *, int stacknum, d4stacknode *);
 /*
  * Global declarations for internal Dinero IV use.
  */
-extern int d4_infcache (d4cache *, d4memref);
-extern d4memref d4_splitm (d4cache *, d4memref, d4addr);
-extern void d4_dopending (d4cache *, d4pendstack *);
-extern void d4_unhash (d4cache *c, int stacknum, d4stacknode *);
-extern d4stacknode *d4_find (d4cache *, int stacknum, d4addr blockaddr);
-extern void d4_wbblock (d4cache *, d4stacknode *, const int);
+extern int d4_infcache (D4Cache *, d4memref);
+extern d4memref d4_splitm (D4Cache *, d4memref, d4addr);
+extern void d4_dopending (D4Cache *, d4pendstack *);
+extern void d4_unhash (D4Cache *c, int stacknum, d4stacknode *);
+extern d4stacknode *d4_find (D4Cache *, int stacknum, d4addr blockaddr);
+extern void d4_wbblock (D4Cache *, d4stacknode *, const int);

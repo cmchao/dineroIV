@@ -57,14 +57,14 @@ struct d4_stackhash_struct d4stackhash;
 d4stacknode d4freelist;
 int d4nnodes;
 d4pendstack *d4pendfree;
-d4cache *d4_allcaches;
+D4Cache *d4_allcaches;
 
 
 /*
  * Private prototypes for this file
  */
-extern void d4_invblock (d4cache *, int stacknum, d4stacknode *);
-extern void d4_invinfcache (d4cache *, const d4memref *);
+extern void d4_invblock (D4Cache *, int stacknum, d4stacknode *);
+extern void d4_invinfcache (D4Cache *, const d4memref *);
 
 
 /*
@@ -72,11 +72,11 @@ extern void d4_invinfcache (d4cache *, const d4memref *);
  * The new cache sits "above" the indicated larger cache in the
  * memory hierarchy, with memory at the bottom and processors at the top.
  */
-d4cache *
-d4new (d4cache *larger)
+D4Cache *
+d4new (D4Cache *larger)
 {
     static int nextcacheid = 1;
-    d4cache *c = calloc (1, sizeof(d4cache));
+    D4Cache *c = calloc (1, sizeof(D4Cache));
 
     if (c == NULL) {
         return NULL;
@@ -97,7 +97,7 @@ d4new (d4cache *larger)
 /*
  * Check all caches, set up internal data structures.
  * Must be called exactly once, after all calls to d4new
- * and all necessary direct initialization of d4cache structures.
+ * and all necessary direct initialization of D4Cache structures.
  * The call to d4setup must occur before any calls to d4ref.
  * The return value is zero for success.
  */
@@ -106,7 +106,7 @@ d4setup()
 {
     int i, nnodes;
     int r = 0;
-    d4cache *c, *cc;
+    D4Cache *c, *cc;
     d4stacknode *nodes = NULL, *ptr;
 
     for (c = d4_allcaches;  c != NULL;  c = c->link) {
@@ -263,35 +263,35 @@ fail1:
  * These exist for convenience of use only.
  */
 void
-d4init_rep_lru (d4cache *c)
+d4init_rep_lru (D4Cache *c)
 {
     c->replacementf = d4rep_lru;
     c->name_replacement = "LRU";
 }
 
 void
-d4init_rep_fifo (d4cache *c)
+d4init_rep_fifo (D4Cache *c)
 {
     c->replacementf = d4rep_fifo;
     c->name_replacement = "FIFO";
 }
 
 void
-d4init_rep_random (d4cache *c)
+d4init_rep_random (D4Cache *c)
 {
     c->replacementf = d4rep_random;
     c->name_replacement = "random";
 }
 
 void
-d4init_prefetch_none (d4cache *c)
+d4init_prefetch_none (D4Cache *c)
 {
     c->prefetchf = d4prefetch_none;
     c->name_prefetch = "none";
 }
 
 void
-d4init_prefetch_always (d4cache *c, int dist, int abortpct)
+d4init_prefetch_always (D4Cache *c, int dist, int abortpct)
 {
     c->prefetchf = d4prefetch_always;
     c->name_prefetch = "always";
@@ -300,7 +300,7 @@ d4init_prefetch_always (d4cache *c, int dist, int abortpct)
 }
 
 void
-d4init_prefetch_loadforw (d4cache *c, int dist, int abortpct)
+d4init_prefetch_loadforw (D4Cache *c, int dist, int abortpct)
 {
     c->prefetchf = d4prefetch_loadforw;
     c->name_prefetch = "load-forward";
@@ -309,7 +309,7 @@ d4init_prefetch_loadforw (d4cache *c, int dist, int abortpct)
 }
 
 void
-d4init_prefetch_subblock (d4cache *c, int dist, int abortpct)
+d4init_prefetch_subblock (D4Cache *c, int dist, int abortpct)
 {
     c->prefetchf = d4prefetch_subblock;
     c->name_prefetch = "subblock";
@@ -318,7 +318,7 @@ d4init_prefetch_subblock (d4cache *c, int dist, int abortpct)
 }
 
 void
-d4init_prefetch_miss (d4cache *c, int dist, int abortpct)
+d4init_prefetch_miss (D4Cache *c, int dist, int abortpct)
 {
     c->prefetchf = d4prefetch_miss;
     c->name_prefetch = "miss";
@@ -327,7 +327,7 @@ d4init_prefetch_miss (d4cache *c, int dist, int abortpct)
 }
 
 void
-d4init_prefetch_tagged (d4cache *c, int dist, int abortpct)
+d4init_prefetch_tagged (D4Cache *c, int dist, int abortpct)
 {
     c->prefetchf = d4prefetch_tagged;
     c->name_prefetch = "tagged";
@@ -336,42 +336,42 @@ d4init_prefetch_tagged (d4cache *c, int dist, int abortpct)
 }
 
 void
-d4init_walloc_always (d4cache *c)
+d4init_walloc_always (D4Cache *c)
 {
     c->wallocf = d4walloc_always;
     c->name_walloc = "always";
 }
 
 void
-d4init_walloc_never (d4cache *c)
+d4init_walloc_never (D4Cache *c)
 {
     c->wallocf = d4walloc_never;
     c->name_walloc = "never";
 }
 
 void
-d4init_walloc_nofetch (d4cache *c)
+d4init_walloc_nofetch (D4Cache *c)
 {
     c->wallocf = d4walloc_nofetch;
     c->name_walloc = "nofetch";
 }
 
 void
-d4init_wback_always (d4cache *c)
+d4init_wback_always (D4Cache *c)
 {
     c->wbackf = d4wback_always;
     c->name_wback = "always";
 }
 
 void
-d4init_wback_never (d4cache *c)
+d4init_wback_never (D4Cache *c)
 {
     c->wbackf = d4wback_never;
     c->name_wback = "never";
 }
 
 void
-d4init_wback_nofetch (d4cache *c)
+d4init_wback_nofetch (D4Cache *c)
 {
     c->wbackf = d4wback_nofetch;
     c->name_wback = "nofetch";
@@ -379,7 +379,7 @@ d4init_wback_nofetch (d4cache *c)
 
 /* this is for the walloc policy of an icache */
 int
-d4walloc_impossible (d4cache *c, d4memref m)
+d4walloc_impossible (D4Cache *c, d4memref m)
 {
     fprintf (stderr, "Dinero IV: impossible walloc policy routine called for %s!!!\n",
              c->name);
@@ -389,7 +389,7 @@ d4walloc_impossible (d4cache *c, d4memref m)
 
 /* this is for the wback policy of an icache */
 int
-d4wback_impossible (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
+d4wback_impossible (D4Cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
 {
     fprintf (stderr, "Dinero IV: impossible wback policy routine called for %s!!!\n",
              c->name);
@@ -402,9 +402,9 @@ d4wback_impossible (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int
 /*
  * Perform a consistency check on a priority stack
  */
-void d4checkstack (d4cache *, int, char *); /* prototype avoids warnings */
+void d4checkstack (D4Cache *, int, char *); /* prototype avoids warnings */
 void
-d4checkstack (d4cache *c, int stacknum, char *msg)
+d4checkstack (D4Cache *c, int stacknum, char *msg)
 {
     d4stacknode *sp, *top;
     int i, ii;
@@ -445,7 +445,7 @@ d4checkstack (d4cache *c, int stacknum, char *msg)
  * Find address in stack.
  */
 d4stacknode *
-d4_find (d4cache *c, int stacknum, d4addr blockaddr)
+d4_find (D4Cache *c, int stacknum, d4addr blockaddr)
 {
     d4stacknode *ptr;
 
@@ -480,7 +480,7 @@ d4_find (d4cache *c, int stacknum, d4addr blockaddr)
 
 /* find the nth element from the top (1 origin) */
 d4stacknode *
-d4findnth (d4cache *c, int stacknum, int n)
+d4findnth (D4Cache *c, int stacknum, int n)
 {
     d4stacknode *p;
     int i, stacksize;
@@ -504,7 +504,7 @@ d4findnth (d4cache *c, int stacknum, int n)
 
 /* Move node to top (most recently used position) of stack */
 void
-d4movetotop (d4cache *c, int stacknum, d4stacknode *ptr)
+d4movetotop (D4Cache *c, int stacknum, d4stacknode *ptr)
 {
     d4stacknode *top = c->stack[stacknum].top;
     d4stacknode *bot;
@@ -527,7 +527,7 @@ d4movetotop (d4cache *c, int stacknum, d4stacknode *ptr)
 
 /* Move node to bottom (least recently used, actually spare) position */
 void
-d4movetobot (d4cache *c, int stacknum, d4stacknode *ptr)
+d4movetobot (D4Cache *c, int stacknum, d4stacknode *ptr)
 {
     d4stacknode *top = c->stack[stacknum].top;
     d4stacknode *bot = top->up;
@@ -550,7 +550,7 @@ d4movetobot (d4cache *c, int stacknum, d4stacknode *ptr)
 
 /* Insert the indicated node into the hash table */
 void
-d4hash (d4cache *c, int stacknum, d4stacknode *s)
+d4hash (D4Cache *c, int stacknum, d4stacknode *s)
 {
     int buck = D4HASH (s->blockaddr, stacknum, s->cachep->cacheid);
 
@@ -562,7 +562,7 @@ d4hash (d4cache *c, int stacknum, d4stacknode *s)
 
 /* Remove the indicated node from the hash table */
 void
-d4_unhash (d4cache *c, int stacknum, d4stacknode *s)
+d4_unhash (D4Cache *c, int stacknum, d4stacknode *s)
 {
     int buck = D4HASH (s->blockaddr, stacknum, c->cacheid);
     d4stacknode *p = d4stackhash.table[buck];
@@ -615,7 +615,7 @@ d4put_mref (d4pendstack *m)
  * to own cache or towards memory
  */
 void
-d4_dopending (d4cache *c, d4pendstack *newm)
+d4_dopending (D4Cache *c, d4pendstack *newm)
 {
     do {
         c->pending = newm->next;
@@ -654,7 +654,7 @@ d4_dopending (d4cache *c, d4pendstack *newm)
  * Each contiguous bunch of subblocks is written in one operation.
  */
 void
-d4_wbblock (d4cache *c, d4stacknode *ptr, const int lg2sbsize)
+d4_wbblock (D4Cache *c, d4stacknode *ptr, const int lg2sbsize)
 {
     d4addr a;
     unsigned int b, dbits;
@@ -685,7 +685,7 @@ d4_wbblock (d4cache *c, d4stacknode *ptr, const int lg2sbsize)
 
 /* invalidate and deallocate a block, as indicated by ptr */
 void
-d4_invblock (d4cache *c, int stacknum, d4stacknode *ptr)
+d4_invblock (D4Cache *c, int stacknum, d4stacknode *ptr)
 {
     assert (ptr->valid != 0);
     ptr->valid = 0;
@@ -709,7 +709,7 @@ d4_invblock (d4cache *c, int stacknum, d4stacknode *ptr)
  * NOTE: this function does not invalidate!
  */
 void
-d4copyback (d4cache *c, const d4memref *m, int prop)
+d4copyback (D4Cache *c, const d4memref *m, int prop)
 {
     int stacknum;
     d4stacknode *ptr;
@@ -763,7 +763,7 @@ d4copyback (d4cache *c, const d4memref *m, int prop)
  *	you have to call d4copyback first for that.
  */
 void
-d4invalidate (d4cache *c, const d4memref *m, int prop)
+d4invalidate (D4Cache *c, const d4memref *m, int prop)
 {
     int stacknum;
     d4stacknode *ptr;
@@ -818,7 +818,7 @@ d4invalidate (d4cache *c, const d4memref *m, int prop)
  * Handle invalidation for infinite cache
  */
 void
-d4_invinfcache (d4cache *c, const d4memref *m)
+d4_invinfcache (D4Cache *c, const d4memref *m)
 {
     int i;
 

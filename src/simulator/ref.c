@@ -74,7 +74,7 @@
  */
 inline
 d4stacknode *
-d4rep_lru (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
+d4rep_lru (D4Cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 {
     if (ptr != NULL) {	/* hits */
         if (ptr != c->stack[stacknum].top) {
@@ -98,7 +98,7 @@ d4rep_lru (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
  */
 inline
 d4stacknode *
-d4rep_fifo (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
+d4rep_fifo (D4Cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 {
     if (ptr == NULL) {	/* misses */
         ptr = c->stack[stacknum].top->up;
@@ -118,7 +118,7 @@ d4rep_fifo (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
  */
 inline
 d4stacknode *
-d4rep_random (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
+d4rep_random (D4Cache *c, int stacknum, d4memref m, d4stacknode *ptr)
 {
     if (ptr == NULL) {	/* misses */
         int setsize = c->stack[stacknum].n - 1;
@@ -142,7 +142,7 @@ d4rep_random (d4cache *c, int stacknum, d4memref m, d4stacknode *ptr)
  */
 inline
 d4pendstack *
-d4prefetch_none (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
+d4prefetch_none (D4Cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
     /* no prefetch, nothing to do */
     return NULL;
@@ -154,7 +154,7 @@ d4prefetch_none (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  */
 inline
 d4pendstack *
-d4prefetch_always (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
+d4prefetch_always (D4Cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
     d4pendstack *pf;
 
@@ -172,7 +172,7 @@ d4prefetch_always (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  */
 inline
 d4pendstack *
-d4prefetch_loadforw (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
+d4prefetch_loadforw (D4Cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
     d4pendstack *pf;
 
@@ -194,7 +194,7 @@ d4prefetch_loadforw (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  */
 inline
 d4pendstack *
-d4prefetch_subblock (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
+d4prefetch_subblock (D4Cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
     d4pendstack *pf;
 
@@ -216,7 +216,7 @@ d4prefetch_subblock (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  */
 inline
 d4pendstack *
-d4prefetch_miss (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
+d4prefetch_miss (D4Cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
     d4pendstack *pf;
 
@@ -245,7 +245,7 @@ d4prefetch_miss (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  */
 inline
 d4pendstack *
-d4prefetch_tagged (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
+d4prefetch_tagged (D4Cache *c, d4memref m, int miss, d4stacknode *stackptr)
 {
     d4pendstack *pf;
     int sbbits;
@@ -268,7 +268,7 @@ d4prefetch_tagged (d4cache *c, d4memref m, int miss, d4stacknode *stackptr)
  */
 inline
 int
-d4walloc_always (d4cache *c, d4memref m)
+d4walloc_always (D4Cache *c, d4memref m)
 {
     return 1;
 }
@@ -279,7 +279,7 @@ d4walloc_always (d4cache *c, d4memref m)
  */
 inline
 int
-d4walloc_never (d4cache *c, d4memref m)
+d4walloc_never (D4Cache *c, d4memref m)
 {
     return 0;
 }
@@ -291,7 +291,7 @@ d4walloc_never (d4cache *c, d4memref m)
  */
 inline
 int
-d4walloc_nofetch (d4cache *c, d4memref m)
+d4walloc_nofetch (D4Cache *c, d4memref m)
 {
     return m.size == D4REFNSB(c, m) << D4VAL (c, lg2subblocksize);
 }
@@ -302,7 +302,7 @@ d4walloc_nofetch (d4cache *c, d4memref m)
  */
 inline
 int
-d4wback_always (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
+d4wback_always (D4Cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
 {
     return 1;
 }
@@ -313,7 +313,7 @@ d4wback_always (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int wal
  */
 inline
 int
-d4wback_never (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
+d4wback_never (D4Cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
 {
     return 0;
 }
@@ -326,7 +326,7 @@ d4wback_never (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int wall
  */
 inline
 int
-d4wback_nofetch (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
+d4wback_nofetch (D4Cache *c, d4memref m, int setnumber, d4stacknode *ptr, int walloc)
 {
     return (D4ADDR2SBMASK(c, m) & ~ptr->valid) == 0 ||
            m.size == (D4REFNSB(c, m) << D4VAL (c, lg2subblocksize));
@@ -349,7 +349,7 @@ d4wback_nofetch (d4cache *c, d4memref m, int setnumber, d4stacknode *ptr, int wa
  */
 
 static int
-d4infcache (d4cache *c, d4memref m)
+d4infcache (D4Cache *c, d4memref m)
 {
     const unsigned int sbsize = 1 << D4VAL (c, lg2subblocksize);
     const d4addr sbaddr = D4ADDR2SUBBLOCK (c, m.address);
@@ -441,7 +441,7 @@ d4infcache (d4cache *c, d4memref m)
  */
 inline
 d4memref
-d4_splitm (d4cache *c, d4memref mr, d4addr ba)
+d4_splitm (D4Cache *c, d4memref mr, d4addr ba)
 {
     const int bsize = 1 << D4VAL (c, lg2blocksize);
     const int bmask = bsize - 1;
@@ -470,7 +470,7 @@ d4_splitm (d4cache *c, d4memref mr, d4addr ba)
  * the processor; other caches are handled automatically.
  */
 void
-d4ref (d4cache *c, d4memref mr)
+d4ref (D4Cache *c, d4memref mr)
 {
     /* special cases first */
     if ((D4VAL (c, flags) & D4F_MEM) != 0) { /* Special case for simulated memory */

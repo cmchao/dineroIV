@@ -1538,7 +1538,7 @@ clog2 (unsigned int x)
  * Die with an error message if there are serious problems.
  */
 void
-init_1cache (d4cache *c, int lev, int idu)
+init_1cache (D4Cache *c, int lev, int idu)
 {
     c->name = malloc (30);
     if (c->name == NULL) {
