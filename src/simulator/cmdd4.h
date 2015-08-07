@@ -48,13 +48,33 @@
  * handling or trace format; those are in separate places.
  */
 
-
-#if __GNUC__    /* assume gcc 2.5 or better */
-extern void die (const char *fmt, ...) __attribute__((noreturn));
-extern void shorthelp (const char *fmt, ...) __attribute__((noreturn));
-#else
-extern void die (const char *fmt, ...);
-extern void shorthelp (const char *fmt, ...);
-#endif
+#include <stdlib.h>
 
 extern const char *progname;	/* for error messages */
+/**
+ * @brief print error message and abort
+ * @param[in] fmt format string
+ * @param[in] ... variable length argument
+ */
+#define die(fmt, ...) do { \
+    fflush(stdout); \
+    fprintf(stderr, "%s: ", progname); \
+    fprintf(stderr, fmt, ##__VA_ARGS__); \
+    exit(1); \
+} while(0);
+
+/*
+ * @brief Produce short help message for improper usage, then terminate
+ * @param[in] fmt format string
+ * @param[in] ... variable length argument
+ */
+#define shorthelp(fmt, ...) do { \
+    fflush(stdout); \
+    fprintf(stderr, "%s: ", progname); \
+    fprintf(stderr, fmt, ##__VA_ARGS__); \
+    fprintf(stderr, "Consult Dinero IV documentation\n" \
+             "or run \"%s -help\" for usage information.\n", progname); \
+    exit(1); \
+} while(0);
+
+

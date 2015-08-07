@@ -796,40 +796,6 @@ initialize_caches (d4cache **icachep, d4cache **dcachep)
 
 
 /*
- * Complain and terminate
- */
-void
-die (const char *fmt, ...)
-{
-    va_list ap;
-    fflush (stdout);
-    fprintf (stderr, "%s: ", progname);
-    va_start (ap, fmt);
-    vfprintf (stderr, fmt, ap);
-    va_end (ap);
-    exit (1);
-}
-
-
-/*
- * Produce short help message for improper usage, then terminate
- */
-void
-shorthelp (const char *fmt, ...)
-{
-    va_list ap;
-    fflush (stdout);
-    fprintf (stderr, "%s: ", progname);
-    va_start (ap, fmt);
-    vfprintf (stderr, fmt, ap);
-    va_end (ap);
-    fprintf (stderr, "Consult Dinero IV documentation\n"
-             "or run \"%s -help\" for usage information.\n", progname);
-    exit (1);
-}
-
-
-/*
  * Everything starts here
  */
 int

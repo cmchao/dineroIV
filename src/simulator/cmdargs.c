@@ -1445,7 +1445,7 @@ verify_options()
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'));
             if (level_subblocksize[idu][lev] != 0 &&
                     level_blocksize[idu][lev] / level_subblocksize[idu][lev] > sizeof(xp->valid)*CHAR_BIT)
-                shorthelp ("level %d %ccache must have no more than %u sub-blocks per block\n",
+                shorthelp ("level %d %ccache must have no more than %lu sub-blocks per block\n",
                            lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'), sizeof(xp->valid)*CHAR_BIT);
             if (level_subblocksize[idu][lev] != 0 && level_doccc[idu][lev] != 0 &&
                     D4_BITMAP_RSIZE < level_blocksize[idu][lev] / level_subblocksize[idu][lev])
