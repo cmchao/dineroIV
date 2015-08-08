@@ -161,14 +161,12 @@ struct d4_stackhash_struct {
 typedef struct {
     d4addr	addr;		/* start address of range */
     char	*bitmap;
-} d4range;
+} D4Range;
 
 #define D4_BITMAP_RSIZE	(8*1024*1024)	/* size of each range, in bits */
 #if D4_BITMAP_RSIZE<=0 || (D4_BITMAP_RSIZE&(D4_BITMAP_RSIZE-1)) != 0
 #error "D4_BITMAP_RSIZE must be a power of 2"
 #endif
-
-
 
 
 /*
@@ -235,7 +233,7 @@ typedef struct D4Cache {
      */
     int		nranges;
     int		maxranges;
-    d4range		*ranges;
+    D4Range		*ranges;
 
 
     /*
