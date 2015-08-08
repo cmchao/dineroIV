@@ -125,10 +125,10 @@ typedef struct D4StackNode {
  * Head of a stack,
  * top points to the most recently used node in the stack.
  */
-typedef struct d4_stackhead_struct {
+typedef struct {
     D4StackNode *top;	/* the "beginning" of the stack */
     int n;			/* size of stack (== 1 + assoc) */
-} d4stackhead;
+} D4StackHead;
 
 
 /*
@@ -176,7 +176,7 @@ typedef struct D4Cache {
     char *name;		/* mostly for printing */
     int cacheid;		/* unique for each cache */
     int flags;
-    d4stackhead *stack;	/* the priority stacks for this cache */
+    D4StackHead *stack;	/* the priority stacks for this cache */
     D4PendStack *pending;	/* stack for prefetch etc. */
     struct D4Cache *link; /* linked list of all caches */
 

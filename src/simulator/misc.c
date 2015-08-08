@@ -156,7 +156,7 @@ d4setup()
             c->numsets = (1 << c->lg2size) / ((1 << c->lg2blocksize) * c->assoc);
 
             c->stack = calloc (c->numsets + ((c->flags & D4F_CCC) != 0),
-                               sizeof(d4stackhead));
+                               sizeof(D4StackHead));
             if (c->stack == NULL) {
                 goto fail10;
             }
