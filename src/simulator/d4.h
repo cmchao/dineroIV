@@ -137,10 +137,10 @@ typedef struct {
  * The hash key is based on the block address, stack number,
  * and cacheid.  Collisions are resolved by chaining.
  */
-struct d4_stackhash_struct {
+typedef struct {
     int size;		/* size of the hash table */
     D4StackNode **table;	/* the table itself, malloced */
-};
+} D4StackHash;
 
 #define D4HASH_THRESH	8	/* stacks bigger than this size are hashed */
 #define D4HASH(ba,sn,cid)	(((unsigned long)(ba)+(sn)+(cid)) %				\
@@ -148,8 +148,6 @@ struct d4_stackhash_struct {
 #ifndef D4_HASHSIZE
 #define D4_HASHSIZE 0	/* default is automatic */
 #endif
-
-
 
 
 /*
@@ -293,7 +291,7 @@ typedef struct D4Cache {
 /*
  * Global data declarations
  */
-extern struct d4_stackhash_struct d4stackhash; /* hash table for all caches */
+extern D4StackHash d4stackhash; /* hash table for all caches */
 extern D4StackNode d4freelist; /* free list for stack nodes of all caches */
 extern int d4nnodes;	/* total number of stack nodes allocated */
 

@@ -53,7 +53,7 @@
 /*
  * Global variable definitions
  */
-struct d4_stackhash_struct d4stackhash;
+D4StackHash d4stackhash;
 D4StackNode d4freelist;
 int d4nnodes;
 D4PendStack *d4pendfree;
