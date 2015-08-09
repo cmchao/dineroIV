@@ -91,6 +91,8 @@ int level_prefetch_distance[3][MAX_LEV];
 
 static int optstringmax;     /** the max length of string in help_* functions */
 
+D4Option g_d4opt;            /** the global Option singleton */
+
 /*
  * command line defaults.
  * Make sure the DEFVAL and DEFSTR versions match
@@ -109,10 +111,6 @@ static int optstringmax;     /** the max length of string in help_* functions */
 #define DEFVAL_informat 'D'
 #define  DEFSTR_informat "D"
 
-uint64_t skipcount;
-uint64_t flushcount;
-uint64_t maxcount;
-uint64_t stat_interval;
 int informat = DEFVAL_informat;
 long on_trigger;
 long off_trigger;
@@ -1133,28 +1131,28 @@ D4ArgList args[] = {
         psummary_0arg, phelp_0arg
     },
     {
-        "-skipcount", 2, &skipcount, NULL,
+        "-skipcount", 2, &g_d4opt.skipcount, NULL,
         NULL,
         "Skip initial U references",
         match_1arg, val_scale_uintd, NULL,
         summary_uintd, help_scale_uintd
     },
     {
-        "-flushcount", 2, &flushcount, NULL,
+        "-flushcount", 2, &g_d4opt.flushcount, NULL,
         NULL,
         "Flush cache every U references",
         match_1arg, val_scale_uintd, NULL,
         summary_uintd, help_scale_uintd
     },
     {
-        "-maxcount", 2, &maxcount, NULL,
+        "-maxcount", 2, &g_d4opt.maxcount, NULL,
         NULL,
         "Stop simulation after U references",
         match_1arg, val_scale_uintd, NULL,
         summary_uintd, help_scale_uintd
     },
     {
-        "-stat-interval", 2, &stat_interval, NULL,
+        "-stat-interval", 2, &g_d4opt.stat_interval, NULL,
         NULL,
         "Show statistics after every U references",
         match_1arg, val_scale_uintd, NULL,
@@ -1234,6 +1232,8 @@ doargs (int argc, char **argv)
     D4ArgList *adesc;
     char **v = argv + 1;
     int x;
+
+    memset(&g_d4opt, 0, sizeof(D4Option));
 
     for (adesc = args;  adesc->optstring != NULL;  adesc++) {
         if (optstringmax < (int)strlen(adesc->optstring) + adesc->pad) {

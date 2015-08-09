@@ -707,8 +707,8 @@ next_trace_item()
         if (on_trigger != 0) {
             discard = 1;    /* initially discard until trigger address seen */
         }
-        if (skipcount > 0) {
-            uint64_t tskipcount = skipcount;
+        if (g_d4opt.skipcount > 0) {
+            uint64_t tskipcount = g_d4opt.skipcount;
             do {
                 r = input_function();
                 if (r.accesstype == D4TRACE_END) {
@@ -826,14 +826,14 @@ main (int argc, char **argv)
     summarize_caches();
 
     printf ("\n---Simulation begins.\n");
-    tintcount = stat_interval;
-    flcount = flushcount;
+    tintcount = g_d4opt.stat_interval;
+    flcount = g_d4opt.flushcount;
     while (1) {
         r = next_trace_item();
         if (r.accesstype == D4TRACE_END) {
             goto done;
         }
-        if (maxcount != 0 && tmaxcount >= maxcount) {
+        if (g_d4opt.maxcount != 0 && tmaxcount >= g_d4opt.maxcount) {
             printf ("---Maximum address count exceeded.\n");
             break;
         }
@@ -850,7 +850,7 @@ main (int argc, char **argv)
         tmaxcount += 1;
         if (tintcount > 0 && (tintcount -= 1) <= 0) {
             dostats();
-            tintcount = stat_interval;
+            tintcount = g_d4opt.stat_interval;
         }
         if (flcount > 0 && (flcount -= 1) <= 0) {
             /* flush cache = copy back and invalidate */
@@ -863,7 +863,7 @@ main (int argc, char **argv)
             if (ci != cd) {
                 d4ref (cd, r);
             }
-            flcount = flushcount;
+            flcount = g_d4opt.flushcount;
         }
     }
 done:

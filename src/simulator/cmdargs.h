@@ -77,16 +77,24 @@ typedef struct D4ArgList {
     void (*help)(const struct D4ArgList *);
 } D4ArgList;
 
+/** all option from command line are converted and stored into
+ *  this format
+ */
+typedef struct {
+    uint64_t skipcount;         /** skip initial U references */
+    uint64_t flushcount;        /** flush cache every U reference */
+    uint64_t maxcount;          /** stop simulation after U referennce */
+    uint64_t stat_interval;     /** show statistics after ever U referce */
+} D4Option;
+
 /* Some globals, defined in cmdargs.c */
 extern D4ArgList args[];	/* defined in cmdargs.c */
 extern int nargs;		/* num entries in args[] */
 extern int maxlevel;		/* largest cache level specified */
 
+extern D4Option g_d4opt;        /** global instance to keep optional value */
+
 extern char *customname;	/* for -custom, name of executable */
-extern uint64_t skipcount;        /* for -skipcount */
-extern uint64_t flushcount;       /* for -flushcount */
-extern uint64_t maxcount;         /* for -maxcount */
-extern uint64_t stat_interval;    /* for -stat-interval */
 extern long on_trigger;		/* for -on-trigger */
 extern long off_trigger;	/* for -off-trigger */
 extern int stat_idcombine;	/* for -stat-idcombine */
