@@ -89,7 +89,6 @@ typedef struct {
 
 /* Some globals, defined in cmdargs.c */
 extern D4ArgList args[];	/* defined in cmdargs.c */
-extern int nargs;		/* num entries in args[] */
 extern int maxlevel;		/* largest cache level specified */
 
 extern D4Option g_d4opt;        /** global instance to keep optional value */

@@ -363,21 +363,27 @@ pmatch_1arg (const char *opt, const D4ArgList *adesc)
     return 2 * (strcmp (nextc, adesc->optstring) == 0);
 }
 
-/*
- * Produce help message in response to -help
+/**
+ * @brief callback function for D4ArgList to
+ *        Produce help message in response to -help
+ *        The function exits directly
+ * @param[in] opt unused
+ * @param[in] arg unused
+ * @param[in] adesc unused
  */
 static void
 val_help (const char *opt, const char *arg, const D4ArgList *adesc)
 {
-    int i;
+    const D4ArgList *iter;
 
     printf ("Usage: %s [options]\nValid options:\n", progname);
-    for (i = 0;  i < nargs;  i++) {
-        if (args[i].optstring != NULL && args[i].help != NULL) {
+
+    for (iter = args;  iter != NULL;  iter++) {
+        if (iter->help != NULL) {
             putchar (' ');
-            args[i].help (&args[i]);
-            if (args[i].defstr != NULL) {
-                printf (" (default %s)", args[i].defstr);
+            iter->help (iter);
+            if (iter->defstr != NULL) {
+                printf (" (default %s)", iter->defstr);
             }
             putchar ('\n');
         }
@@ -1188,7 +1194,7 @@ D4ArgList args[] = {
     },
     { NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
-int nargs = sizeof(args) / sizeof(args[0]);
+
 
 /*
  * Internal function to handle one command line option.
