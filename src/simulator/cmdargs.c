@@ -402,7 +402,10 @@ val_help (const char *opt, const char *arg, const D4ArgList *adesc)
 
 
 /*
- * Produce help message in response to -copyright
+ * @brief Produce help message in response to -copyright
+ * @param[in] opt unused
+ * @param[in] arg unused
+ * @param[in] adesc unused
  */
 static void
 val_helpcr (const char *opt, const char *arg, const D4ArgList *adesc)
@@ -450,8 +453,11 @@ val_helpcr (const char *opt, const char *arg, const D4ArgList *adesc)
 }
 
 
-/*
- * Produce help message in response to -contact
+/**
+ * @brief Produce help message in response to -contact
+ * @param[in] opt unused
+ * @param[in] arg unused
+ * @param[in] adesc unused
  */
 static void
 val_helpw (const char *opt, const char *arg, const D4ArgList *adesc)
@@ -477,8 +483,11 @@ val_helpw (const char *opt, const char *arg, const D4ArgList *adesc)
 }
 
 
-/*
- * Explain DineroIII->DineroIV option mappings
+/**
+ * @brief Explain DineroIII->DineroIV option mappings
+ * @param[in] opt unused
+ * @param[in] arg unused
+ * @param[in] adesc unused
  */
 static void
 val_helpd3 (const char *opt, const char *arg, const D4ArgList *adesc)
