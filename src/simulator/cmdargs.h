@@ -57,7 +57,7 @@
 #define MAX_LEV	5		/* allow -ln prefix no larger than this */
 #endif
 
-struct arglist {
+typedef struct D4ArgList {
     const char *optstring;	  /* string to match, without -ln-idu if applicable */
     int pad;		  /* how many extra chars will help print? */
     void *var;		  /* scalar variable or array to modify */
@@ -66,19 +66,19 @@ struct arglist {
     const char *helpstring;	  /* string for help line */
 
     /* function to recognize arg on command line */
-    int (*match)(const char *opt, const struct arglist *);
+    int (*match)(const char *opt, const struct D4ArgList *);
     /* valf is function to set value */
-    void (*valf)(const char *opt, const char *arg, const struct arglist *);
+    void (*valf)(const char *opt, const char *arg, const struct D4ArgList *);
     /* customf produces definitions for custom version */
-    void (*customf)(const struct arglist *, FILE *);
+    void (*customf)(const struct D4ArgList *, FILE *);
     /* sumf prints summary line */
-    void (*sumf)(const struct arglist *, FILE *);
+    void (*sumf)(const struct D4ArgList *, FILE *);
     /* help prints line for -help */
-    void (*help)(const struct arglist *);
-};
+    void (*help)(const struct D4ArgList *);
+} D4ArgList;
 
 /* Some globals, defined in cmdargs.c */
-extern struct arglist args[];	/* defined in cmdargs.c */
+extern D4ArgList args[];	/* defined in cmdargs.c */
 extern int nargs;		/* num entries in args[] */
 extern int maxlevel;		/* largest cache level specified */
 

@@ -123,7 +123,7 @@ int stat_idcombine;
  * a single char value.
  */
 static void
-help_char (const struct arglist *adesc)
+help_char (const D4ArgList *adesc)
 {
     printf ("%s %-*s %s", adesc->optstring,
             optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "C",
@@ -136,7 +136,7 @@ help_char (const struct arglist *adesc)
  * List the choices on subsequent lines.
  */
 static void
-help_informat (const struct arglist *adesc)
+help_informat (const D4ArgList *adesc)
 {
     help_char (adesc);
     help_trace_format (optstringmax);	/* look for this in tracein.c */
@@ -318,7 +318,7 @@ argscale_uintd (const char *arg, uint64_t *var)
  * Recognize an option with no args
  */
 static int
-match_0arg (const char *opt, const struct arglist *adesc)
+match_0arg (const char *opt, const D4ArgList *adesc)
 {
     return strcmp (opt, adesc->optstring) == 0;
 }
@@ -328,7 +328,7 @@ match_0arg (const char *opt, const struct arglist *adesc)
  * Recognize an option with no args and the -ln-idu prefix
  */
 static int
-pmatch_0arg (const char *opt, const struct arglist *adesc)
+pmatch_0arg (const char *opt, const D4ArgList *adesc)
 {
     int level;
     int idu;
@@ -344,7 +344,7 @@ pmatch_0arg (const char *opt, const struct arglist *adesc)
  * Recognize an option with 1 arg
  */
 static int
-match_1arg (const char *opt, const struct arglist *adesc)
+match_1arg (const char *opt, const D4ArgList *adesc)
 {
     return 2 * (strcmp (opt, adesc->optstring) == 0);
 }
@@ -354,7 +354,7 @@ match_1arg (const char *opt, const struct arglist *adesc)
  * Recognize an option with 1 arg and the -ln-idu prefix
  */
 static int
-pmatch_1arg (const char *opt, const struct arglist *adesc)
+pmatch_1arg (const char *opt, const D4ArgList *adesc)
 {
     int level;
     int idu;
@@ -369,7 +369,7 @@ pmatch_1arg (const char *opt, const struct arglist *adesc)
  * Produce help message in response to -help
  */
 static void
-val_help (const char *opt, const char *arg, const struct arglist *adesc)
+val_help (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     int i;
 
@@ -401,7 +401,7 @@ val_help (const char *opt, const char *arg, const struct arglist *adesc)
  * Produce help message in response to -copyright
  */
 static void
-val_helpcr (const char *opt, const char *arg, const struct arglist *adesc)
+val_helpcr (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     printf ("Dinero IV is copyrighted software\n");
     printf ("\n");
@@ -450,7 +450,7 @@ val_helpcr (const char *opt, const char *arg, const struct arglist *adesc)
  * Produce help message in response to -contact
  */
 static void
-val_helpw (const char *opt, const char *arg, const struct arglist *adesc)
+val_helpw (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     printf ("Dinero IV was written by Jan Edler and Mark D. Hill.\n");
     printf ("\n");
@@ -477,7 +477,7 @@ val_helpw (const char *opt, const char *arg, const struct arglist *adesc)
  * Explain DineroIII->DineroIV option mappings
  */
 static void
-val_helpd3 (const char *opt, const char *arg, const struct arglist *adesc)
+val_helpd3 (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     printf ("Summary of DineroIV replacements for DineroIII options:\n\n");
     printf ("DineroIII    DineroIV\n");
@@ -506,7 +506,7 @@ val_helpd3 (const char *opt, const char *arg, const struct arglist *adesc)
  * Handle an option with no args (i.e., a boolean option).
  */
 static void
-val_0arg (const char *opt, const char *arg, const struct arglist *adesc)
+val_0arg (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     *(int *) adesc->var = 1;
 }
@@ -516,7 +516,7 @@ val_0arg (const char *opt, const char *arg, const struct arglist *adesc)
  * Handle an option with no args (i.e., a boolean option) and the -ln-idu-prefix.
  */
 static void
-pval_0arg (const char *opt, const char *arg, const struct arglist *adesc)
+pval_0arg (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     int (*var)[3][MAX_LEV] = adesc->var;
     int level;
@@ -533,7 +533,7 @@ pval_0arg (const char *opt, const char *arg, const struct arglist *adesc)
  * so level_idu() can't return NULL.
  */
 static void
-pval_uint (const char *opt, const char *arg, const struct arglist *adesc)
+pval_uint (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     unsigned int (*var)[3][MAX_LEV] = adesc->var;
     unsigned int argui;
@@ -555,7 +555,7 @@ pval_uint (const char *opt, const char *arg, const struct arglist *adesc)
  * Here we use double for extra integer range.
  */
 static void
-val_scale_uintd (const char *opt, const char *arg, const struct arglist *adesc)
+val_scale_uintd (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     if (argscale_uintd (arg, adesc->var)) {
         shorthelp ("bad option: %s %s\n", opt, arg);
@@ -570,7 +570,7 @@ val_scale_uintd (const char *opt, const char *arg, const struct arglist *adesc)
  * so level_idu() can't return NULL.
  */
 static void
-pval_scale_pow2 (const char *opt, const char *arg, const struct arglist *adesc)
+pval_scale_pow2 (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     unsigned int (*var)[3][MAX_LEV] = adesc->var;
     unsigned int argui;
@@ -592,7 +592,7 @@ pval_scale_pow2 (const char *opt, const char *arg, const struct arglist *adesc)
  * Handle an option with a single character as arg
  */
 static void
-val_char (const char *opt, const char *arg, const struct arglist *adesc)
+val_char (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     int *var = adesc->var;
 
@@ -607,7 +607,7 @@ val_char (const char *opt, const char *arg, const struct arglist *adesc)
  * Handle an option with level/idu prefix and a single character as arg
  */
 static void
-pval_char (const char *opt, const char *arg, const struct arglist *adesc)
+pval_char (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     int (*var)[3][MAX_LEV] = adesc->var;
     int level;
@@ -625,7 +625,7 @@ pval_char (const char *opt, const char *arg, const struct arglist *adesc)
  * Handle an option with a hexadecimal address as arg.
  */
 static void
-val_addr (const char *opt, const char *arg, const struct arglist *adesc)
+val_addr (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     long *var = adesc->var;
     long argl;
@@ -645,7 +645,7 @@ val_addr (const char *opt, const char *arg, const struct arglist *adesc)
  * when the values in question are boolean.
  */
 static void
-pcustom_0arg (const struct arglist *adesc, FILE *hfile)
+pcustom_0arg (const D4ArgList *adesc, FILE *hfile)
 {
     int i, j;
     int (*var)[3][MAX_LEV] = adesc->var;
@@ -669,7 +669,7 @@ pcustom_0arg (const struct arglist *adesc, FILE *hfile)
  * when the values in question are unsigned ints.
  */
 static void
-pcustom_uint (const struct arglist *adesc, FILE *hfile)
+pcustom_uint (const D4ArgList *adesc, FILE *hfile)
 {
     int i, j;
     unsigned int (*var)[3][MAX_LEV] = adesc->var;
@@ -693,7 +693,7 @@ pcustom_uint (const struct arglist *adesc, FILE *hfile)
  * when the values in question are chars.
  */
 static void
-pcustom_char (const struct arglist *adesc, FILE *hfile)
+pcustom_char (const D4ArgList *adesc, FILE *hfile)
 {
     int i, j;
     int (*var)[3][MAX_LEV] = adesc->var;
@@ -715,7 +715,7 @@ pcustom_char (const struct arglist *adesc, FILE *hfile)
  * Produce a summary line for parameters with no arg (i.e., boolean parameters).
  */
 static void
-summary_0arg (const struct arglist *adesc, FILE *f)
+summary_0arg (const D4ArgList *adesc, FILE *f)
 {
     if (*(int *)adesc->var != 0) {
         fprintf (f, "%s\n", adesc->optstring);
@@ -727,7 +727,7 @@ summary_0arg (const struct arglist *adesc, FILE *f)
  * Produce a summary line for parameters with level/idu prefix but no arg.
  */
 static void
-psummary_0arg (const struct arglist *adesc, FILE *f)
+psummary_0arg (const D4ArgList *adesc, FILE *f)
 {
     int idu, lev;
     int (*var)[3][MAX_LEV] = adesc->var;
@@ -748,7 +748,7 @@ psummary_0arg (const struct arglist *adesc, FILE *f)
  * handled as a double for extended range.
  */
 static void
-summary_uintd (const struct arglist *adesc, FILE *f)
+summary_uintd (const D4ArgList *adesc, FILE *f)
 {
     fprintf (f, "%s %" PRIu64 "\n", adesc->optstring, *(uint64_t *)adesc->var);
 }
@@ -759,7 +759,7 @@ summary_uintd (const struct arglist *adesc, FILE *f)
  * unsigned integer value.
  */
 static void
-psummary_uint (const struct arglist *adesc, FILE *f)
+psummary_uint (const D4ArgList *adesc, FILE *f)
 {
     int idu, lev;
     unsigned int (*var)[3][MAX_LEV] = adesc->var;
@@ -781,7 +781,7 @@ psummary_uint (const struct arglist *adesc, FILE *f)
  * unsigned power-of-2 integer value, remembered as its log.
  */
 static void
-psummary_luint (const struct arglist *adesc, FILE *f)
+psummary_luint (const D4ArgList *adesc, FILE *f)
 {
     int idu, lev;
     unsigned int (*var)[3][MAX_LEV] = adesc->var;
@@ -803,7 +803,7 @@ psummary_luint (const struct arglist *adesc, FILE *f)
  * Produce a summary line for parameters with typical single char argument.
  */
 static void
-summary_char (const struct arglist *adesc, FILE *f)
+summary_char (const D4ArgList *adesc, FILE *f)
 {
     fprintf (f, "%s %c\n", adesc->optstring, *(int *)adesc->var);
 }
@@ -814,7 +814,7 @@ summary_char (const struct arglist *adesc, FILE *f)
  * single char value.
  */
 static void
-psummary_char (const struct arglist *adesc, FILE *f)
+psummary_char (const D4ArgList *adesc, FILE *f)
 {
     int idu, lev;
     int (*var)[3][MAX_LEV] = adesc->var;
@@ -837,7 +837,7 @@ psummary_char (const struct arglist *adesc, FILE *f)
  * as argument.
  */
 static void
-summary_addr (const struct arglist *adesc, FILE *f)
+summary_addr (const D4ArgList *adesc, FILE *f)
 {
     fprintf (f, "%s 0x%lx\n", adesc->optstring, *(long *)adesc->var);
 }
@@ -847,7 +847,7 @@ summary_addr (const struct arglist *adesc, FILE *f)
  * Produce a help line for a possible command line option taking no args.
  */
 static void
-help_0arg (const struct arglist *adesc)
+help_0arg (const D4ArgList *adesc)
 {
     printf ("%-*s %s", optstringmax, adesc->optstring, adesc->helpstring);
 }
@@ -859,7 +859,7 @@ help_0arg (const struct arglist *adesc)
  * We don't bother trying to show the default values; there are too many.
  */
 static void
-phelp_0arg (const struct arglist *adesc)
+phelp_0arg (const D4ArgList *adesc)
 {
     printf ("-lN-T%-*s %s", optstringmax - adesc->pad, adesc->optstring, adesc->helpstring);
 }
@@ -871,7 +871,7 @@ phelp_0arg (const struct arglist *adesc)
  */
 #if 0
 static void
-help_uint (const struct arglist *adesc)
+help_uint (const D4ArgList *adesc)
 {
     printf ("%s %-*s %s", adesc->optstring,
             optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "U",
@@ -885,7 +885,7 @@ help_uint (const struct arglist *adesc)
  * a scaled unsigned int value, but using double for extra range.
  */
 static void
-help_scale_uintd (const struct arglist *adesc)
+help_scale_uintd (const D4ArgList *adesc)
 {
     printf ("%s %-*s %s", adesc->optstring,
             optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "U",
@@ -899,7 +899,7 @@ help_scale_uintd (const struct arglist *adesc)
  * We don't bother trying to show the default values; there are too many.
  */
 static void
-phelp_uint (const struct arglist *adesc)
+phelp_uint (const D4ArgList *adesc)
 {
     printf ("-lN-T%s %-*s %s", adesc->optstring,
             optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "U",
@@ -913,7 +913,7 @@ phelp_uint (const struct arglist *adesc)
  * We don't bother trying to show the default values; there are too many.
  */
 static void
-phelp_scale_pow2 (const struct arglist *adesc)
+phelp_scale_pow2 (const D4ArgList *adesc)
 {
     printf ("-lN-T%s %-*s %s", adesc->optstring,
             optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "P",
@@ -927,7 +927,7 @@ phelp_scale_pow2 (const struct arglist *adesc)
  * We don't bother trying to show the default values; there are too many.
  */
 static void
-phelp_char (const struct arglist *adesc)
+phelp_char (const D4ArgList *adesc)
 {
     printf ("-lN-T%s %-*s %s", adesc->optstring,
             optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "C",
@@ -940,7 +940,7 @@ phelp_char (const struct arglist *adesc)
  * a hexidecimal address value.
  */
 static void
-help_addr (const struct arglist *adesc)
+help_addr (const D4ArgList *adesc)
 {
     printf ("%s %-*s %s", adesc->optstring,
             optstringmax - (int)strlen(adesc->optstring) - adesc->pad + 1, "A",
@@ -957,7 +957,7 @@ help_addr (const struct arglist *adesc)
  * List the choices on subsequent lines.
  */
 static void
-phelp_replacement (const struct arglist *adesc)
+phelp_replacement (const D4ArgList *adesc)
 {
     phelp_char (adesc);
     printf ("\n %*s (l=LRU, f=FIFO, r=random)",
@@ -970,7 +970,7 @@ phelp_replacement (const struct arglist *adesc)
  * List the choices on subsequent lines.
  */
 static void
-phelp_fetch (const struct arglist *adesc)
+phelp_fetch (const D4ArgList *adesc)
 {
     phelp_char (adesc);
     printf ("\n %*s (d=demand, a=always, m=miss, t=tagged,\n"
@@ -984,7 +984,7 @@ phelp_fetch (const struct arglist *adesc)
  * List the choices on subsequent lines.
  */
 static void
-phelp_walloc (const struct arglist *adesc)
+phelp_walloc (const D4ArgList *adesc)
 {
     phelp_char (adesc);
     printf ("\n %*s (a=always, n=never, f=nofetch)",
@@ -997,7 +997,7 @@ phelp_walloc (const struct arglist *adesc)
  * List the choices on subsequent lines.
  */
 static void
-phelp_wback (const struct arglist *adesc)
+phelp_wback (const D4ArgList *adesc)
 {
     phelp_char (adesc);
     printf ("\n %*s (a=always, n=never, f=nofetch)",
@@ -1012,7 +1012,7 @@ static void
 unspec (int lev, int idu, const char *name, void *var, const char *suggest)
 {
     int iduchar = idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd');
-    struct arglist *argl;
+    D4ArgList *argl;
 
     for (argl = args;  argl->var != var;  argl++)
         if (argl->optstring == NULL) {
@@ -1026,7 +1026,7 @@ unspec (int lev, int idu, const char *name, void *var, const char *suggest)
 
 
 /* Initialize argument table to specify acceptable arguments */
-struct arglist args[] = {
+D4ArgList args[] = {
     {
         "-help", 0, NULL, NULL,
         NULL,
@@ -1200,7 +1200,7 @@ int nargs = sizeof(args) / sizeof(args[0]);
 static int
 do1arg (const char *opt, const char *arg)
 {
-    struct arglist *adesc;
+    D4ArgList *adesc;
 
     for (adesc = args;  adesc->optstring != NULL;  adesc++) {
         int eaten = adesc->match (opt, adesc);
@@ -1231,7 +1231,7 @@ do1arg (const char *opt, const char *arg)
 void
 doargs (int argc, char **argv)
 {
-    struct arglist *adesc;
+    D4ArgList *adesc;
     char **v = argv + 1;
     int x;
 
@@ -1256,7 +1256,7 @@ doargs (int argc, char **argv)
 void
 summarize_caches (void)
 {
-    struct arglist *adesc;
+    D4ArgList *adesc;
 
     printf ("\n---Summary of options "
             "(-help option gives usage information).\n\n");
