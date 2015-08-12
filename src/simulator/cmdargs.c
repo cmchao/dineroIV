@@ -363,6 +363,7 @@ pmatch_1arg (const char *opt, const D4ArgList *adesc)
     return 2 * (strcmp (nextc, adesc->optstring) == 0);
 }
 
+static D4ArgList args[];   /** forward declaration */
 /**
  * @brief callback function for D4ArgList to
  *        Produce help message in response to -help
@@ -1039,7 +1040,7 @@ unspec (int lev, int idu, const char *name, void *var, const char *suggest)
 
 
 /* Initialize argument table to specify acceptable arguments */
-D4ArgList args[] = {
+static D4ArgList args[] = {
     {
         "-help", 0, NULL, NULL,
         NULL,

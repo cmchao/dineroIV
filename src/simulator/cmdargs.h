@@ -85,10 +85,11 @@ typedef struct {
     uint64_t flushcount;        /** flush cache every U reference */
     uint64_t maxcount;          /** stop simulation after U referennce */
     uint64_t stat_interval;     /** show statistics after ever U referce */
+
+    unsigned int level_blocksize[3][MAX_LEV];
 } D4Option;
 
 /* Some globals, defined in cmdargs.c */
-extern D4ArgList args[];	/* defined in cmdargs.c */
 extern int maxlevel;		/* largest cache level specified */
 
 extern D4Option g_d4opt;        /** global instance to keep optional value */
