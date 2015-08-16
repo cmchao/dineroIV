@@ -766,7 +766,7 @@ initialize_caches (D4Cache **icachep, D4Cache **dcachep)
 
     for (lev = g_d4opt.maxlevel - 1;  lev >= 0;  lev--) {
         for (idu = 0;  idu < 3;  idu++) {
-            if (level_size[idu][lev] != 0) {
+            if (g_d4opt.level_size[idu][lev] != 0) {
                 switch (idu) {
                 case 0:
                     cd = ci = c = d4new (ci);

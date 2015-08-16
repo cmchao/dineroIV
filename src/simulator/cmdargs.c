@@ -77,17 +77,17 @@
  * of the array is defined elsewhere.
  */
 /* keep value parsed from command argument string */
-unsigned int level_blocksize[3][MAX_LEV];
-unsigned int level_subblocksize[3][MAX_LEV];
-unsigned int level_size[3][MAX_LEV];
-unsigned int level_assoc[3][MAX_LEV];
-int level_doccc[3][MAX_LEV];
-int level_replacement[3][MAX_LEV];
-int level_fetch[3][MAX_LEV];
-int level_walloc[3][MAX_LEV];
-int level_wback[3][MAX_LEV];
-int level_prefetch_abortpercent[3][MAX_LEV];
-int level_prefetch_distance[3][MAX_LEV];
+static unsigned int level_blocksize[3][MAX_LEV];
+static unsigned int level_subblocksize[3][MAX_LEV];
+static unsigned int level_size[3][MAX_LEV];
+static unsigned int level_assoc[3][MAX_LEV];
+static int level_doccc[3][MAX_LEV];
+static int level_replacement[3][MAX_LEV];
+static int level_fetch[3][MAX_LEV];
+static int level_walloc[3][MAX_LEV];
+static int level_wback[3][MAX_LEV];
+static int level_prefetch_abortpercent[3][MAX_LEV];
+static int level_prefetch_distance[3][MAX_LEV];
 
 static int optstringmax;     /** the max length of string in help_* functions */
 
@@ -1264,6 +1264,9 @@ doargs (int argc, char **argv)
         v += x;
         argc -= x;
     }
+
+    /* copy static variable to global option */
+    memcpy(g_d4opt.level_size, level_size, sizeof(level_size));
 }
 
 /*

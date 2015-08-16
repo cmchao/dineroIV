@@ -81,12 +81,22 @@ typedef struct D4ArgList {
  *  this format
  */
 typedef struct {
+    /** feature trigger related counter */
     uint64_t skipcount;         /** skip initial U references */
     uint64_t flushcount;        /** flush cache every U reference */
     uint64_t maxcount;          /** stop simulation after U referennce */
     uint64_t stat_interval;     /** show statistics after ever U referce */
 
+    /** cache-related parameter */
     int maxlevel;               /** the higest level actually used */
+    unsigned int level_size[3][MAX_LEV]; /** The size of each cache is given by
+                                        * level_size[idu][level]
+                                        * where idu=0 for ucache,
+                                        *           1 for icache,
+                                        *           2 for dcache,
+                                        * and 0=closest to processor,
+                                        *     MAX_LEV-1 = closest to memory)
+                                        */
 } D4Option;
 
 /* Some globals, defined in cmdargs.c */
@@ -96,14 +106,6 @@ extern char *customname;	/* for -custom, name of executable */
 extern long on_trigger;		/* for -on-trigger */
 extern long off_trigger;	/* for -off-trigger */
 extern int stat_idcombine;	/* for -stat-idcombine */
-
-/*
- * The size of each cache is given by
- *	level_size[idu][level]
- * where idu=0 for ucache, 1 for icache, 2 for dcache,
- * and 0=closest to processor, MAX_LEV-1 = closest to memory)
- */
-extern unsigned int level_size[3][MAX_LEV];
 
 /*
  * Set argument-related things up after seeing all args
