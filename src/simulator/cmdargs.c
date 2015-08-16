@@ -76,7 +76,7 @@
  * For those options subject to customization, the customized version
  * of the array is defined elsewhere.
  */
-int maxlevel;	/* the highest level actually used */
+/* keep value parsed from command argument string */
 unsigned int level_blocksize[3][MAX_LEV];
 unsigned int level_subblocksize[3][MAX_LEV];
 unsigned int level_size[3][MAX_LEV];
@@ -187,8 +187,8 @@ level_idu (const char *opt, int *levelp, int *idup)
         break;
     }
     *levelp = level - 1;
-    if (level > maxlevel) {
-        maxlevel = level;
+    if (level > g_d4opt.maxlevel) {
+        g_d4opt.maxlevel = level;
     }
     return nextc;
 }
@@ -668,9 +668,9 @@ pcustom_0arg (const D4ArgList *adesc, FILE *hfile)
              adesc->customstring);
     for (i = 0;  i < 3;  i++) {
         fprintf (hfile, " { ");
-        for (j = 0;  j < maxlevel;  j++)
+        for (j = 0;  j < g_d4opt.maxlevel;  j++)
             fprintf (hfile, "%d%s ", (*var)[i][j],
-                     j < maxlevel - 1 ? "," : "");
+                     j < g_d4opt.maxlevel - 1 ? "," : "");
         fprintf (hfile, "}%s\n", i < 2 ? "," : "");
     }
     fprintf (hfile, "};\n");
@@ -692,9 +692,9 @@ pcustom_uint (const D4ArgList *adesc, FILE *hfile)
              adesc->customstring);
     for (i = 0;  i < 3;  i++) {
         fprintf (hfile, " { ");
-        for (j = 0;  j < maxlevel;  j++)
+        for (j = 0;  j < g_d4opt.maxlevel;  j++)
             fprintf (hfile, "%u%s ", (*var)[i][j],
-                     j < maxlevel - 1 ? "," : "");
+                     j < g_d4opt.maxlevel - 1 ? "," : "");
         fprintf (hfile, "}%s\n", i < 2 ? "," : "");
     }
     fprintf (hfile, "};\n");
@@ -716,9 +716,9 @@ pcustom_char (const D4ArgList *adesc, FILE *hfile)
              adesc->customstring);
     for (i = 0;  i < 3;  i++) {
         fprintf (hfile, " { ");
-        for (j = 0;  j < maxlevel;  j++)
+        for (j = 0;  j < g_d4opt.maxlevel;  j++)
             fprintf (hfile, "%d%s ", (*var)[i][j],
-                     j < maxlevel - 1 ? "," : "");
+                     j < g_d4opt.maxlevel - 1 ? "," : "");
         fprintf (hfile, "}%s\n", i < 2 ? "," : "");
     }
     fprintf (hfile, "};\n");
@@ -747,7 +747,7 @@ psummary_0arg (const D4ArgList *adesc, FILE *f)
     int (*var)[3][MAX_LEV] = adesc->var;
 
     for (idu = 0;  idu < 3;  idu++) {
-        for (lev = 0;  lev <= maxlevel;  lev++) {
+        for (lev = 0;  lev <= g_d4opt.maxlevel;  lev++) {
             if ((*var)[idu][lev] != 0)
                 fprintf (f, "-l%d-%c%s\n", lev + 1,
                          idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'),
@@ -779,7 +779,7 @@ psummary_uint (const D4ArgList *adesc, FILE *f)
     unsigned int (*var)[3][MAX_LEV] = adesc->var;
 
     for (idu = 0;  idu < 3;  idu++) {
-        for (lev = 0;  lev <= maxlevel;  lev++) {
+        for (lev = 0;  lev <= g_d4opt.maxlevel;  lev++) {
             if ((*var)[idu][lev] != 0) {
                 fprintf (f, "-l%d-%c%s %u\n", lev + 1,
                          idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'),
@@ -801,7 +801,7 @@ psummary_luint (const D4ArgList *adesc, FILE *f)
     unsigned int (*var)[3][MAX_LEV] = adesc->var;
 
     for (idu = 0;  idu < 3;  idu++) {
-        for (lev = 0;  lev <= maxlevel;  lev++) {
+        for (lev = 0;  lev <= g_d4opt.maxlevel;  lev++) {
             if ((*var)[idu][lev] != 0) {
                 fprintf (f, "-l%d-%c%s %u\n", lev + 1,
                          idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'),
@@ -834,7 +834,7 @@ psummary_char (const D4ArgList *adesc, FILE *f)
     int (*var)[3][MAX_LEV] = adesc->var;
 
     for (idu = 0;  idu < 3;  idu++) {
-        for (lev = 0;  lev <= maxlevel;  lev++) {
+        for (lev = 0;  lev <= g_d4opt.maxlevel;  lev++) {
             if ((*var)[idu][lev] != 0) {
                 fprintf (f, "-l%d-%c%s %c\n", lev + 1,
                          idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'),
@@ -1300,7 +1300,7 @@ verify_options()
      *	prefetch distance (default to 1)
      *	other defaults defined as DEFVAL_xxx
      */
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
             if (level_blocksize[idu][lev] != 0 && level_subblocksize[idu][lev] == 0) {
                 level_subblocksize[idu][lev] = level_blocksize[idu][lev];
@@ -1330,11 +1330,11 @@ verify_options()
     /*
      * check for missing required parameters
      */
-    if (maxlevel <= 0)
+    if (g_d4opt.maxlevel <= 0)
         shorthelp ("cache size and block size must be specified,\n"
                    "e.g.: -l1-isize 16k -l1-dsize 8192 "
                    "-l1-ibsize 32 -l1-dbsize 16\n");
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         int nerr = 0, nidu = 0;
         for (idu = 0;  idu < 3;  idu++) {
             int nparams = (level_blocksize[idu][lev] != 0) +
@@ -1367,7 +1367,7 @@ verify_options()
     verify_trace_format();	/* look for this in tracein.c */
 
     /* allowable replacement policies */
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
             if (level_replacement[idu][lev] != 0 &&
                     level_replacement[idu][lev] != 'l' &&	/* LRU */
@@ -1379,7 +1379,7 @@ verify_options()
     }
 
     /* allowable fetch policies and prefetch parameters */
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
             if (level_fetch[idu][lev] != 0 &&
                     level_fetch[idu][lev] != 'd' &&	/* demand fetch */
@@ -1409,7 +1409,7 @@ verify_options()
     }
 
     /* allowable walloc policies */
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         if (level_walloc[1][lev] != 0) {
             shorthelp ("level %d icache cannot have write allocate policy\n", lev + 1);
         }
@@ -1424,7 +1424,7 @@ verify_options()
     }
 
     /* allowable wback policies */
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         if (level_wback[1][lev] != 0) {
             shorthelp ("level %d icache cannot have write back policy\n", lev + 1);
         }
@@ -1439,7 +1439,7 @@ verify_options()
     }
 
     /* the sub-block size is limited by size specified in memory reference */
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
             D4MemRef x;
             /* put a 1 in MSB position; x.size is unsigned */
@@ -1452,7 +1452,7 @@ verify_options()
     }
 
     /* block size/sub-block size */
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
             D4StackNode *xp;
             if (level_blocksize[idu][lev] != 0 &&
@@ -1472,7 +1472,7 @@ verify_options()
 
     /* block and sub-block sizes must match for -stat-idcombine */
     if (stat_idcombine) {
-        for (lev = 0;  lev < maxlevel;  lev++) {
+        for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
             if (level_blocksize[1][lev] != level_blocksize[2][lev]) {
                 shorthelp ("level %d i & d cache block sizes must match for -stat-idcombine\n", lev + 1);
             }
@@ -1485,7 +1485,7 @@ verify_options()
     /*
      * Check for u and (i or d) at each level
      */
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         if (0 != (level_blocksize[0][lev]    |
                   level_subblocksize[0][lev] |
                   level_size[0][lev]         |
@@ -1509,7 +1509,7 @@ verify_options()
     }
 
     /* check consistency of sizes */
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {
             if (level_blocksize[idu][lev] != 0 &&
                     level_blocksize[idu][lev] * level_assoc[idu][lev] > level_size[idu][lev])
@@ -1519,7 +1519,7 @@ verify_options()
     }
 
     /* check for no u->id split */
-    for (lev = 1;  lev < maxlevel;  lev++) {
+    for (lev = 1;  lev < g_d4opt.maxlevel;  lev++) {
         if (level_blocksize[0][lev - 1] != 0 &&
                 level_blocksize[0][lev] == 0) {
             shorthelp ("level %d cache is unified, level %d is not\n", lev, lev + 1);

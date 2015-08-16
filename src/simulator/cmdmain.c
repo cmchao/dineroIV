@@ -85,7 +85,7 @@ dostats()
     int lev;
     int i;
 
-    for (lev = 0;  lev < maxlevel;  lev++) {
+    for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         if (stat_idcombine && levcache[0][lev] == NULL) {
             D4Cache cc;	/* a bogus cache structure */
             char ccname[30];
@@ -764,7 +764,7 @@ initialize_caches (D4Cache **icachep, D4Cache **dcachep)
     }
     ci->name = memname;
 
-    for (lev = maxlevel - 1;  lev >= 0;  lev--) {
+    for (lev = g_d4opt.maxlevel - 1;  lev >= 0;  lev--) {
         for (idu = 0;  idu < 3;  idu++) {
             if (level_size[idu][lev] != 0) {
                 switch (idu) {
