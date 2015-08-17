@@ -42,11 +42,11 @@
  *
  */
 
-#include <stddef.h>
-#include <stdlib.h>
+#include <assert.h>
 #include <limits.h>
 #include <stdio.h>
-#include <assert.h>
+#include <stdlib.h>
+
 #include "d4.h"
 
 
