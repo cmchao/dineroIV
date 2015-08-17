@@ -49,17 +49,9 @@
  *
  */
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <limits.h>
 #include <stdio.h>
-#include <errno.h>
-#include <math.h>
-#include <ctype.h>
-#include <string.h>
-#include <sys/stat.h>
+#include <stdlib.h>
+
 #include "d4.h"
 #include "cmdd4.h"
 #include "cmdargs.h"
