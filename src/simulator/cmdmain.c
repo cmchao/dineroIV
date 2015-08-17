@@ -67,7 +67,6 @@
 
 
 /* some global variables */
-const char *progname;		/* for error messages */
 D4Cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
 D4Cache *mem;				/* which cache represents simulated memory? */
 
@@ -713,7 +712,7 @@ next_trace_item()
                 r = input_function();
                 if (r.accesstype == D4TRACE_END) {
                     fprintf (stderr, "%s warning: input ended "
-                             "before -skipcount satisfied\n", progname);
+                             "before -skipcount satisfied\n", g_d4opt.progname);
                     return r;
                 }
             } while ((tskipcount -= 1) > 0);
@@ -724,9 +723,10 @@ next_trace_item()
         if (r.accesstype == D4TRACE_END) {
             if ((g_d4opt.on_trigger != 0 || g_d4opt.off_trigger != 0) && !hastoggled)
                 fprintf (stderr, "%s warning: trace discard "
-                         "trigger addresses were not matched\n", progname);
+                         "trigger addresses were not matched\n", g_d4opt.progname);
             else if (discard == 0 && g_d4opt.off_trigger != 0) {
-                fprintf (stderr, "%s warning: tail end of trace not discarded\n", progname);
+                fprintf (stderr, "%s warning: tail end of trace not discarded\n",
+                         g_d4opt.progname);
             }
             return r;
         }
@@ -805,8 +805,6 @@ main (int argc, char **argv)
     D4Cache *ci, *cd;
     uint64_t tmaxcount = 0, tintcount;
     uint64_t flcount;
-
-    progname = basename(argv[0]);
 
     doargs (argc, argv);
     verify_options();

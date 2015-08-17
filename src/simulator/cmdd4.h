@@ -50,7 +50,6 @@
 
 #include <stdlib.h>
 
-extern const char *progname;	/* for error messages */
 /**
  * @brief print error message and abort
  * @param[in] fmt format string
@@ -58,7 +57,7 @@ extern const char *progname;	/* for error messages */
  */
 #define die(fmt, ...) do { \
     fflush(stdout); \
-    fprintf(stderr, "%s: ", progname); \
+    fprintf(stderr, "%s: ", g_d4opt.progname); \
     fprintf(stderr, fmt, ##__VA_ARGS__); \
     exit(1); \
 } while(0);
@@ -70,10 +69,10 @@ extern const char *progname;	/* for error messages */
  */
 #define shorthelp(fmt, ...) do { \
     fflush(stdout); \
-    fprintf(stderr, "%s: ", progname); \
+    fprintf(stderr, "%s: ", g_d4opt.progname); \
     fprintf(stderr, fmt, ##__VA_ARGS__); \
     fprintf(stderr, "Consult Dinero IV documentation\n" \
-             "or run \"%s -help\" for usage information.\n", progname); \
+             "or run \"%s -help\" for usage information.\n", g_d4opt.progname); \
     exit(1); \
 } while(0);
 

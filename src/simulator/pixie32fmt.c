@@ -179,7 +179,7 @@ again:
     switch (reftype) {
     default:
         fprintf (stderr,
-                 "%s: unknown pixie32 reftype=%u\n", progname, reftype);
+                 "%s: unknown pixie32 reftype=%u\n", g_d4opt.progname, reftype);
         /* fall through */
     case SYSCALL:
     case LW:

@@ -51,8 +51,8 @@
  * The bulk of the new format-specific code should go into a new source file.
  */
 
-#include <stddef.h>
 #include <stdio.h>
+
 #include "d4.h"
 #include "cmdd4.h"
 #include "tracein.h"

@@ -372,7 +372,7 @@ val_help (const char *opt, const char *arg, const D4ArgList *adesc)
 {
     const D4ArgList *iter;
 
-    printf ("Usage: %s [options]\nValid options:\n", progname);
+    printf ("Usage: %s [options]\nValid options:\n", g_d4opt.progname);
 
     for (iter = args;  iter != NULL;  iter++) {
         if (iter->help != NULL) {
@@ -1236,7 +1236,7 @@ do1arg (const char *opt, const char *arg)
     if (opt[0] == '-' && strchr ("uidbSarfpPwAQzZ", opt[1]) != NULL)
         shorthelp ("\"%s\" option not recognized for Dinero IV;\n"
                    "try \"%s -dineroIII\" for Dinero III --> IV option correspondence.\n",
-                   opt, progname);
+                   opt, g_d4opt.progname);
 
     shorthelp ("\"%s\" option not recognized.\n", opt);
     return 0;	/* can't really get here, but some compilers get upset if we don't have a return value */
@@ -1256,8 +1256,9 @@ doargs (int argc, char **argv)
     /* set default value */
     memset(&g_d4opt, 0, sizeof(D4Option));
     g_d4opt.informat = DEFVAL_informat;
+    g_d4opt.progname = basename(argv[0]);
 
-
+    /* handle each value */
     for (adesc = args;  adesc->optstring != NULL;  adesc++) {
         if (optstringmax < (int)strlen(adesc->optstring) + adesc->pad) {
             optstringmax = strlen(adesc->optstring) + adesc->pad;

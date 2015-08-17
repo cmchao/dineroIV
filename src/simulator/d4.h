@@ -318,6 +318,7 @@ typedef struct {
     uint64_t off_trigger;       /** simulation stop after this address */
     bool stat_idcombine;        /** combine I$D cache stats */
     int informat;               /** input trace format */
+    const char *progname;       /** the program name */
 } D4Option;
 
 

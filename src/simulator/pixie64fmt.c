@@ -213,7 +213,7 @@ again:
     case REF_UNDEF:	/* should not happen */
     default:
         fprintf (stderr,
-                 "%s: unknown pixie64 reftype=%u\n", progname, reftype);
+                 "%s: unknown pixie64 reftype=%u\n", g_d4opt.progname, reftype);
         goto again;
 
     case DSO_OPEN:
