@@ -112,7 +112,6 @@ D4Option g_d4opt;            /** the global Option singleton */
 #define  DEFSTR_informat "D"
 
 int informat = DEFVAL_informat;
-int stat_idcombine;
 
 /*
  * Produce a help line for a possible command line option with
@@ -514,13 +513,17 @@ val_helpd3 (const char *opt, const char *arg, const D4ArgList *adesc)
 }
 
 
-/*
- * Handle an option with no args (i.e., a boolean option).
+/**
+ * @brief Handle an option with no args (i.e., a boolean option).
+ *
+ * @param[in] opt option name
+ * @param[in] arg option value(no use)
+ * @param[out] adesc get return value pointer
  */
 static void
 val_0arg (const char *opt, const char *arg, const D4ArgList *adesc)
 {
-    *(int *) adesc->var = 1;
+    *(bool *) adesc->var = true;
 }
 
 
@@ -1199,7 +1202,7 @@ static D4ArgList args[] = {
         summary_addr, help_addr
     },
     {
-        "-stat-idcombine", 2, &stat_idcombine, NULL,
+        "-stat-idcombine", 2, &g_d4opt.stat_idcombine, NULL,
         NULL,
         "Combine I&D cache stats",
         match_0arg, val_0arg, NULL,

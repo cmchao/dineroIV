@@ -53,6 +53,8 @@
  * summary info, and option customization.
  */
 
+#include <stdbool.h>
+
 #ifndef MAX_LEV
 #define MAX_LEV	5		/* allow -ln prefix no larger than this */
 #endif
@@ -99,12 +101,11 @@ typedef struct {
                                         */
     uint64_t on_trigger;        /** simulation start from this address */
     uint64_t off_trigger;       /** simulation stop after this address */
+    bool stat_idcombine;        /** combine I$D cache stats */
 } D4Option;
 
 /* Some globals, defined in cmdargs.c */
 extern D4Option g_d4opt;        /** global instance to keep optional value */
-
-extern int stat_idcombine;	/* for -stat-idcombine */
 
 /*
  * Set argument-related things up after seeing all args
