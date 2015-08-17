@@ -704,7 +704,7 @@ next_trace_item()
 
     if (once) {
         once = 0;
-        if (on_trigger != 0) {
+        if (g_d4opt.on_trigger != 0) {
             discard = 1;    /* initially discard until trigger address seen */
         }
         if (g_d4opt.skipcount > 0) {
@@ -722,17 +722,17 @@ next_trace_item()
     while (1) {
         r = input_function();
         if (r.accesstype == D4TRACE_END) {
-            if ((on_trigger != 0 || off_trigger != 0) && !hastoggled)
+            if ((g_d4opt.on_trigger != 0 || g_d4opt.off_trigger != 0) && !hastoggled)
                 fprintf (stderr, "%s warning: trace discard "
                          "trigger addresses were not matched\n", progname);
-            else if (discard == 0 && off_trigger != 0) {
+            else if (discard == 0 && g_d4opt.off_trigger != 0) {
                 fprintf (stderr, "%s warning: tail end of trace not discarded\n", progname);
             }
             return r;
         }
         if (r.address != 0) {	/* valid triggers must be != 0 */
-            if ((discard != 0 && on_trigger == r.address) ||
-                    (discard == 0 && off_trigger == r.address)) {
+            if ((discard != 0 && g_d4opt.on_trigger == r.address) ||
+                    (discard == 0 && g_d4opt.off_trigger == r.address)) {
                 discard ^= 1;	/* toggle */
                 hastoggled = 1;
                 continue;	/* discard the trigger itself */

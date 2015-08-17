@@ -97,13 +97,13 @@ typedef struct {
                                         * and 0=closest to processor,
                                         *     MAX_LEV-1 = closest to memory)
                                         */
+    uint64_t on_trigger;        /** simulation start from this address */
+    uint64_t off_trigger;       /** simulation stop after this address */
 } D4Option;
 
 /* Some globals, defined in cmdargs.c */
 extern D4Option g_d4opt;        /** global instance to keep optional value */
 
-extern long on_trigger;		/* for -on-trigger */
-extern long off_trigger;	/* for -off-trigger */
 extern int stat_idcombine;	/* for -stat-idcombine */
 
 /*

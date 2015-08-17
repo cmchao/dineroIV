@@ -112,8 +112,6 @@ D4Option g_d4opt;            /** the global Option singleton */
 #define  DEFSTR_informat "D"
 
 int informat = DEFVAL_informat;
-long on_trigger;
-long off_trigger;
 int stat_idcombine;
 
 /*
@@ -635,17 +633,22 @@ pval_char (const char *opt, const char *arg, const D4ArgList *adesc)
 }
 
 
-/*
- * Handle an option with a hexadecimal address as arg.
+/**
+ * @brief Handle an option with a hexadecimal address as arg.
+ *
+ * @param[in] opt option name
+ * @param[in] arg optiona value
+ * @param[out] adesc get return value pointer
+ *
  */
 static void
 val_addr (const char *opt, const char *arg, const D4ArgList *adesc)
 {
-    long *var = adesc->var;
+    uint64_t *var = adesc->var;
     long argl;
     char *nextc;
 
-    argl = strtoul (arg, &nextc, 16);
+    argl = strtoull (arg, &nextc, 16);
     if (*nextc != 0) {
         shorthelp ("bad option: %s %s\n", opt, arg);
     }
@@ -1182,14 +1185,14 @@ static D4ArgList args[] = {
         summary_char, help_informat
     },
     {
-        "-on-trigger", 2, &on_trigger, NULL,
+        "-on-trigger", 2, &g_d4opt.on_trigger, NULL,
         NULL,
         "Trigger address to start simulation",
         match_1arg, val_addr, NULL,
         summary_addr, help_addr
     },
     {
-        "-off-trigger", 2, &off_trigger, NULL,
+        "-off-trigger", 2, &g_d4opt.off_trigger, NULL,
         NULL,
         "Trigger address to stop simulation",
         match_1arg, val_addr, NULL,
