@@ -111,8 +111,6 @@ D4Option g_d4opt;            /** the global Option singleton */
 #define DEFVAL_informat 'D'
 #define  DEFSTR_informat "D"
 
-int informat = DEFVAL_informat;
-
 /*
  * Produce a help line for a possible command line option with
  * a single char value.
@@ -1181,7 +1179,7 @@ static D4ArgList args[] = {
         summary_uintd, help_scale_uintd
     },
     {
-        "-informat", 2, &informat, DEFSTR_informat,
+        "-informat", 2, &g_d4opt.informat, DEFSTR_informat,
         NULL,
         "Input trace format",
         match_1arg, val_char, NULL,
@@ -1255,7 +1253,10 @@ doargs (int argc, char **argv)
     char **v = argv + 1;
     int x;
 
+    /* set default value */
     memset(&g_d4opt, 0, sizeof(D4Option));
+    g_d4opt.informat = DEFVAL_informat;
+
 
     for (adesc = args;  adesc->optstring != NULL;  adesc++) {
         if (optstringmax < (int)strlen(adesc->optstring) + adesc->pad) {
@@ -1480,7 +1481,7 @@ verify_options()
     }
 
     /* block and sub-block sizes must match for -stat-idcombine */
-    if (stat_idcombine) {
+    if (g_d4opt.stat_idcombine) {
         for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
             if (level_blocksize[1][lev] != level_blocksize[2][lev]) {
                 shorthelp ("level %d i & d cache block sizes must match for -stat-idcombine\n", lev + 1);

@@ -66,9 +66,9 @@ D4MemRef (*input_function) (void);
 void
 verify_trace_format()
 {
-    switch (informat) {
+    switch (g_d4opt.informat) {
     default:
-        shorthelp ("unknown input format '%c'\n", informat);
+        shorthelp ("unknown input format '%c'\n", g_d4opt.informat);
     case 0:
         shorthelp ("no input format specified\n");
     case 'D':				/* extended "din" format */

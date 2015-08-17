@@ -55,10 +55,6 @@
 
 #include <stdbool.h>
 
-#ifndef MAX_LEV
-#define MAX_LEV	5		/* allow -ln prefix no larger than this */
-#endif
-
 typedef struct D4ArgList {
     const char *optstring;	  /* string to match, without -ln-idu if applicable */
     int pad;		  /* how many extra chars will help print? */
@@ -78,34 +74,6 @@ typedef struct D4ArgList {
     /* help prints line for -help */
     void (*help)(const struct D4ArgList *);
 } D4ArgList;
-
-/** all option from command line are converted and stored into
- *  this format
- */
-typedef struct {
-    /** feature trigger related counter */
-    uint64_t skipcount;         /** skip initial U references */
-    uint64_t flushcount;        /** flush cache every U reference */
-    uint64_t maxcount;          /** stop simulation after U referennce */
-    uint64_t stat_interval;     /** show statistics after ever U referce */
-
-    /** cache-related parameter */
-    int maxlevel;               /** the higest level actually used */
-    unsigned int level_size[3][MAX_LEV]; /** The size of each cache is given by
-                                        * level_size[idu][level]
-                                        * where idu=0 for ucache,
-                                        *           1 for icache,
-                                        *           2 for dcache,
-                                        * and 0=closest to processor,
-                                        *     MAX_LEV-1 = closest to memory)
-                                        */
-    uint64_t on_trigger;        /** simulation start from this address */
-    uint64_t off_trigger;       /** simulation stop after this address */
-    bool stat_idcombine;        /** combine I$D cache stats */
-} D4Option;
-
-/* Some globals, defined in cmdargs.c */
-extern D4Option g_d4opt;        /** global instance to keep optional value */
 
 /*
  * Set argument-related things up after seeing all args
