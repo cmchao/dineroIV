@@ -102,7 +102,6 @@ typedef struct {
 /* Some globals, defined in cmdargs.c */
 extern D4Option g_d4opt;        /** global instance to keep optional value */
 
-extern char *customname;	/* for -custom, name of executable */
 extern long on_trigger;		/* for -on-trigger */
 extern long off_trigger;	/* for -off-trigger */
 extern int stat_idcombine;	/* for -stat-idcombine */
