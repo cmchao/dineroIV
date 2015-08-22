@@ -136,10 +136,6 @@ main (int argc, char **argv)
     verify_options();
     initialize_caches (levcache, &ci, &cd, &mem);
 
-    if (cd == NULL) {
-        cd = ci;    /* for unified L1 cache */
-    }
-
     printf ("---Dinero IV cache simulator, version %s\n", D4VERSION);
     printf ("---Written by Jan Edler and Mark D. Hill\n");
     printf ("---Copyright (C) 1997 NEC Research Institute, Inc. and Mark D. Hill.\n");

@@ -1710,4 +1710,8 @@ initialize_caches (D4Cache *levcache[3][MAX_LEV],
     }
     *icachep = ci;
     *dcachep = cd;
+
+    if (*dcachep == NULL) {
+        *dcachep = *icachep;    /* for unified L1 cache */
+    }
 }
