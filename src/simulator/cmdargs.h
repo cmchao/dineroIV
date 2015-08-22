@@ -82,6 +82,10 @@ typedef struct D4ArgList {
  */
 void doargs (int argc, char **argv);
 void verify_options (void);
+
+/**
+ * Print info about how the caches are set up and version information
+ */
 void summarize_caches (void);
 
 /*

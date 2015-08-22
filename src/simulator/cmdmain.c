@@ -135,14 +135,6 @@ main (int argc, char **argv)
     doargs (argc, argv);
     verify_options();
     initialize_caches (levcache, &ci, &cd, &mem);
-
-    printf ("---Dinero IV cache simulator, version %s\n", D4VERSION);
-    printf ("---Written by Jan Edler and Mark D. Hill\n");
-    printf ("---Copyright (C) 1997 NEC Research Institute, Inc. and Mark D. Hill.\n");
-    printf ("---All rights reserved.\n");
-    printf ("---Copyright (C) 1985, 1989 Mark D. Hill.  All rights reserved.\n");
-    printf ("---See -copyright option for details\n");
-
     summarize_caches();
 
     printf ("\n---Simulation begins.\n");

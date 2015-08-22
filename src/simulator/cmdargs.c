@@ -1276,21 +1276,26 @@ doargs (int argc, char **argv)
     memcpy(g_d4opt.level_size, level_size, sizeof(level_size));
 }
 
-/*
- * @brief Print info about how the caches are set up
- */
 void
 summarize_caches (void)
 {
     D4ArgList *adesc;
 
+    printf ("---Dinero IV cache simulator, version %s\n", D4VERSION);
+    printf ("---Written by Jan Edler and Mark D. Hill\n");
+    printf ("---Copyright (C) 1997 NEC Research Institute, Inc. and Mark D. Hill.\n");
+    printf ("---All rights reserved.\n");
+    printf ("---Copyright (C) 1985, 1989 Mark D. Hill.  All rights reserved.\n");
+    printf ("---See -copyright option for details\n");
+
     printf ("\n---Summary of options "
             "(-help option gives usage information).\n\n");
 
-    for (adesc = args;  adesc->optstring != NULL;  adesc++)
+    for (adesc = args;  adesc->optstring != NULL;  adesc++) {
         if (adesc->sumf != (void (*)())NULL) {
             adesc->sumf (adesc, stdout);
         }
+    }
 }
 
 
