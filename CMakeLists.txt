@@ -15,6 +15,7 @@ set(SRC_DINEROIV src/simulator/binaryfmt.c
                  src/simulator/pixie32fmt.c
                  src/simulator/pixie64fmt.c
                  src/simulator/ref.c
+                 src/simulator/result.c
                  src/simulator/tracein.c
                  src/simulator/xdinfmt.c)
 
