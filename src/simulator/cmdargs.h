@@ -42,6 +42,8 @@
  *
  */
 
+#ifndef CMDARGS_H
+#define CMDARGS_H
 
 /*
  * This structure describes a command line arg for Dinero IV.
@@ -92,3 +94,4 @@ void summarize_caches (void);
  */
 void initialize_caches(D4Cache *lev[3][MAX_LEV],
                        D4Cache **icachep, D4Cache **dcachep, D4Cache **mem);
+#endif

@@ -42,6 +42,8 @@
  *
  */
 
+#ifndef CMDD4_H
+#define CMDD4_H
 
 /*
  * Just some miscellaneous stuff here, not specific to argument
@@ -76,4 +78,4 @@
     exit(1); \
 } while(0);
 
-
+#endif

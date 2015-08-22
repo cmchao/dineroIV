@@ -42,6 +42,8 @@
  *
  */
 
+#ifndef TRACEIN_H
+#define TRACEIN_H
 
 /* One of the following functions is called to generate each trace record */
 extern D4MemRef tracein_xdin (void);
@@ -64,3 +66,4 @@ extern void verify_trace_format (void);
 
 /* list valid choices for -informat */
 extern void help_trace_format (int indent);
+#endif

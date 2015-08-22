@@ -41,6 +41,9 @@
  * TO USE THE SOFTWARE.
  *
  */
+#ifndef D4_H
+#define D4_H
+
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -411,3 +414,5 @@ extern void d4_dopending (D4Cache *, D4PendStack *);
 extern void d4_unhash (D4Cache *c, int stacknum, D4StackNode *);
 extern D4StackNode *d4_find (D4Cache *, int stacknum, d4addr blockaddr);
 extern void d4_wbblock (D4Cache *, D4StackNode *, const int);
+
+#endif
