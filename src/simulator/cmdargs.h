@@ -81,5 +81,14 @@ typedef struct D4ArgList {
 void doargs (int argc, char **argv);
 void verify_options (void);
 void summarize_caches (void);
-extern void initialize_caches (D4Cache **icachep, D4Cache **dcachep);
-extern void init_1cache (D4Cache *, int, int);
+
+/*
+ * Called to initialize all caches based on args
+ * Die with an error message if there are serious problems.
+ * @param[out] levcache array to store each level cache
+ * @param[out] icachep pointer to top level instruction cache hierarchy
+ * @param[out] dcachep pointer to top level data caceh hierarchy
+ * @param[mem] mem pointer to mem cache hierarchy
+ */
+void initialize_caches(D4Cache *lev[3][MAX_LEV],
+                       D4Cache **icachep, D4Cache **dcachep, D4Cache **mem);

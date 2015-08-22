@@ -1556,7 +1556,7 @@ clog2 (unsigned int x)
  * Initialize one cache based on args
  * Die with an error message if there are serious problems.
  */
-void
+static void
 init_1cache (D4Cache *c, int lev, int idu)
 {
     c->name = malloc (30);
@@ -1664,4 +1664,50 @@ init_1cache (D4Cache *c, int lev, int idu)
 
     c->prefetch_distance = level_prefetch_distance[idu][lev] * level_subblocksize[idu][lev];
     c->prefetch_abortpercent = level_prefetch_abortpercent[idu][lev];
+}
+
+void
+initialize_caches (D4Cache *levcache[3][MAX_LEV],
+                   D4Cache **icachep, D4Cache **dcachep, D4Cache **mem)
+{
+    static char memname[] = "memory";
+    int i, lev, idu;
+    D4Cache	*c = NULL,	/* avoid `may be used uninitialized' warning in gcc */
+             *ci,
+             *cd;
+
+    *mem = cd = ci = d4new(NULL);
+    if (ci == NULL) {
+        die ("cannot create simulated memory\n");
+    }
+    ci->name = memname;
+
+    for (lev = g_d4opt.maxlevel - 1;  lev >= 0;  lev--) {
+        for (idu = 0;  idu < 3;  idu++) {
+            if (g_d4opt.level_size[idu][lev] != 0) {
+                switch (idu) {
+                case 0:
+                    cd = ci = c = d4new (ci);
+                    break;	/* u */
+                case 1:
+                    ci = c = d4new (ci);
+                    break;	/* i */
+                case 2:
+                    cd = c = d4new (cd);
+                    break;	/* d */
+                }
+                if (c == NULL)
+                    die ("cannot create level %d %ccache\n",
+                         lev + 1, idu == 0 ? 'u' : (idu == 1 ? 'i' : 'd'));
+                init_1cache (c, lev, idu);
+                levcache[idu][lev] = c;
+            }
+        }
+    }
+    i = d4setup();
+    if (i != 0) {
+        die ("cannot complete cache initializations; d4setup = %d\n", i);
+    }
+    *icachep = ci;
+    *dcachep = cd;
 }
