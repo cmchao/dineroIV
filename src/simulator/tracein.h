@@ -152,7 +152,19 @@ D4MemRef tracein_pixie32 (void);
  */
 D4MemRef tracein_pixie64 (void);
 
-extern D4MemRef tracein_binary (void);
+/**
+ * This format is pretty similar to the traditional Dinero "din" format,
+ * but it supplies the size as well as address and access type, and
+ * requires no conversion from ascii strings on input.
+ * Each record is 8 bytes:
+ *      struct {
+ *         uint32_t address;  //little endian
+ *         uint16_t size;     //little endian g an address,
+ *         uint8_t  type;
+ *         uint8_t  padding;
+ *      }
+ */
+D4MemRef tracein_binary (void);
 
 /* A pointer to one of the above functions */
 extern D4MemRef (*input_function) (void);

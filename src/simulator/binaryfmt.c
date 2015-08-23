@@ -42,24 +42,16 @@
  *
  */
 
-#include <stddef.h>
+#include <errno.h>
 #include <limits.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
-#include <errno.h>
+#include <unistd.h>
+
 #include "d4.h"
 #include "cmdd4.h"
 #include "tracein.h"
 
-
-/*
- * This format is pretty similar to the traditional Dinero "din" format,
- * but it supplies the size as well as address and access type, and
- * requires no conversion from ascii strings on input.
- * Each record is 8 bytes: a little-endian 4-byte-int, containing an address,
- * followed by a 2-byte little-endian size, a 1-byte access type, and a byte of padding.
- */
 
 #define RECORD_SIZE 8
 
