@@ -42,26 +42,12 @@
  *
  */
 
-#include <stddef.h>
 #include <stdio.h>
 #include <ctype.h>
+
 #include "d4.h"
 #include "cmdd4.h"
 #include "tracein.h"
-
-
-/*
- * Read in ASCII from standard input
- * Expect ONE label and addr in hex per line.
- * Rest of data input line is ignored so it may
- * be used for comments.
- *
- * This version is a bit more forgiving than the
- * FAST_BUT_DANGEROUS_INPUT version in Dinero III.
- *
- * WARNING: If more than one tuple is put on a line,
- * all but the first tuple will be ignored.
- */
 
 D4MemRef
 tracein_din()

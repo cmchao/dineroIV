@@ -51,28 +51,6 @@
 #include "tracein.h"
 
 
-/**
- * Read in ASCII from standard input
- * Expect 3 significant fields per line:
- *    +--------------+----------+-------+
- *    |  access type |  address |  size |
- *    +--------------+----------+-------+
- * The rest of the data input line is ignored so it may be used for comments.
- *
- * Accesstype
- *	  r  read
- *	  w  write
- *	  i  instruction fetch
- *	  m  miscellaneous (like a read but won't generate prefetch)
- *	  c  copyback (no invalidate implied)
- *	  v  invalidate (no copyback implied)
- * Address
- *    'A' hex address format
- *
- * Size
- *    'A' hex address format
- */
-
 D4MemRef
 tracein_xdin()
 {

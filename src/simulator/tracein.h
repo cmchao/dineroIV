@@ -45,9 +45,58 @@
 #ifndef TRACEIN_H
 #define TRACEIN_H
 
-/* One of the following functions is called to generate each trace record */
-extern D4MemRef tracein_xdin (void);
-extern D4MemRef tracein_din (void);
+/**
+ * Read in ASCII from standard input
+ * Expect 3 significant fields per line:
+ *    +--------------+----------+-------+
+ *    |  access type |  address |  size |
+ *    +--------------+----------+-------+
+ * The rest of the data input line is ignored so it may be used for comments.
+ *
+ * Accesstype
+ *	  r  read
+ *	  w  write
+ *	  i  instruction fetch
+ *	  m  miscellaneous (like a read but won't generate prefetch)
+ *	  c  copyback (no invalidate implied)
+ *	  v  invalidate (no copyback implied)
+ * Address
+ *    'A' hex address format
+ *
+ * Size
+ *    'A' hex address format
+ */
+D4MemRef tracein_xdin (void);
+
+/**
+ * Read in ASCII from standard input
+ * Expect 2 significant fields per line:
+ *    +---------+----------+
+ *    |  label  |  address |
+ *    +---------+----------+
+ * The rest of the data input line is ignored so it may be used for comments.
+ * This version is a bit more forgiving than the FAST_BUT_DANGEROUS_INPUT
+ * version in Dinero III.
+ *
+ * Accesstype
+ *	  r  read
+ *	  w  write
+ *	  i  instruction fetch
+ *	  m  miscellaneous (like a read but won't generate prefetch)
+ *	  c  copyback (no invalidate implied)
+ *	  v  invalidate (no copyback implied)
+ * Address
+ *    'A' hex address format
+ *
+ * Size
+ *    'A' hex address format
+ *
+ *
+ * @warning If more than one tuple is put on a line, all but the first
+ *          tuple will be ignored.
+ */
+D4MemRef tracein_din (void);
+
 extern D4MemRef tracein_pixie32 (void);
 extern D4MemRef tracein_pixie64 (void);
 extern D4MemRef tracein_binary (void);
