@@ -58,26 +58,26 @@
 #include <stdbool.h>
 
 typedef struct D4ArgList {
-    const char *optstring;	  /* string to match, without -ln-idu if applicable */
-    int pad;		  /* how many extra chars will help print? */
-    void *var;		  /* scalar variable or array to modify */
-    const char *defstr;		  /* default value, as a string */
-    const char *customstring; /* arg to use for custom version */
-    const char *helpstring;	  /* string for help line */
+    const char *optstring;	  /** string to match, without -ln-idu if applicable */
+    int pad;		          /** how many extra chars will help print? */
+    void *var;		          /** scalar variable or array to modify */
+    const char *defstr;		  /** default value, as a string */
+    const char *customstring; /** arg to use for custom version */
+    const char *helpstring;	  /** string for help line */
 
-    /* function to recognize arg on command line */
+    /** function to recognize arg on command line */
     int (*match)(const char *opt, const struct D4ArgList *);
-    /* valf is function to set value */
+    /** valf is function to set value */
     void (*valf)(const char *opt, const char *arg, const struct D4ArgList *);
-    /* customf produces definitions for custom version */
+    /** customf produces definitions for custom version */
     void (*customf)(const struct D4ArgList *, FILE *);
-    /* sumf prints summary line */
+    /** sumf prints summary line */
     void (*sumf)(const struct D4ArgList *, FILE *);
-    /* help prints line for -help */
+    /*( help prints line for -help */
     void (*help)(const struct D4ArgList *);
 } D4ArgList;
 
-/*
+/**
  * Set argument-related things up after seeing all args
  */
 void doargs (int argc, char **argv);
@@ -88,7 +88,7 @@ void verify_options (void);
  */
 void summarize_caches (void);
 
-/*
+/**
  * Called to initialize all caches based on args
  * Die with an error message if there are serious problems.
  * @param[out] levcache array to store each level cache
