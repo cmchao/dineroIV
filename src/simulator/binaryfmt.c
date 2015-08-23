@@ -46,7 +46,6 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "d4.h"
 #include "cmdd4.h"
@@ -75,7 +74,7 @@ tracein_binary()
         } else {
             inptr = 0;
         }
-        nread = read (0, &inbuf[inptr], sizeof(inbuf) - inptr);
+        nread = fread (&inbuf[inptr], sizeof(inbuf[0]), sizeof(inbuf) - inptr, stdin);
         if (nread < 0) {
             die ("binary input error: %s\n", strerror (errno));
         }

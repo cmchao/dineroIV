@@ -47,7 +47,6 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "d4.h"
 #include "cmdd4.h"
@@ -135,7 +134,7 @@ tracein_pixie64()
     }
 again:
     if (inptr == NULL) {    /* need to fill inbuf */
-        int nread = read (0, inbuf, sizeof inbuf);
+        int nread = fread (inbuf, sizeof(inbuf[0]), sizeof(inbuf), stdin);
         if (nread < 0) {
             die ("pixie64 input error: %s\n", strerror (errno));
         }
