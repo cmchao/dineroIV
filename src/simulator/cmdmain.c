@@ -62,15 +62,11 @@
 /* some global variables */
 static D4Cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
 
-/* private prototypes for this file */
-extern D4MemRef next_trace_item (void);
-
-
 /*
  * Called to produce each address trace record
  */
-D4MemRef
-next_trace_item()
+static D4MemRef
+next_trace_item(void)
 {
     D4MemRef r;
     static int once = 1;
