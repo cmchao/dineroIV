@@ -42,13 +42,13 @@
  *
  */
 
-#include <stddef.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
 #include <assert.h>
+#include <errno.h>
 #include <limits.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "d4.h"
 #include "cmdd4.h"
 #include "tracein.h"
@@ -56,72 +56,45 @@
 
 /*
  * Acknowledgements:
- * Mark Hill (markhill@cs.wisc.edu) wrote and documented the
- * din input format for dineroIII
- * Mike Smith (smith@eecs.harvard.edu) documented pixie,
- * including the trace format.
- * Mike Uhler (uhler@gmu.mti.sgi.com) and
- * Marty Itzkowitz (martyi@nubbins.engr.sgi.com)
- * provided updated information about the pixie trace output formats.
+ *     Mark Hill (markhill@cs.wisc.edu)
+ *          wrote and documented the * din input format for dineroIII
+ *     Mike Smith (smith@eecs.harvard.edu)
+ *          documented pixie, including the trace format.
+ *     Mike Uhler (uhler@gmu.mti.sgi.com)
+ *     Marty Itzkowitz (martyi@nubbins.engr.sgi.com)
+ *          provided updated information about the pixie trace output formats.
  */
 
+#define LW                   0    /* load word */
+#define LD                   1    /* load double */
+#define SW                   2    /* store word */
+#define SD                   3    /* store double */
+#define SB                   4    /* store byte */
+#define SH                   5    /* store half-word */
+#define SWR                  6    /* store word right */
+#define SWL                  7    /* store word left */
+#define LWC1                 8    /* load word coprocessor 1 */
+#define LDC1                 9    /* load double coprocessor 1 */
+#define SWC1                 10   /* store word coprocessor 1 */
+#define SDC1                 11   /* store double coprocessor 1 */
+#define BB                   12   /* enter basic block */
+#define ANNUL                13   /* annul conditional delay slot */
+#define SYSCALL              14   /* system call */
+#define REF_UNDEF            15   /* undefined; can distinguish between 32 and 64 bit */
+#define DSO_OPEN             16   /* DSO number */
+#define DSO_MAP_HI           17   /* high part of DSO "quick start" address */
+#define DSO_MAP_LO           18   /* low part of DSO "quick start" address */
+#define DSO_NAME             19   /* 1 character of DSO name */
+#define DSO_CLOSE            20   /* close DSO by number */
+#define DSO_MAX_IOFFSET      25   /* max instruction offset from text start */
+#define SEGMENT_MOVED_STATIC 26   /* amount pixie moved the data segment */
+#define DSO_MOVED_DYNAMIC    27   /* amount rld moved the DSO */
+#define NUM_DATA_SEGMENTS    28   /* number of data segments in the DSO */
+#define SEGMENT_MAP_HI       29   /* high part of "quick start" address of segment */
+#define SEGMENT_MAP_LO       30   /* low part */
+#define SEGMENT_SIZE         31   /* size of data segment in bytes */
 
-
-/*
- * 64-bit pixie trace format consists of 64-bit words,
- * the most significant 8 bits is a count,
- * the next 8 bits are a reference type, and
- * the remaining 48 bits are the address.
- * The address for basic blocks is a word offset
- * from the beginning of the DSO (i.e., (address - dso start)/4).
- * The addresses for loads and stores are byte addresses.
- * The count field for basic blocks tells how many sequential
- * instructions to fetch before doing something else.
- * The count field for loads and stores tells how many ifetches
- * to do after the load or store, before doing something else.
- *
- * We currently assume the "n32" execution mode, and therefore
- * truncate all addresses to their low 32 bits (sizeof(int)==4).
- *
- * We currently only support nonshared executables, although the
- * format supports full use of DSOs.  Also, to be perfectly legitimate,
- * we should map data addresses to correspond to what they would have been
- * in the unpixified program (they may well have been displaced
- * in the pixified version); we don't do that either.
- *
- * We could automatically distinquish between 32-bit and 64-bit formats,
- * but we don't.
- */
-#define LW	0	/* load word */
-#define LD	1	/* load double */
-#define SW	2	/* store word */
-#define SD	3	/* store double */
-#define SB	4	/* store byte */
-#define SH	5	/* store half-word */
-#define SWR	6	/* store word right */
-#define SWL	7	/* store word left */
-#define LWC1	8	/* load word coprocessor 1 */
-#define LDC1	9	/* load double coprocessor 1 */
-#define SWC1	10	/* store word coprocessor 1 */
-#define SDC1	11	/* store double coprocessor 1 */
-#define BB	12	/* enter basic block */
-#define ANNUL	13	/* annul conditional delay slot */
-#define SYSCALL	14	/* system call */
-#define REF_UNDEF 15	/* undefined; can distinguish between 32 and 64 bit */
-#define DSO_OPEN 16	/* DSO number */
-#define DSO_MAP_HI 17	/* high part of DSO "quick start" address */
-#define DSO_MAP_LO 18	/* low part of DSO "quick start" address */
-#define DSO_NAME 19	/* 1 character of DSO name */
-#define DSO_CLOSE 20	/* close DSO by number */
-#define DSO_MAX_IOFFSET 25 /* max instruction offset from text start */
-#define SEGMENT_MOVED_STATIC 26 /* amount pixie moved the data segment */
-#define DSO_MOVED_DYNAMIC 27 /* amount rld moved the DSO */
-#define NUM_DATA_SEGMENTS 28 /* number of data segments in the DSO */
-#define SEGMENT_MAP_HI 29 /* high part of "quick start" address of segment */
-#define SEGMENT_MAP_LO 30 /* low part */
-#define SEGMENT_SIZE 31	/* size of data segment in bytes */
-
-#define MIN(a,b)	((a)<(b)?(a):(b))
+#define MIN(a,b)    ((a)<(b)?(a):(b))
 
 #ifndef PIXIE_SWAB
 #define PIXIE_SWAB 0
@@ -129,17 +102,17 @@
 
 /* We need a way to keep deferred references */
 #define NSTACK 300
-static D4MemRef stack[NSTACK];	/* to store deferred references */
-static D4MemRef *sptr = stack;	/* stack pointer */
+static D4MemRef stack[NSTACK];    /* to store deferred references */
+static D4MemRef *sptr = stack;    /* stack pointer */
 
-#define push_ref(atype,addr,sz) do {					\
-		assert (sptr < &stack[NSTACK]);				\
-		sptr->accesstype = atype;				\
-		sptr->address = addr;					\
-		sptr++->size = sz;					\
-	} while (0)	/* expect semicolon */
+#define push_ref(atype,addr,sz) do {                    \
+        assert (sptr < &stack[NSTACK]);                \
+        sptr->accesstype = atype;                \
+        sptr->address = addr;                    \
+        sptr++->size = sz;                    \
+    } while (0)    /* expect semicolon */
 
-#define pop_ref()	*--sptr
+#define pop_ref()    *--sptr
 
 D4MemRef
 tracein_pixie64()
@@ -149,11 +122,11 @@ tracein_pixie64()
     static unsigned char inbuf[4096];
     static unsigned char *inptr = NULL;
     static unsigned char *endptr = NULL;
-    static unsigned int iaddr = ~0;	/* current instr address */
+    static unsigned int iaddr = ~0;    /* current instr address */
     static unsigned int textbase = 0;
-    unsigned int addr;		/* address from pixie */
-    int reftype, count;		/* from pixie */
-    int c;				/* iterator for ifetching */
+    unsigned int addr;        /* address from pixie */
+    int reftype, count;        /* from pixie */
+    int c;                /* iterator for ifetching */
     int size;
     D4MemRef r;
 
@@ -161,7 +134,7 @@ tracein_pixie64()
         return pop_ref();
     }
 again:
-    if (inptr == NULL) {	/* need to fill inbuf */
+    if (inptr == NULL) {    /* need to fill inbuf */
         int nread = read (0, inbuf, sizeof inbuf);
         if (nread < 0) {
             die ("pixie64 input error: %s\n", strerror (errno));
@@ -210,7 +183,7 @@ again:
     }
 
     switch (reftype) {
-    case REF_UNDEF:	/* should not happen */
+    case REF_UNDEF:    /* should not happen */
     default:
         fprintf (stderr,
                  "%s: unknown pixie64 reftype=%u\n", g_d4opt.progname, reftype);
@@ -224,7 +197,7 @@ again:
     case SEGMENT_MAP_HI:
     case SEGMENT_MAP_LO:
     case SEGMENT_SIZE:
-        goto again;	/* ignore these */
+        goto again;    /* ignore these */
 
     case DSO_MAP_HI:
 #if INT_MAX > 0x7fffffff
@@ -245,13 +218,13 @@ again:
         }
         goto again;
     case BB:
-        iaddr = addr << 2;	/* convert word address to byte */
-        iaddr += textbase;	/* base address for DSO 0 */
+        iaddr = addr << 2;    /* convert word address to byte */
+        iaddr += textbase;    /* base address for DSO 0 */
         if (count == 0) {
             goto again;    /* 1st instr is load/store/whatever */
         }
         size = 4;
-        count--;	/* counteract increment, below */
+        count--;    /* counteract increment, below */
         break;
     case LD:
     case LDC1:
@@ -276,15 +249,15 @@ again:
     case SB:
         size = 1;
         break;
-    case SWR:	/* assume big endian */
+    case SWR:    /* assume big endian */
         size = addr % 4 + 1;
         addr &= ~3;
         break;
-    case SWL:	/* assume big endian */
+    case SWL:    /* assume big endian */
         size = 4 - (addr % 4);
         break;
     }
-    count++;	/* allow for current instruction */
+    count++;    /* allow for current instruction */
 
     /* push excess instructions onto stack in reverse order */
     for (c = count;  c > 1;  c--) {
@@ -313,13 +286,13 @@ again:
     case SDC1:
         push_ref (D4XWRITE, addr, size);
         break;
-    case ANNUL:	/* annulled instruction; just do the ifetch */
-    case BB:	/* leading instruction of basic block */
+    case ANNUL:    /* annulled instruction; just do the ifetch */
+    case BB:    /* leading instruction of basic block */
         break;
     }
     r.accesstype = D4XINSTRN;
     r.address = iaddr;
-    r.size = 4;	/* MIPS instructions are all 4 bytes */
+    r.size = 4;    /* MIPS instructions are all 4 bytes */
     iaddr += count * 4;
     return r;
 }

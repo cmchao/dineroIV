@@ -97,7 +97,7 @@ D4MemRef tracein_xdin (void);
  */
 D4MemRef tracein_din (void);
 
-/*
+/**
  * 32-bit pixie trace format consists of 32-bit words,
  *
  *   31   28 27   24 23            0
@@ -118,7 +118,40 @@ D4MemRef tracein_din (void);
  */
 D4MemRef tracein_pixie32 (void);
 
+/*
+ * 64-bit pixie trace format consists of 64-bit words,
+ *
+ *   63   56 55   48 47            0
+ *  +-------+-------+---------------+
+ *  | count |  type |    address    |
+ *  +-------+-------+---------------+
+ *
+ * count
+ *     1. basic blocks
+ *          tells how many sequential instructions to fetch before doing
+ *          something else.
+ *     2. loads/store
+ *          tells how many ifetches * to do after the load or store, before
+ *          doing something else.
+ * address
+ *     1. basic blocks : word offset(4-byte) from the beginning of the DSO
+ *                       (i.e., (address - dso start)/4).
+ *     2. load/store : byte address
+ *
+ * We currently assume the "n32" execution mode, and therefore
+ * truncate all addresses to their low 32 bits (sizeof(int)==4).
+ *
+ * We currently only support nonshared executables, although the
+ * format supports full use of DSOs.  Also, to be perfectly legitimate,
+ * we should map data addresses to correspond to what they would have been
+ * in the unpixified program (they may well have been displaced
+ * in the pixified version); we don't do that either.
+ *
+ * We could automatically distinquish between 32-bit and 64-bit formats,
+ * but we don't.
+ */
 D4MemRef tracein_pixie64 (void);
+
 extern D4MemRef tracein_binary (void);
 
 /* A pointer to one of the above functions */
