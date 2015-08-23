@@ -42,69 +42,55 @@
  *
  */
 
-#include <stddef.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
 #include <assert.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "d4.h"
 #include "cmdd4.h"
 #include "tracein.h"
 
 /*
  * Acknowledgements:
- * Mark Hill (markhill@cs.wisc.edu) wrote and documented the
- * din input format for dineroIII
- * Mike Smith (smith@eecs.harvard.edu) documented pixie,
- * including the trace format.
- * Mike Uhler (uhler@gmu.mti.sgi.com) and
- * Marty Itzkowitz (martyi@nubbins.engr.sgi.com)
- * provided updated information about the pixie trace output formats.
+ *     Mark Hill (markhill@cs.wisc.edu)
+ *          wrote and documented the * din input format for dineroIII
+ *     Mike Smith (smith@eecs.harvard.edu)
+ *          documented pixie, including the trace format.
+ *     Mike Uhler (uhler@gmu.mti.sgi.com)
+ *     Marty Itzkowitz (martyi@nubbins.engr.sgi.com)
+ *          provided updated information about the pixie trace output formats.
  */
 
-
-
-/*
- * 32-bit pixie trace format consists of 32-bit words,
- * the most significant 4 bits is a count,
- * the next 4 bits are a reference type, and
- * the remaining 24 bits are the address.
- * The address for basic blocks is a word address (i.e., shifted right 2 bits),
- * while the addresses for loads and stores are byte addresses.
- * The count field for basic blocks tells how many sequential
- * instructions to fetch before doing something else.
- * The count field for loads and stores tells how many ifetches
- * to do after the load or store, before doing something else.
- */
-#define LW	0	/* load word */
-#define LD	1	/* load double */
-#define SW	2	/* store word */
-#define SD	3	/* store double */
-#define SB	4	/* store byte */
-#define SH	5	/* store half-word */
-#define SWR	6	/* store word right */
-#define SWL	7	/* store word left */
-#define LWC1	8	/* load word coprocessor 1 */
-#define LDC1	9	/* load double coprocessor 1 */
-#define SWC1	10	/* store word coprocessor 1 */
-#define SDC1	11	/* store double coprocessor 1 */
-#define BB	12	/* enter basic block */
-#define ANNUL	13	/* annul conditional delay slot */
-#define SYSCALL	14	/* system call */
+#define LW         0     /* load word */
+#define LD         1     /* load double */
+#define SW         2     /* store word */
+#define SD         3     /* store double */
+#define SB         4     /* store byte */
+#define SH         5     /* store half-word */
+#define SWR        6     /* store word right */
+#define SWL        7     /* store word left */
+#define LWC1       8     /* load word coprocessor 1 */
+#define LDC1       9     /* load double coprocessor 1 */
+#define SWC1       10    /* store word coprocessor 1 */
+#define SDC1       11    /* store double coprocessor 1 */
+#define BB         12    /* enter basic block */
+#define ANNUL      13    /* annul conditional delay slot */
+#define SYSCALL    14    /* system call */
 
 /* We need a way to keep deferred references */
-static D4MemRef stack[16];	/* to store deferred references */
-static D4MemRef *sptr = stack;	/* stack pointer */
+static D4MemRef stack[16];    /* to store deferred references */
+static D4MemRef *sptr = stack;    /* stack pointer */
 
-#define push_ref(atype,addr,sz) do {					\
-		assert (sptr < &stack[15]);				\
-		sptr->accesstype = atype;				\
-		sptr->address = addr;					\
-		sptr++->size = sz;					\
-	} while (0)	/* expect semicolon */
+#define push_ref(atype,addr,sz) do {          \
+        assert (sptr < &stack[15]);           \
+        sptr->accesstype = atype;             \
+        sptr->address = addr;                 \
+        sptr++->size = sz;                    \
+    } while (0)    /* expect semicolon */
 
-#define pop_ref()	*--sptr
+#define pop_ref()    *--sptr
 
 #ifndef PIXIE_SWAB
 #define PIXIE_SWAB 0
@@ -116,10 +102,10 @@ tracein_pixie32()
     static unsigned char inbuf[4096];
     static unsigned char *inptr = NULL;
     static unsigned char *endptr = NULL;
-    static unsigned int iaddr = ~0;	/* current instr address */
-    unsigned int addr;		/* address from pixie */
-    unsigned int reftype, count;	/* from pixie */
-    unsigned int c;			/* iterator for ifetching */
+    static unsigned int iaddr = ~0;    /* current instr address */
+    unsigned int addr;        /* address from pixie */
+    unsigned int reftype, count;    /* from pixie */
+    unsigned int c;            /* iterator for ifetching */
     int size;
     D4MemRef r;
 
@@ -129,7 +115,7 @@ tracein_pixie32()
         /* return pop_ref(); this evoked a compiler bug on SGI/IRIX6.?, so avoid it */
     }
 again:
-    if (inptr == NULL) {	/* need to fill inbuf */
+    if (inptr == NULL) {    /* need to fill inbuf */
         int nread = read (0, inbuf, sizeof inbuf);
         if (nread < 0) {
             die ("pixie32 input error: %s\n", strerror (errno));
@@ -163,12 +149,12 @@ again:
     }
 
     if (reftype == BB) {
-        iaddr = addr << 2;	/* convert word address to byte */
+        iaddr = addr << 2;    /* convert word address to byte */
         if (count == 0) {
             goto again;    /* 1st instr is load/store/whatever */
         }
     } else {
-        count++;	/* allow for current instruction */
+        count++;    /* allow for current instruction */
     }
 
     /* push excess instructions onto stack in reverse order */
@@ -186,8 +172,8 @@ again:
     case LWC1:
     case SW:
     case SWC1:
-    case ANNUL:	/* this one doesn't actually matter */
-    case BB:	/* this one doesn't actually matter */
+    case ANNUL:    /* this one doesn't actually matter */
+    case BB:    /* this one doesn't actually matter */
         size = 4;
         addr &= ~3;
         break;
@@ -205,17 +191,17 @@ again:
     case SB:
         size = 1;
         break;
-    case SWL:	/* assume big endian */
+    case SWL:    /* assume big endian */
         size = (addr % 4) + 1;
         addr &= ~3;
         break;
-    case SWR:	/* assume big endian */
+    case SWR:    /* assume big endian */
         size = 4 - (addr % 4);
         break;
     }
 
     switch (reftype) {
-    default:	/* warning already issued */
+    default:    /* warning already issued */
         /* fall through */
     case SYSCALL:
         push_ref (D4XMISC, addr, size);
@@ -236,13 +222,13 @@ again:
     case SDC1:
         push_ref (D4XWRITE, addr, size);
         break;
-    case ANNUL:	/* annulled instruction; just do the ifetch */
-    case BB:	/* leading instruction of basic block */
+    case ANNUL:    /* annulled instruction; just do the ifetch */
+    case BB:    /* leading instruction of basic block */
         break;
     }
     r.accesstype = D4XINSTRN;
     r.address = iaddr;
-    r.size = 4;	/* MIPS instructions are all 4 bytes */
+    r.size = 4;    /* MIPS instructions are all 4 bytes */
     iaddr += count * 4;
     return r;
 }

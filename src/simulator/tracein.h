@@ -97,8 +97,28 @@ D4MemRef tracein_xdin (void);
  */
 D4MemRef tracein_din (void);
 
-extern D4MemRef tracein_pixie32 (void);
-extern D4MemRef tracein_pixie64 (void);
+/*
+ * 32-bit pixie trace format consists of 32-bit words,
+ *
+ *   31   28 27   24 23            0
+ *  +-------+-------+---------------+
+ *  | count |  type |    address    |
+ *  +-------+-------+---------------+
+ *
+ * count
+ *     1. basic blocks
+ *          tells how many sequential instructions to fetch before doing
+ *          something else.
+ *     2. loads/store
+ *          tells how many ifetches * to do after the load or store, before
+ *          doing something else.
+ * address
+ *     1. basic blocks : word address (4-byte) address
+ *     2. load/store : byte address
+ */
+D4MemRef tracein_pixie32 (void);
+
+D4MemRef tracein_pixie64 (void);
 extern D4MemRef tracein_binary (void);
 
 /* A pointer to one of the above functions */
