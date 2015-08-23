@@ -131,7 +131,8 @@ static void
 help_informat (const D4ArgList *adesc)
 {
     help_char (adesc);
-    help_trace_format (optstringmax);	/* look for this in tracein.c */
+    printf ("\n %*s (D=extended din, d=traditional din, p=pixie32, P=pixie64,\n %*s b=binary)",
+            optstringmax, " ", optstringmax, " ");
 }
 
 

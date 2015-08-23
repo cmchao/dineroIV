@@ -177,7 +177,4 @@ extern int informat;
 
 /* check that a recognized input format has been specified */
 extern void verify_trace_format (void);
-
-/* list valid choices for -informat */
-extern void help_trace_format (int indent);
 #endif

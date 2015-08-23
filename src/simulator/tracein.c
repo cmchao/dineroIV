@@ -88,12 +88,3 @@ verify_trace_format()
         break;
     }
 }
-
-
-/* list the choices for -informat */
-void
-help_trace_format (int indent)
-{
-    printf ("\n %*s (D=extended din, d=traditional din, p=pixie32, P=pixie64,\n %*s b=binary)",
-            indent, " ", indent, " ");
-}
