@@ -57,34 +57,52 @@
 #include "cmdd4.h"
 #include "tracein.h"
 
-D4MemRef (*input_function) (void);
 
-/*
- * This function is called to get each trace record
- * We also take care of skipping records:f
- */
-void
-verify_trace_format()
+int tracein_init(TraceIn *tin, const char* infile)
 {
+    int err = 0;
+    tin->infile_path = infile;
+    if (tin->infile_path) {
+        tin->infile_fp = fopen(tin->infile_path, "r");
+        if (tin->infile_fp == NULL) {
+            shorthelp("can't open input file '%s'\n", tin->infile_path);
+            err = 1;
+        }
+    } else {
+        tin->infile_fp = stdin;
+    }
+
+    tin->trace_count = 0;
+
     switch (g_d4opt.informat) {
     default:
         shorthelp ("unknown input format '%c'\n", g_d4opt.informat);
+        err = 2;
     case 0:
         shorthelp ("no input format specified\n");
+        err = 3;
     case 'D':				/* extended "din" format */
-        input_function = tracein_xdin;
+        tin->read_func = tracein_xdin;
         break;
     case 'd':				/* traditional "din" format */
-        input_function = tracein_din;
+        tin->read_func = tracein_din;
         break;
     case 'p':				/* 32-bit pixie -idtrace format */
-        input_function = tracein_pixie32;
+        tin->read_func = tracein_pixie32;
         break;
     case 'P':				/* 64-bit pixie -idtrace format */
-        input_function = tracein_pixie64;
+        tin->read_func = tracein_pixie64;
         break;
     case 'b':				/* binary format, similar to din */
-        input_function = tracein_binary;
+        tin->read_func = tracein_binary;
         break;
     }
+
+    return err;
+}
+
+
+void tracein_read(TraceIn *tin, D4MemRef *memref)
+{
+    tin->read_func(tin, memref);
 }

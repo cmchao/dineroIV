@@ -113,8 +113,8 @@ static D4MemRef *sptr = stack;    /* stack pointer */
 
 #define pop_ref()    *--sptr
 
-D4MemRef
-tracein_pixie64()
+void
+tracein_pixie64 (TraceIn *trace_ctx, D4MemRef *r)
 {
     static char dynlib[] = "pixie64 input (reftype %d): dynamically linked executable not supported\n";
     static int once = 1;
@@ -127,10 +127,10 @@ tracein_pixie64()
     int reftype, count;        /* from pixie */
     int c;                /* iterator for ifetching */
     int size;
-    D4MemRef r;
 
     if (sptr > stack) {
-        return pop_ref();
+        memcpy(r, &(pop_ref()), sizeof(D4MemRef));
+        return;
     }
 again:
     if (inptr == NULL) {    /* need to fill inbuf */
@@ -139,10 +139,10 @@ again:
             die ("pixie64 input error: %s\n", strerror (errno));
         }
         if (nread <= 0) {
-            r.address = 0;
-            r.size = 0;
-            r.accesstype = D4TRACE_END;
-            return r;
+            r->address = 0;
+            r->size = 0;
+            r->accesstype = D4TRACE_END;
+            return;
         }
         if ((nread % 8) != 0) {
             die ("pixie64 trace input not double word aligned\n");
@@ -289,9 +289,8 @@ again:
     case BB:    /* leading instruction of basic block */
         break;
     }
-    r.accesstype = D4XINSTRN;
-    r.address = iaddr;
-    r.size = 4;    /* MIPS instructions are all 4 bytes */
+    r->accesstype = D4XINSTRN;
+    r->address = iaddr;
+    r->size = 4;    /* MIPS instructions are all 4 bytes */
     iaddr += count * 4;
-    return r;
 }

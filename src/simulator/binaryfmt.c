@@ -58,13 +58,12 @@
 #error "binary format code assumes 8 bit chars"
 #endif
 
-D4MemRef
-tracein_binary()
+void
+tracein_binary (TraceIn *trace_ctx, D4MemRef *r)
 {
     static unsigned char inbuf[RECORD_SIZE * 1024];
     static int hiwater = 0;
     static int inptr = 0;
-    D4MemRef r;
 
     if (inptr > hiwater - RECORD_SIZE) {	/* need to fill inbuf */
         int nread;
@@ -79,23 +78,23 @@ tracein_binary()
             die ("binary input error: %s\n", strerror (errno));
         }
         if (nread <= 0) {
-            r.accesstype = D4TRACE_END;
-            r.address = 0;
-            r.size = 0;
-            return r;
+            r->accesstype = D4TRACE_END;
+            r->address = 0;
+            r->size = 0;
+            return;
         }
         hiwater = inptr + nread;
         inptr = 0;
     }
-    r.address = (inbuf[inptr + 0] << (0 * CHAR_BIT)) |
-                (inbuf[inptr + 1] << (1 * CHAR_BIT)) |
-                (inbuf[inptr + 2] << (2 * CHAR_BIT)) |
-                (inbuf[inptr + 3] << (3 * CHAR_BIT));
+    r->address = (inbuf[inptr + 0] << (0 * CHAR_BIT)) |
+                 (inbuf[inptr + 1] << (1 * CHAR_BIT)) |
+                 (inbuf[inptr + 2] << (2 * CHAR_BIT)) |
+                 (inbuf[inptr + 3] << (3 * CHAR_BIT));
     inptr += 4;
-    r.size = (inbuf[inptr + 0] << (0 * CHAR_BIT)) |
-             (inbuf[inptr + 1] << (1 * CHAR_BIT));
+    r->size = (inbuf[inptr + 0] << (0 * CHAR_BIT)) |
+              (inbuf[inptr + 1] << (1 * CHAR_BIT));
     inptr += 2;
-    r.accesstype = inbuf[inptr++];
+    r->accesstype = inbuf[inptr++];
     inptr++;	/* skip padding */
-    return r;
+    trace_ctx->trace_count++;
 }

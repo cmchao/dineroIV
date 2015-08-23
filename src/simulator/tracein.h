@@ -46,6 +46,34 @@
 #define TRACEIN_H
 
 /**
+ * abstract trace input
+ */
+typedef struct TraceIn {
+    const char *infile_path;               /** input file path */
+    FILE *infile_fp;                       /** input file handler */
+    uint64_t trace_count;                  /** # of reading trace */
+    void (*read_func) (struct TraceIn *trace_ctx,
+                       D4MemRef *memref);  /** pointer to read line trace handling
+                                               function*/
+} TraceIn;
+
+/**
+ * initialize TraceIn structure
+ * @param[out] tin pointer to uninitial TraceIn structure
+ * @param[in] input file path
+ * @return 0 -> success  1 -> error occur
+ */
+int tracein_init(TraceIn *tin, const char* infile);
+
+/**
+ * read one trace record. The funtion exit immediate if there are any
+ * unexpected error
+ * @param[out] tin pointer to initialized TraceIn structure
+ * @param[in] input file path
+ */
+void tracein_read(TraceIn *tin, D4MemRef *memref);
+
+/**
  * Read in ASCII from standard input
  * Expect 3 significant fields per line:
  *    +--------------+----------+-------+
@@ -65,8 +93,11 @@
  *
  * Size
  *    'A' hex address format
+ *
+ * @param[in,out] trace_ctx pointer to trace context
+ * @param[out] memref pointer to unset D4MemRef instance
  */
-D4MemRef tracein_xdin (void);
+void tracein_xdin (TraceIn *trace_ctx, D4MemRef *r);
 
 /**
  * Read in ASCII from standard input
@@ -94,8 +125,11 @@ D4MemRef tracein_xdin (void);
  *
  * @warning If more than one tuple is put on a line, all but the first
  *          tuple will be ignored.
+ *
+ * @param[in,out] trace_ctx pointer to trace context
+ * @param[out] memref pointer to unset D4MemRef instance
  */
-D4MemRef tracein_din (void);
+void tracein_din (TraceIn *trace_ctx, D4MemRef *r);
 
 /**
  * 32-bit pixie trace format consists of 32-bit words,
@@ -115,8 +149,11 @@ D4MemRef tracein_din (void);
  * address
  *     1. basic blocks : word address (4-byte) address
  *     2. load/store : byte address
+ *
+ * @param[in,out] trace_ctx pointer to trace context
+ * @param[out] memref pointer to unset D4MemRef instance
  */
-D4MemRef tracein_pixie32 (void);
+void tracein_pixie32 (TraceIn *trace_ctx, D4MemRef *r);
 
 /*
  * 64-bit pixie trace format consists of 64-bit words,
@@ -149,8 +186,11 @@ D4MemRef tracein_pixie32 (void);
  *
  * We could automatically distinquish between 32-bit and 64-bit formats,
  * but we don't.
+ *
+ * @param[in,out] trace_ctx pointer to trace context
+ * @param[out] memref pointer to unset D4MemRef instance
  */
-D4MemRef tracein_pixie64 (void);
+void tracein_pixie64 (TraceIn *trace_ctx, D4MemRef *r);
 
 /**
  * This format is pretty similar to the traditional Dinero "din" format,
@@ -163,18 +203,12 @@ D4MemRef tracein_pixie64 (void);
  *         uint8_t  type;
  *         uint8_t  padding;
  *      }
+ *
+ * @param[in,out] trace_ctx pointer to trace context
+ * @param[out] memref pointer to unset D4MemRef instance
  */
-D4MemRef tracein_binary (void);
+void tracein_binary (TraceIn *trace_ctx, D4MemRef *r);
 
-/* A pointer to one of the above functions */
-extern D4MemRef (*input_function) (void);
-
-/* the accesstype returned by next_trace_item when the trace is exhausted */
+/** the accesstype returned by next_trace_item when the trace is exhausted */
 #define D4TRACE_END	D4NUMACCESSTYPES
-
-/* -informat arg */
-extern int informat;
-
-/* check that a recognized input format has been specified */
-extern void verify_trace_format (void);
 #endif

@@ -51,10 +51,9 @@
 #include "tracein.h"
 
 
-D4MemRef
-tracein_xdin()
+void
+tracein_xdin (TraceIn *trace_ctx, D4MemRef *r)
 {
-    static double tcount = 1;	/* double to increase range */
     static char badatype[] = "xdin format error on trace record %.0f: unknown atype: %s"
                              "Consider -informat d for Dinero III input format\n";
     static char badaddr[] = "xdin format error on trace record %.0f: non hex digit (code 0x%x) in address\n";
@@ -64,30 +63,29 @@ tracein_xdin()
     char errline[128];
     d4addr addr;
     int size, atype;
-    D4MemRef r;
     int c, cc;
 
     /* skip initial whitespace */
     do {
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     } while (c == ' ' || c == '\t');
     if (c == EOF) {
-        r.address = 0;
-        r.size = 0;
-        r.accesstype = D4TRACE_END;
-        return r;		/* this will trigger normal termination */
+        r->address = 0;
+        r->size = 0;
+        r->accesstype = D4TRACE_END;
+        return;		/* this will trigger normal termination */
     }
     if (c == '\n') {
-        die (shortline, tcount);
+        die (shortline, trace_ctx->trace_count);
     }
 
     /* the accesstype is just 1 char */
     switch (c) {
     default:
         errline[0] = c;
-        fgets (errline + 1, sizeof(errline) - 1, stdin);
+        fgets (errline + 1, sizeof(errline) - 1, trace_ctx->infile_fp);
         errline[strlen(errline) - 1] = '\n'; /* ensure trailing \n */
-        die (badatype, tcount, errline);
+        die (badatype, trace_ctx->trace_count, errline);
         /* no return */
     case 'r':
     case 'R':
@@ -114,77 +112,76 @@ tracein_xdin()
         atype = D4XINVAL;
         break;
     }
-    cc = getchar();
+    cc = getc(trace_ctx->infile_fp);
     if (cc == '\n') {
-        die (shortline, tcount);
+        die (shortline, trace_ctx->trace_count);
     }
     if (cc != ' ' && cc != '\t') {
         errline[0] = c;
         errline[1] = cc;
-        fgets (errline + 2, sizeof(errline) - 2, stdin);
+        fgets (errline + 2, sizeof(errline) - 2, trace_ctx->infile_fp);
         errline[strlen(errline) - 1] = '\n'; /* ensure trailing \n */
-        die (badatype, tcount, errline);
+        die (badatype, trace_ctx->trace_count, errline);
     }
 
     /* skip whitespace between atype and address */
     do {
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     } while (c == ' ' || c == '\t');
     if (c == '\n' || c == EOF) {
-        die (shortline, tcount);
+        die (shortline, trace_ctx->trace_count);
     }
 
     /* now get the address */
     if (!isxdigit(c)) {
-        die (badaddr, tcount, c);
+        die (badaddr, trace_ctx->trace_count, c);
     }
     addr = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-    c = getchar();
+    c = getc(trace_ctx->infile_fp);
     if ((c == 'x' || c == 'X') && addr == 0) {
-        c = getchar();    /* ignore leading 0x or 0X */
+        c = getc(trace_ctx->infile_fp);    /* ignore leading 0x or 0X */
     }
     while (isxdigit(c)) {
         addr *= 16;
         addr += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     }
     if (c != EOF && c != '\n' && c != ' ' && c != '\t') {
-        die (badaddr, tcount, c);
+        die (badaddr, trace_ctx->trace_count, c);
     }
 
     /* skip whitespace between addr and size */
     while (c == ' ' || c == '\t') {
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     }
     if (c == EOF || c == '\n') {
-        die (nosize, tcount);
+        die (nosize, trace_ctx->trace_count);
     }
 
     /* now get the size */
     if (!isxdigit(c)) {
-        die (badsize, tcount, c);
+        die (badsize, trace_ctx->trace_count, c);
     }
     size = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-    c = getchar();
+    c = getc(trace_ctx->infile_fp);
     if ((c == 'x' || c == 'X') && size == 0) {
-        c = getchar();    /* ignore leading 0x or 0X */
+        c = getc(trace_ctx->infile_fp);    /* ignore leading 0x or 0X */
     }
     while (isxdigit(c)) {
         size *= 16;
         size += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     }
     if (c != EOF && c != '\n' && c != ' ' && c != '\t') {
-        die (badsize, tcount, c);
+        die (badsize, trace_ctx->trace_count, c);
     }
 
     /* skip rest of line */
     while (c != '\n' && c != EOF) {
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     }
-    r.accesstype = atype;
-    r.address = addr;
-    r.size = size;
-    tcount += 1;
-    return r;
+    r->accesstype = atype;
+    r->address = addr;
+    r->size = size;
+    trace_ctx->trace_count += 1;
 }

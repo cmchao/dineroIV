@@ -65,10 +65,9 @@ static D4Cache *levcache[3][MAX_LEV];		/* to locate cache by level and type */
 /*
  * Called to produce each address trace record
  */
-static D4MemRef
-next_trace_item(void)
+static void
+next_trace_item(TraceIn* trace_ctx, D4MemRef *r)
 {
-    D4MemRef r;
     static int once = 1;
     static int discard = 0;
     static int hastoggled = 0;
@@ -81,18 +80,18 @@ next_trace_item(void)
         if (g_d4opt.skipcount > 0) {
             uint64_t tskipcount = g_d4opt.skipcount;
             do {
-                r = input_function();
-                if (r.accesstype == D4TRACE_END) {
+                tracein_read(trace_ctx, r);
+                if (r->accesstype == D4TRACE_END) {
                     fprintf (stderr, "%s warning: input ended "
                              "before -skipcount satisfied\n", g_d4opt.progname);
-                    return r;
+                    return;
                 }
             } while ((tskipcount -= 1) > 0);
         }
     }
     while (1) {
-        r = input_function();
-        if (r.accesstype == D4TRACE_END) {
+        tracein_read(trace_ctx, r);
+        if (r->accesstype == D4TRACE_END) {
             if ((g_d4opt.on_trigger != 0 || g_d4opt.off_trigger != 0) && !hastoggled)
                 fprintf (stderr, "%s warning: trace discard "
                          "trigger addresses were not matched\n", g_d4opt.progname);
@@ -100,18 +99,18 @@ next_trace_item(void)
                 fprintf (stderr, "%s warning: tail end of trace not discarded\n",
                          g_d4opt.progname);
             }
-            return r;
+            return;
         }
-        if (r.address != 0) {	/* valid triggers must be != 0 */
-            if ((discard != 0 && g_d4opt.on_trigger == r.address) ||
-                    (discard == 0 && g_d4opt.off_trigger == r.address)) {
+        if (r->address != 0) {	/* valid triggers must be != 0 */
+            if ((discard != 0 && g_d4opt.on_trigger == r->address) ||
+                    (discard == 0 && g_d4opt.off_trigger == r->address)) {
                 discard ^= 1;	/* toggle */
                 hastoggled = 1;
                 continue;	/* discard the trigger itself */
             }
         }
         if (!discard) {
-            return r;
+            return;
         }
     }
 }
@@ -122,6 +121,8 @@ next_trace_item(void)
 int
 main (int argc, char **argv)
 {
+    int err;
+    TraceIn trace_ctx;
     D4MemRef r;
     D4Cache *ci, *cd;
     D4Cache *mem;				/* which cache represents simulated memory? */
@@ -133,11 +134,16 @@ main (int argc, char **argv)
     initialize_caches (levcache, &ci, &cd, &mem);
     summarize_caches();
 
+    err = tracein_init(&trace_ctx, g_d4opt.trace_file);
+    if (err) {
+        die("setup input tracefile path\n");
+    }
+
     printf ("\n---Simulation begins.\n");
     tintcount = g_d4opt.stat_interval;
     flcount = g_d4opt.flushcount;
     while (1) {
-        r = next_trace_item();
+        next_trace_item(&trace_ctx, &r);
         if (r.accesstype == D4TRACE_END) {
             goto done;
         }

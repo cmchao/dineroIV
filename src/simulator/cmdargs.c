@@ -1406,8 +1406,6 @@ verify_options()
         }
     }
 
-    verify_trace_format();	/* look for this in tracein.c */
-
     /* allowable replacement policies */
     for (lev = 0;  lev < g_d4opt.maxlevel;  lev++) {
         for (idu = 0;  idu < 3;  idu++) {

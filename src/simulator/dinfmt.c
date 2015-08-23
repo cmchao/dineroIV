@@ -49,91 +49,88 @@
 #include "cmdd4.h"
 #include "tracein.h"
 
-D4MemRef
-tracein_din()
+void
+tracein_din (TraceIn *trace_ctx, D4MemRef *r)
 {
-    static double tcount = 1;	/* double to increase range */
     static char badlabel[] = "din format error on trace record %.0f: non hex digit (code 0x%x) in label\n";
     static char badaddr[] = "din format error on trace record %.0f: non hex digit (code 0x%x) in address\n";
     static char shortline[] = "din format error on trace record %.0f: short line\n";
     d4addr addr = 0;
     int atype = 0;
-    D4MemRef r;
     int c;
 
     /* skip initial whitespace */
     do {
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     } while (c == ' ' || c == '\t');
     if (c == EOF) {
-        r.address = 0;
-        r.size = 0;
-        r.accesstype = D4TRACE_END;
-        return r;		/* this will trigger normal termination */
+        r->address = 0;
+        r->size = 0;
+        r->accesstype = D4TRACE_END;
+        return;		/* this will trigger normal termination */
     }
     if (c == '\n') {
-        die (shortline, tcount);
+        die (shortline, trace_ctx->trace_count);
     }
 
     /* typically the label is just 1 char */
     if (!isxdigit(c)) {
-        die (badlabel, tcount, c);
+        die (badlabel, trace_ctx->trace_count, c);
     }
     atype = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-    c = getchar();
+    c = getc(trace_ctx->infile_fp);
     if (c != ' ' && c != '\t') {	/* rarely get rest of label */
         if ((c == 'x' || c == 'X') && atype == 0) {
-            c = getchar();    /* ignore leading 0x or 0X */
+            c = getc(trace_ctx->infile_fp);    /* ignore leading 0x or 0X */
         }
         if (c == '\n' || c == EOF) {
-            die (shortline, tcount);
+            die (shortline, trace_ctx->trace_count);
         }
         while (isxdigit(c)) {
             atype *= 16;
             atype += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-            c = getchar();
+            c = getc(trace_ctx->infile_fp);
         }
         if (c == '\n' || c == EOF) {
-            die (shortline, tcount);
+            die (shortline, trace_ctx->trace_count);
         }
         if (c != ' ' && c != '\t') {
-            die (badlabel, tcount, c);
+            die (badlabel, trace_ctx->trace_count, c);
         }
     }
 
     /* skip whitespace between label and address */
     do {
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     } while (c == ' ' || c == '\t');
     if (c == '\n' || c == EOF) {
-        die (shortline, tcount);
+        die (shortline, trace_ctx->trace_count);
     }
 
     /* now get the address */
     if (!isxdigit(c)) {
-        die (badaddr, tcount, c);
+        die (badaddr, trace_ctx->trace_count, c);
     }
     addr = c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-    c = getchar();
+    c = getc(trace_ctx->infile_fp);
     if ((c == 'x' || c == 'X') && addr == 0) {
-        c = getchar();    /* ignore leading 0x or 0X */
+        c = getc(trace_ctx->infile_fp);    /* ignore leading 0x or 0X */
     }
     while (isxdigit(c)) {
         addr *= 16;
         addr += c - (isdigit(c) ? '0' : ((islower(c) ? 'a' : 'A') - 10));
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     }
     if (c != EOF && c != '\n' && c != ' ' && c != '\t') {
-        die (badaddr, tcount, c);
+        die (badaddr, trace_ctx->trace_count, c);
     }
 
     /* skip rest of line */
     while (c != '\n' && c != EOF) {
-        c = getchar();
+        c = getc(trace_ctx->infile_fp);
     }
-    r.accesstype = atype;
-    r.address = addr & ~3;	/* dineroIII is pretty much word-oriented */
-    r.size = 4;
-    tcount += 1;
-    return r;
+    r->accesstype = atype;
+    r->address = addr & ~3;	/* dineroIII is pretty much word-oriented */
+    r->size = 4;
+    trace_ctx->trace_count += 1;
 }

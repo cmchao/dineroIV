@@ -95,8 +95,8 @@ static D4MemRef *sptr = stack;    /* stack pointer */
 #define PIXIE_SWAB 0
 #endif
 
-D4MemRef
-tracein_pixie32()
+void
+tracein_pixie32 (TraceIn *trace_ctx, D4MemRef *r)
 {
     static unsigned char inbuf[4096];
     static unsigned char *inptr = NULL;
@@ -106,24 +106,23 @@ tracein_pixie32()
     unsigned int reftype, count;    /* from pixie */
     unsigned int c;            /* iterator for ifetching */
     int size;
-    D4MemRef r;
 
     if (sptr > stack) {
-        r = pop_ref();
-        return r;
+        memcpy(r, &(pop_ref()), sizeof(D4MemRef));
+        return;
         /* return pop_ref(); this evoked a compiler bug on SGI/IRIX6.?, so avoid it */
     }
 again:
     if (inptr == NULL) {    /* need to fill inbuf */
-        int nread = fread (inbuf, sizeof(inbuf[0]), sizeof(inbuf), stdin);
+        int nread = fread (inbuf, sizeof(inbuf[0]), sizeof(inbuf), trace_ctx->infile_fp);
         if (nread < 0) {
             die ("pixie32 input error: %s\n", strerror (errno));
         }
         if (nread <= 0) {
-            r.address = 0;
-            r.size = 0;
-            r.accesstype = D4TRACE_END;
-            return r;
+            r->address = 0;
+            r->size = 0;
+            r->accesstype = D4TRACE_END;
+            return;
         }
         if ((nread % 4) != 0) {
             die ("pixie32 trace input not word aligned\n");
@@ -225,9 +224,8 @@ again:
     case BB:    /* leading instruction of basic block */
         break;
     }
-    r.accesstype = D4XINSTRN;
-    r.address = iaddr;
-    r.size = 4;    /* MIPS instructions are all 4 bytes */
+    r->accesstype = D4XINSTRN;
+    r->address = iaddr;
+    r->size = 4;    /* MIPS instructions are all 4 bytes */
     iaddr += count * 4;
-    return r;
 }
