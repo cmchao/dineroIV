@@ -137,6 +137,19 @@ help_informat (const D4ArgList *adesc)
 
 
 /*
+ * Special help routine for -infile.
+ * List the choices on subsequent lines.
+ */
+static void
+help_infile (const D4ArgList *adesc)
+{
+    help_char (adesc);
+    printf ("\n %*s ",
+            optstringmax, "input tracefile path");
+}
+
+
+/*
  * Generic functions for handling command line arguments.
  * Most argument-specific knowledge is in cmdargs.c.
  */
@@ -631,6 +644,12 @@ pval_char (const char *opt, const char *arg, const D4ArgList *adesc)
         shorthelp ("bad option: %s %s\n", opt, arg);
     }
     (*var)[idu][level] = *arg;
+}
+
+static void
+val_string (const char *opt, const char *arg, const D4ArgList *adesc)
+{
+    *(const char **)adesc->var = arg;
 }
 
 
@@ -1184,6 +1203,13 @@ static D4ArgList args[] = {
         "Input trace format",
         match_1arg, val_char, NULL,
         summary_char, help_informat
+    },
+    {
+        "-infile", 2, &g_d4opt.trace_file, NULL,
+        NULL,
+        "Input trace path",
+        match_1arg, val_string, NULL,
+        NULL, help_infile
     },
     {
         "-on-trigger", 2, &g_d4opt.on_trigger, NULL,

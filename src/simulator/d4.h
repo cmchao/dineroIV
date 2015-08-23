@@ -322,6 +322,7 @@ typedef struct {
     bool stat_idcombine;        /** combine I$D cache stats */
     int informat;               /** input trace format */
     const char *progname;       /** the program name */
+    const char *trace_file;     /** input tracefile path */
 } D4Option;
 
 
