@@ -99,7 +99,7 @@ typedef struct D4PendStack {
 
 
 
-/*
+/**
  * Stack node in simulated cache,
  * Each stack is doubly linked, using up and down fields.
  * The list is circular, so top->up is the bottom.
@@ -109,18 +109,18 @@ typedef struct D4PendStack {
  * the valid nodes are also on a hash bucket chain.
  */
 typedef struct D4StackNode {
-    d4addr		blockaddr;	    /* byte address of block */
-    unsigned int	valid;		    /* bit for each subblock */
-    unsigned int	referenced;	    /* bit for each subblock */
-    unsigned int	dirty;		    /* bit for each subblock */
-    int		onstack;	    /* which stack is node on? */
-    struct D4Cache *cachep;	    /* which cache is this a part of */
-    struct D4StackNode *down;   /* ptr to less recently used node */
-    struct D4StackNode *up;     /* ptr to more recently used node */
-    struct D4StackNode *bucket; /* singly-linked for hash collisions */
+    d4addr             blockaddr;  /** byte address of block */
+    unsigned int       valid;      /** bit for each subblock */
+    unsigned int       referenced; /** bit for each subblock */
+    unsigned int       dirty;      /** bit for each subblock */
+    int                onstack;    /** which stack is node on? */
+    struct D4Cache     *cachep;    /** which cache is this a part of */
+    struct D4StackNode *down;      /** ptr to less recently used node */
+    struct D4StackNode *up;        /** ptr to more recently used node */
+    struct D4StackNode *bucket;    /** singly-linked for hash collisions */
 
 #ifdef D4STACK_USERHOOK
-    D4STACK_USERHOOK	/* allow additional stuff for user policies */
+    D4STACK_USERHOOK               /** allow additional stuff for user policies */
 #endif
 } D4StackNode;
 
