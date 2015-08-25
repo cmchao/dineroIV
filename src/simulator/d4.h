@@ -341,8 +341,25 @@ extern D4Option g_d4opt;        /** global instance to keep optional value */
  */
 
 /* top level user-callable functions */
-extern D4Cache	*d4new (D4Cache *);
-extern int	d4setup (void);
+/**
+ * Create a new cache
+ * The new cache sits "above" the indicated larger cache in the
+ * memory hierarchy, with memory at the bottom and processors at the top.
+ *
+ * @param[in]  the downstream cache of the new cache. if NULL, it means memory
+ * @return new cache instance or NULL if failed
+ */
+D4Cache	*d4new (D4Cache *);
+
+/**
+ * Check all caches, set up internal data structures.
+ * Must be called exactly once, after all calls to d4new
+ * and all necessary direct initialization of D4Cache structures.
+ * The call to d4setup must occur before any calls to d4ref.
+ *
+ * @return  0 -> success
+ */
+int	d4setup (void);
 void		d4ref (D4Cache *, D4MemRef); /* call generic version */
 void		d4copyback (D4Cache *, const D4MemRef *, int);
 void		d4invalidate (D4Cache *, const D4MemRef *, int);

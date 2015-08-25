@@ -67,11 +67,6 @@ extern void d4_invblock (D4Cache *, int stacknum, D4StackNode *);
 extern void d4_invinfcache (D4Cache *, const D4MemRef *);
 
 
-/*
- * Create a new cache
- * The new cache sits "above" the indicated larger cache in the
- * memory hierarchy, with memory at the bottom and processors at the top.
- */
 D4Cache *
 d4new (D4Cache *larger)
 {
@@ -93,16 +88,8 @@ d4new (D4Cache *larger)
     return c;
 }
 
-
-/*
- * Check all caches, set up internal data structures.
- * Must be called exactly once, after all calls to d4new
- * and all necessary direct initialization of D4Cache structures.
- * The call to d4setup must occur before any calls to d4ref.
- * The return value is zero for success.
- */
 int
-d4setup()
+d4setup(void)
 {
     int i, nnodes;
     int r = 0;
