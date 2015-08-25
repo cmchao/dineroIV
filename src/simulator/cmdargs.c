@@ -1577,9 +1577,13 @@ clog2 (unsigned int x)
 }
 
 
-/*
+/**
  * Initialize one cache based on args
  * Die with an error message if there are serious problems.
+ *
+ * @param[in, out] c one cache instance
+ * @param[in] lev  cache level
+ * @param[in] ldu  cache type
  */
 static void
 init_1cache (D4Cache *c, int lev, int idu)

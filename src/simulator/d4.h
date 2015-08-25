@@ -175,22 +175,22 @@ typedef struct {
  * full specification of a cache
  */
 typedef struct D4Cache {
-    char *name;		/* mostly for printing */
-    int cacheid;		/* unique for each cache */
-    int flags;
-    D4StackHead *stack;	/* the priority stacks for this cache */
-    D4PendStack *pending;	/* stack for prefetch etc. */
-    struct D4Cache *link; /* linked list of all caches */
+    char *name;            /** mostly for printing */
+    int cacheid;           /** unique for each cache */
+    int flags;             /** keep D4F_XXX hot bit information */
+    D4StackHead *stack;    /** the priority stacks for this cache */
+    D4PendStack *pending;  /** stack for prefetch etc. */
+    struct D4Cache *link;  /** linked list of all caches */
 
     /*
      * Cache parameters
      */
-    int lg2blocksize;	/* set by the user */
-    int lg2subblocksize;	/* set by the user */
-    int lg2size;		/* set by the user */
-    int assoc;		/* set by the user */
+    int lg2blocksize;      /** block size, set by the user */
+    int lg2subblocksize;   /** sub-block size, set by the user */
+    int lg2size;           /** size set by the user */
+    int assoc;             /** way number, set by the user */
 
-    int numsets;		/* this one is derived, not set by the user */
+    int numsets;           /** this one is derived, not set by the user */
 
     /*
      * Interconnection of caches
@@ -198,60 +198,60 @@ typedef struct D4Cache {
      * being memory and the leaves being closest
      * to the processors.
      */
-    struct D4Cache *downstream;
-    void (*ref)(struct D4Cache *, D4MemRef);	/* d4ref or custom version */
+    struct D4Cache *downstream;  /** pointer to next level cache instance */
+    void (*ref)(struct D4Cache *, D4MemRef);  /** d4ref or custom version */
 
     /*
      * Cache policy functions and data:
-     *	replacement, prefetch, write-alloc, write-back
+     *    replacement, prefetch, write-alloc, write-back
      * These must be set by the user
      * (normally, each policy should have an initialization routine)
      */
-    /* adjust priority stack */
-    D4StackNode	*(*replacementf) (struct D4Cache *, int stacknum,
-                                  D4MemRef, D4StackNode *ptr);
-    /* indicate a prefetch with prefetch_pending */
-    D4PendStack	*(*prefetchf) (struct D4Cache *, D4MemRef,
-                               int miss, D4StackNode *ptr);
-    /* walloc returns true for write-allocate */
-    int		(*wallocf) (struct D4Cache *, D4MemRef);
-    /* wback returns true for write-back */
-    int		(*wbackf) (struct D4Cache *, D4MemRef, int,
-                       D4StackNode *ptr, int);
+    /** adjust priority stack */
+    D4StackNode    *(*replacementf) (struct D4Cache *, int stacknum,
+                                     D4MemRef, D4StackNode *ptr);
+    /** indicate a prefetch with prefetch_pending */
+    D4PendStack    *(*prefetchf) (struct D4Cache *, D4MemRef,
+                                  int miss, D4StackNode *ptr);
+    /** walloc returns true for write-allocate */
+    int        (*wallocf) (struct D4Cache *, D4MemRef);
+    /** wback returns true for write-back */
+    int        (*wbackf) (struct D4Cache *, D4MemRef, int,
+                          D4StackNode *ptr, int);
 
-    int		prefetch_distance;	/* specific to built-in prefetch policies */
-    int		prefetch_abortpercent;
-    const char		*name_replacement;	/* for printing */
-    const char		*name_prefetch;
-    const char		*name_walloc;
-    const char		*name_wback;
+    int        prefetch_distance;     /** specific to built-in prefetch policies */
+    int        prefetch_abortpercent;
+    const char *name_replacement;     /** for printing */
+    const char *name_prefetch;
+    const char *name_walloc;
+    const char *name_wback;
 
 #ifdef D4CACHE_USERHOOK
-    D4CACHE_USERHOOK	/* allow additional stuff for user policies */
+    D4CACHE_USERHOOK                  /** allow additional stuff for user policies */
 #endif
 
-    /*
+    /**
      * Infinite cache for compulsory/capacity/conflict classification
      */
-    int		nranges;
-    int		maxranges;
-    D4Range		*ranges;
+    int        nranges;
+    int        maxranges;
+    D4Range    *ranges;
 
 
-    /*
+    /**
      * Cache statistics
      * Doubles are used as big integers
      * Index is accesstype + 0 or
      *          accesstype + D4PREFETCH for prefetch
      */
-    double fetch	      [2 * D4NUMACCESSTYPES];
-    double miss	      [2 * D4NUMACCESSTYPES];
+    double fetch          [2 * D4NUMACCESSTYPES];
+    double miss           [2 * D4NUMACCESSTYPES];
     double blockmiss      [2 * D4NUMACCESSTYPES];
-    double comp_miss      [2 * D4NUMACCESSTYPES];	/* compulsory misses */
+    double comp_miss      [2 * D4NUMACCESSTYPES];  /* compulsory misses */
     double comp_blockmiss [2 * D4NUMACCESSTYPES];
-    double cap_miss	      [2 * D4NUMACCESSTYPES];	/* capacity misses */
+    double cap_miss       [2 * D4NUMACCESSTYPES];  /* capacity misses */
     double cap_blockmiss  [2 * D4NUMACCESSTYPES];
-    double conf_miss      [2 * D4NUMACCESSTYPES];	/* conflict misses */
+    double conf_miss      [2 * D4NUMACCESSTYPES];  /* conflict misses */
     double conf_blockmiss [2 * D4NUMACCESSTYPES];
 
     double multiblock;
