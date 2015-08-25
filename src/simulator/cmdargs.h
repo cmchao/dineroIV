@@ -81,6 +81,12 @@ typedef struct D4ArgList {
  * Set argument-related things up after seeing all args
  */
 void doargs (int argc, char **argv);
+
+/**
+ * Called after all the options and args are consumed.
+ * Check them for consistency and reasonableness.
+ * Die with an error message if there are serious problems.
+ */
 void verify_options (void);
 
 /**

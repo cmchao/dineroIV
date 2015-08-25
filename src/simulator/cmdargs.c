@@ -1326,13 +1326,8 @@ summarize_caches (void)
 }
 
 
-/*
- * Called after all the options and args are consumed.
- * Check them for consistency and reasonableness.
- * Die with an error message if there are serious problems.
- */
 void
-verify_options()
+verify_options(void)
 {
     int lev, idu;
 
