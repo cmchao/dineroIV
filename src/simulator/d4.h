@@ -63,9 +63,9 @@ typedef uint32_t d4addr;
  * and indicated the operation applies to the whole cache.
  */
 typedef struct {
-    d4addr		address;
-    char		accesstype;
-    unsigned short	size;		/* of memory referenced, in bytes */
+    d4addr        address;     /** memorr address */
+    int           accesstype;  /** D4Xefined */
+    unsigned  int size;        /** of memory referenced, in bytes */
 } D4MemRef;
 
 
