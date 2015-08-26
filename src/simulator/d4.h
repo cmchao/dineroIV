@@ -270,8 +270,11 @@ typedef struct D4Cache {
  * Miscellaneous pseudo-functions
  */
 #define D4VAL(cache,field)	((cache)->field)
-#define D4LG2MASK(n)		 /* make an n-bit mask */		      \
-		((((d4addr)1)<<(n))-1)
+
+static inline d4addr D4LG2MASK(d4addr n)
+{
+    return ((((d4addr)1)<<(n))-1);
+}
 
 #define D4ADDR2BLOCK(cache,addr) /* byte address of block containing ref */   \
 		((addr) & ~D4LG2MASK(D4VAL(cache,lg2blocksize)))
@@ -331,7 +334,6 @@ typedef struct {
  */
 extern D4StackHash d4stackhash; /* hash table for all caches */
 extern D4StackNode d4freelist; /* free list for stack nodes of all caches */
-extern int d4nnodes;	/* total number of stack nodes allocated */
 extern D4Option g_d4opt;        /** global instance to keep optional value */
 
 

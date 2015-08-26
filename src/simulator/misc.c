@@ -55,7 +55,6 @@
  */
 D4StackHash d4stackhash;
 D4StackNode d4freelist;
-int d4nnodes;
 D4PendStack *d4pendfree;
 D4Cache *d4_allcaches;
 
@@ -87,6 +86,7 @@ d4new (D4Cache *larger)
     d4_allcaches = c;	/* d4customize depends on this LIFO order */
     return c;
 }
+
 
 int
 d4setup(void)
@@ -180,7 +180,6 @@ d4setup(void)
 #if D4_HASHSIZE == 0
             d4stackhash.size += c->numsets * c->assoc;
 #endif
-            d4nnodes += nnodes;
         }
 
         /* make a printable name if the user didn't pick one */
@@ -240,7 +239,6 @@ fail1:
         c->stack = NULL;
         c->numsets = 0;
     }
-    d4nnodes = 0;
     return r;
 }
 
