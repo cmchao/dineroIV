@@ -548,7 +548,7 @@ pval_0arg (const char *opt, const char *arg, const D4ArgList *adesc)
     int level;
     int idu;
 
-    (void) level_idu (opt, &level, &idu);
+    level_idu (opt, &level, &idu);
     (*var)[idu][level] = 1;
 }
 
@@ -567,7 +567,7 @@ pval_uint (const char *opt, const char *arg, const D4ArgList *adesc)
     int idu;
     char *nextc;
 
-    (void) level_idu (opt, &level, &idu);
+    level_idu (opt, &level, &idu);
     argui = strtoul (arg, &nextc, 10);
     if (*nextc != 0) {
         shorthelp ("bad option: %s %s\n", opt, arg);
@@ -603,7 +603,7 @@ pval_scale_pow2 (const char *opt, const char *arg, const D4ArgList *adesc)
     int level;
     int idu;
 
-    (void) level_idu (opt, &level, &idu);
+    level_idu (opt, &level, &idu);
     if (!argscale_uint (arg, &argui)) {
         shorthelp ("bad option: %s %s\n", opt, arg);
     }
@@ -639,7 +639,7 @@ pval_char (const char *opt, const char *arg, const D4ArgList *adesc)
     int level;
     int idu;
 
-    (void) level_idu (opt, &level, &idu);
+    level_idu (opt, &level, &idu);
     if (strlen (arg) != 1) {
         shorthelp ("bad option: %s %s\n", opt, arg);
     }
