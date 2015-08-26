@@ -1648,6 +1648,8 @@ init_1cache (D4Cache *c, int lev, int idu)
         c->name_prefetch = "subblock";
         break;
     }
+    c->prefetch_distance = level_prefetch_distance[idu][lev] * level_subblocksize[idu][lev];
+    c->prefetch_abortpercent = level_prefetch_abortpercent[idu][lev];
 
     switch (level_walloc[idu][lev]) {
     default:
@@ -1691,8 +1693,6 @@ init_1cache (D4Cache *c, int lev, int idu)
         break;
     }
 
-    c->prefetch_distance = level_prefetch_distance[idu][lev] * level_subblocksize[idu][lev];
-    c->prefetch_abortpercent = level_prefetch_abortpercent[idu][lev];
 }
 
 void

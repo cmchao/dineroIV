@@ -297,6 +297,18 @@ d4walloc_nofetch (D4Cache *c, D4MemRef m)
 }
 
 
+/* this is for the walloc policy of an icache */
+int
+d4walloc_impossible (D4Cache *c, D4MemRef m)
+{
+    fprintf (stderr, "Dinero IV: impossible walloc policy routine called for %s!!!\n",
+             c->name);
+    exit (9);
+    return 0;	/* can't really get here, but some compilers get upset if we don't have a return value */
+}
+
+
+
 /*
  * Always write back
  */
@@ -332,6 +344,16 @@ d4wback_nofetch (D4Cache *c, D4MemRef m, int setnumber, D4StackNode *ptr, int wa
            m.size == (D4REFNSB(c, m) << D4VAL (c, lg2subblocksize));
 }
 
+
+/* this is for the wback policy of an icache */
+int
+d4wback_impossible (D4Cache *c, D4MemRef m, int setnumber, D4StackNode *ptr, int walloc)
+{
+    fprintf (stderr, "Dinero IV: impossible wback policy routine called for %s!!!\n",
+             c->name);
+    exit (9);
+    return 0;	/* can't really get here, but some compilers get upset if we don't have a return value */
+}
 
 
 /*
