@@ -107,6 +107,20 @@ typedef struct D4PendStack {
  * + 1 for replacement.  The valid ones are always first.
  * For caches with large associativity (>= D4HASH_THRESH),
  * the valid nodes are also on a hash bucket chain.
+ * The following is 2-way example:
+ *
+ *                                 up
+ *                   +----------------------------+
+ *                   |                            v
+ *                   |     down          down
+ *+-------+      +---+--+ +---> +------+ +--> +------+
+ *| stack | +--> | node0|       | node1|      | node2|    # set
+ *+-------+      +------+ <---+ +------+ <--+ +---+--+
+ *                          up            up      |
+ *                   ^                            |
+ *                   +----------------------------+
+ *                                 down
+ *
  */
 typedef struct D4StackNode {
     d4addr             blockaddr;  /** byte address of block */
@@ -125,13 +139,13 @@ typedef struct D4StackNode {
 } D4StackNode;
 
 
-/*
+/**
  * Head of a stack,
  * top points to the most recently used node in the stack.
  */
 typedef struct {
-    D4StackNode *top;	/* the "beginning" of the stack */
-    int n;			/* size of stack (== 1 + assoc) */
+    D4StackNode *top;    /** the "beginning" of the stack */
+    int n;               /** size of stack (== 1 + assoc) */
 } D4StackHead;
 
 
@@ -171,7 +185,7 @@ typedef struct {
 #endif
 
 
-/*
+/**
  * full specification of a cache
  */
 typedef struct D4Cache {
