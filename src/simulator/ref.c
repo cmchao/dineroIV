@@ -496,7 +496,7 @@ d4ref (D4Cache *c, D4MemRef mr)
 {
     /* special cases first */
     if ((D4VAL (c, flags) & D4F_MEM) != 0) { /* Special case for simulated memory */
-        c->fetch[(int)mr.accesstype]++;
+        c->fetch[mr.accesstype]++;
     } else if (mr.accesstype == D4XCOPYB || mr.accesstype == D4XINVAL) {
         D4MemRef m = mr;	/* dumb compilers might de-optimize if we take addr of mr */
         if (m.accesstype == D4XCOPYB) {
@@ -664,22 +664,22 @@ d4ref (D4Cache *c, D4MemRef mr)
             if (miss) {
                 int infmiss = 0; /* assume hit in infinite cache */
                 if (!fullmiss) { /* hit in fully assoc: conflict miss */
-                    c->conf_miss[(int)m.accesstype]++;
+                    c->conf_miss[m.accesstype]++;
                 } else {
                     infmiss = d4infcache (c, m);
                     if (infmiss != 0) { /* first miss: compulsory */
-                        c->comp_miss[(int)m.accesstype]++;
+                        c->comp_miss[m.accesstype]++;
                     } else {	/* hit in infinite cache: capacity miss */
-                        c->cap_miss[(int)m.accesstype]++;
+                        c->cap_miss[m.accesstype]++;
                     }
                 }
                 if (blockmiss) {
                     if (!fullblockmiss) { /* block hit in full assoc */
-                        c->conf_blockmiss[(int)m.accesstype]++;
+                        c->conf_blockmiss[m.accesstype]++;
                     } else if (infmiss == 1) { /* block miss in full and inf */
-                        c->comp_blockmiss[(int)m.accesstype]++;
+                        c->comp_blockmiss[m.accesstype]++;
                     } else { /* part of block hit in infinite cache */
-                        c->cap_blockmiss[(int)m.accesstype]++;
+                        c->cap_blockmiss[m.accesstype]++;
                     }
                 }
             }
@@ -699,11 +699,11 @@ d4ref (D4Cache *c, D4MemRef mr)
         /*
          * Update non-ccc metrics.
          */
-        c->fetch[(int)m.accesstype]++;
+        c->fetch[m.accesstype]++;
         if (miss) {
-            c->miss[(int)m.accesstype]++;
+            c->miss[m.accesstype]++;
             if (blockmiss) {
-                c->blockmiss[(int)m.accesstype]++;
+                c->blockmiss[m.accesstype]++;
             }
         }
 
