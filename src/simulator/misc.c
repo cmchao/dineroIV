@@ -59,12 +59,6 @@ D4PendStack *d4pendfree;
 D4Cache *d4_allcaches;
 
 
-/*
- * Private prototypes for this file
- */
-extern void d4_invblock (D4Cache *, int stacknum, D4StackNode *);
-extern void d4_invinfcache (D4Cache *, const D4MemRef *);
-
 /**
  * create the hash value for node related to specific cache
  *
@@ -540,7 +534,7 @@ d4_wbblock (D4Cache *c, D4StackNode *ptr, const int lg2sbsize)
 
 
 /* invalidate and deallocate a block, as indicated by ptr */
-void
+static inline void
 d4_invblock (D4Cache *c, int stacknum, D4StackNode *ptr)
 {
     assert (ptr->valid != 0);
@@ -606,6 +600,51 @@ d4copyback (D4Cache *c, const D4MemRef *m, int prop)
 
 
 /*
+ * Handle invalidation for infinite cache
+ */
+static void
+d4_invinfcache (D4Cache *c, const D4MemRef *m)
+{
+    int i;
+
+    if (m == NULL || m->size == 0) {	/* invalidate whole cache */
+        for (i = 0;  i < c->nranges;  i++) {
+            assert (c->ranges[i].bitmap != NULL);
+            free (c->ranges[i].bitmap);
+            c->ranges[i].bitmap = NULL;
+        }
+        c->nranges = 0;
+        c->maxranges = 0;
+    } else {					/* invalidate just one block */
+        const unsigned int sbsize = 1 << D4VAL (c, lg2subblocksize);
+        const unsigned int baddr = D4ADDR2BLOCK (c, m->address);
+        unsigned int bitoff;	/* offset of bit in bitmap */
+        int hi, lo, nsb;
+
+        bitoff = (baddr & (D4_BITMAP_RSIZE - 1)) / sbsize;
+
+        /* binary search for range containing our address */
+        hi = c->nranges - 1;
+        lo = 0;
+        while (lo <= hi) {
+            i = lo + (hi - lo) / 2;
+            if (c->ranges[i].addr + D4_BITMAP_RSIZE <= baddr) {
+                lo = i + 1;    /* need to look higher */
+            } else if (c->ranges[i].addr > baddr) {
+                hi = i - 1;    /* need to look lower */
+            } else {				/* found the right range */
+                for (nsb = c->lg2blocksize - c->lg2subblocksize;
+                        nsb-- > 0;
+                        bitoff++)
+                    c->ranges[i].bitmap[bitoff / CHAR_BIT] &=
+                        ~(1 << (bitoff % CHAR_BIT));
+                break;
+            }
+        }
+    }
+}
+
+/*
  * Invalidate cache contents.  The operation affects the whole cache
  * or just 1 block, depending on m:
  * if m == NULL or m->size == 0, it affects the whole cache.
@@ -669,48 +708,3 @@ d4invalidate (D4Cache *c, const D4MemRef *m, int prop)
     }
 }
 
-
-/*
- * Handle invalidation for infinite cache
- */
-void
-d4_invinfcache (D4Cache *c, const D4MemRef *m)
-{
-    int i;
-
-    if (m == NULL || m->size == 0) {	/* invalidate whole cache */
-        for (i = 0;  i < c->nranges;  i++) {
-            assert (c->ranges[i].bitmap != NULL);
-            free (c->ranges[i].bitmap);
-            c->ranges[i].bitmap = NULL;
-        }
-        c->nranges = 0;
-        c->maxranges = 0;
-    } else {					/* invalidate just one block */
-        const unsigned int sbsize = 1 << D4VAL (c, lg2subblocksize);
-        const unsigned int baddr = D4ADDR2BLOCK (c, m->address);
-        unsigned int bitoff;	/* offset of bit in bitmap */
-        int hi, lo, nsb;
-
-        bitoff = (baddr & (D4_BITMAP_RSIZE - 1)) / sbsize;
-
-        /* binary search for range containing our address */
-        hi = c->nranges - 1;
-        lo = 0;
-        while (lo <= hi) {
-            i = lo + (hi - lo) / 2;
-            if (c->ranges[i].addr + D4_BITMAP_RSIZE <= baddr) {
-                lo = i + 1;    /* need to look higher */
-            } else if (c->ranges[i].addr > baddr) {
-                hi = i - 1;    /* need to look lower */
-            } else {				/* found the right range */
-                for (nsb = c->lg2blocksize - c->lg2subblocksize;
-                        nsb-- > 0;
-                        bitoff++)
-                    c->ranges[i].bitmap[bitoff / CHAR_BIT] &=
-                        ~(1 << (bitoff % CHAR_BIT));
-                break;
-            }
-        }
-    }
-}
