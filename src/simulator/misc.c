@@ -65,6 +65,18 @@ D4Cache *d4_allcaches;
 extern void d4_invblock (D4Cache *, int stacknum, D4StackNode *);
 extern void d4_invinfcache (D4Cache *, const D4MemRef *);
 
+/**
+ * create the hash value for node related to specific cache
+ *
+ * @param[in] ba blockaddr
+ * @param[in] sn stacknum
+ * @param[in] cid cacheid
+ * @return  hash value
+ */
+static inline int d4hash_make(d4addr ba, int sn, int cid) {
+    return (ba + sn + cid) % d4stackhash.size;
+}
+
 
 D4Cache *
 d4new (D4Cache *larger)
@@ -291,7 +303,7 @@ d4_find (D4Cache *c, int stacknum, d4addr blockaddr)
     D4StackNode *ptr;
 
     if (c->stack[stacknum].n > D4HASH_THRESH) {
-        int buck = D4HASH (blockaddr, stacknum, c->cacheid);
+        int buck = d4hash_make (blockaddr, stacknum, c->cacheid);
         for (ptr = d4stackhash.table[buck];
                 ptr != NULL && (ptr->blockaddr != blockaddr || ptr->cachep != c || ptr->onstack != stacknum);
                 ptr = ptr->bucket) {
@@ -392,7 +404,7 @@ d4movetobot (D4Cache *c, int stacknum, D4StackNode *ptr)
 inline void
 d4hash_insert (D4Cache *c, int stacknum, D4StackNode *s)
 {
-    int buck = D4HASH (s->blockaddr, stacknum, s->cachep->cacheid);
+    int buck = d4hash_make (s->blockaddr, stacknum, s->cachep->cacheid);
 
     assert(c != NULL);
     assert(s != NULL);
@@ -408,7 +420,7 @@ d4hash_insert (D4Cache *c, int stacknum, D4StackNode *s)
 void
 d4_unhash (D4Cache *c, int stacknum, D4StackNode *s)
 {
-    int buck = D4HASH (s->blockaddr, stacknum, c->cacheid);
+    int buck = d4hash_make (s->blockaddr, stacknum, c->cacheid);
     D4StackNode *p = d4stackhash.table[buck];
 
     assert (c->stack[stacknum].n > D4HASH_THRESH);
