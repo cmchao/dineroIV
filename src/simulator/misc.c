@@ -389,15 +389,18 @@ d4movetobot (D4Cache *c, int stacknum, D4StackNode *ptr)
 }
 
 
-/* Insert the indicated node into the hash table */
-void
-d4hash (D4Cache *c, int stacknum, D4StackNode *s)
+inline void
+d4hash_insert (D4Cache *c, int stacknum, D4StackNode *s)
 {
     int buck = D4HASH (s->blockaddr, stacknum, s->cachep->cacheid);
 
-    assert (c->stack[stacknum].n > D4HASH_THRESH);
-    s->bucket = d4stackhash.table[buck];
-    d4stackhash.table[buck] = s;
+    assert(c != NULL);
+    assert(s != NULL);
+
+    if (c->stack[stacknum].n > D4HASH_THRESH) {
+        s->bucket = d4stackhash.table[buck];
+        d4stackhash.table[buck] = s;
+    }
 }
 
 

@@ -430,9 +430,15 @@ extern void d4init_prefetch_generic (D4Cache *); /* helper routine for prefetch 
 extern D4StackNode *d4findnth (D4Cache *, int stacknum, int n);
 extern void d4movetotop (D4Cache *, int stacknum, D4StackNode *);
 extern void d4movetobot (D4Cache *, int stacknum, D4StackNode *);
-extern void d4hash (D4Cache *, int stacknum, D4StackNode *);
 
-
+/** Insert the indicated node into the hash table
+ * if way number + 1 > D4HASH_THRESH
+ *
+ * @param[in, out] c the related cache instance
+ * @param[in] stacknum  set number
+ * @param[in] s the node needed to be hashed
+ */
+void d4hash_insert (D4Cache * c, int stacknum, D4StackNode * s);
 
 
 /*

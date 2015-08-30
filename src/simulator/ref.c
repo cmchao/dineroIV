@@ -84,9 +84,7 @@ d4rep_lru (D4Cache *c, int stacknum, D4MemRef m, D4StackNode *ptr)
         ptr = c->stack[stacknum].top->up;
         assert (ptr->valid == 0);
         ptr->blockaddr = D4ADDR2BLOCK (c, m.address);
-        if (c->stack[stacknum].n > D4HASH_THRESH) {
-            d4hash (c, stacknum, ptr);
-        }
+        d4hash_insert (c, stacknum, ptr);
         c->stack[stacknum].top = ptr;	/* quicker than d4movetotop */
     }
     return ptr;
@@ -104,9 +102,7 @@ d4rep_fifo (D4Cache *c, int stacknum, D4MemRef m, D4StackNode *ptr)
         ptr = c->stack[stacknum].top->up;
         assert (ptr->valid == 0);
         ptr->blockaddr = D4ADDR2BLOCK (c, m.address);
-        if (c->stack[stacknum].n > D4HASH_THRESH) {
-            d4hash (c, stacknum, ptr);
-        }
+        d4hash_insert (c, stacknum, ptr);
         c->stack[stacknum].top = ptr;	/* quicker than d4movetotop */
     }
     return ptr;
@@ -125,9 +121,7 @@ d4rep_random (D4Cache *c, int stacknum, D4MemRef m, D4StackNode *ptr)
         ptr = c->stack[stacknum].top->up;
         assert (ptr->valid == 0);
         ptr->blockaddr = D4ADDR2BLOCK (c, m.address);
-        if (setsize >= D4HASH_THRESH) {
-            d4hash (c, stacknum, ptr);
-        }
+        d4hash_insert (c, stacknum, ptr);
         c->stack[stacknum].top = ptr;	/* quicker than d4movetotop */
         if (ptr->up->valid != 0) {	/* set is full */
             d4movetobot (c, stacknum, d4findnth (c, stacknum, 2 + (random() % setsize)));
