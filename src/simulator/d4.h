@@ -161,11 +161,7 @@ typedef struct {
 } D4StackHash;
 
 #define D4HASH_THRESH	8	/* stacks bigger than this size are hashed */
-#define D4HASH(ba,sn,cid)	(((unsigned long)(ba)+(sn)+(cid)) %				\
-				 ((D4_HASHSIZE>0) ? D4_HASHSIZE : d4stackhash.size))
-#ifndef D4_HASHSIZE
-#define D4_HASHSIZE 0	/* default is automatic */
-#endif
+#define D4HASH(ba,sn,cid)	(((unsigned long)(ba)+(sn)+(cid)) %	d4stackhash.size)
 
 
 /*

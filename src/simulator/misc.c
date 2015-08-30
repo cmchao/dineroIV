@@ -177,9 +177,7 @@ d4setup(void)
                 ptr += n;
             }
             assert (ptr - nodes == nnodes);
-#if D4_HASHSIZE == 0
             d4stackhash.size += c->numsets * c->assoc;
-#endif
         }
 
         /* make a printable name if the user didn't pick one */
@@ -192,9 +190,7 @@ d4setup(void)
                      (c->flags & D4F_MEM) != 0 ? "memory" : "cache", c->cacheid);
         }
     }
-#if D4_HASHSIZE > 0
-    d4stackhash.size = D4_HASHSIZE;
-#endif
+
     d4stackhash.table = calloc (d4stackhash.size, sizeof(D4StackNode*));
     if (d4stackhash.table == NULL) {
         goto fail13;
