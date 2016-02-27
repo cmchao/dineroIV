@@ -592,9 +592,7 @@ d4ref (D4Cache *c, D4MemRef mr)
                     if (!ronly && (rptr->valid & rptr->dirty) != 0) {
                         d4_wbblock (c, rptr, D4VAL (c, lg2subblocksize));
                     }
-                    if (c->stack[setnumber].n > D4HASH_THRESH) {
-                        d4_unhash (c, setnumber, rptr);
-                    }
+                    d4hash_remove (c, setnumber, rptr);
                     rptr->valid = 0;
                 }
             }
@@ -682,9 +680,7 @@ d4ref (D4Cache *c, D4MemRef mr)
             if (fullblockmiss) {
                 D4StackNode *rptr = c->stack[fullset].top->up;
                 if (rptr->valid != 0) {
-                    if (c->stack[fullset].n > D4HASH_THRESH) {
-                        d4_unhash (c, fullset, rptr);
-                    }
+                    d4hash_remove (c, fullset, rptr);
                     rptr->valid = 0;
                 }
             }

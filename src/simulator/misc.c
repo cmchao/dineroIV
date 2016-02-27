@@ -410,22 +410,25 @@ d4hash_insert (D4Cache *c, int stacknum, D4StackNode *s)
 }
 
 
-/* Remove the indicated node from the hash table */
 void
-d4_unhash (D4Cache *c, int stacknum, D4StackNode *s)
+d4hash_remove (D4Cache *c, int stacknum, D4StackNode *s)
 {
+    assert(c != NULL);
+    assert(s != NULL);
+
     int buck = d4hash_make (s->blockaddr, stacknum, c->cacheid);
     D4StackNode *p = d4stackhash.table[buck];
 
-    assert (c->stack[stacknum].n > D4HASH_THRESH);
-    if (p == s) {
-        d4stackhash.table[buck] = s->bucket;
-    } else {
-        while (p->bucket != s) {
-            assert (p->bucket != NULL);
-            p = p->bucket;
+    if (c->stack[stacknum].n > D4HASH_THRESH) {
+        if (p == s) {
+            d4stackhash.table[buck] = s->bucket;
+        } else {
+            while (p->bucket != s) {
+                assert (p->bucket != NULL);
+                p = p->bucket;
+            }
+            p->bucket = s->bucket;
         }
-        p->bucket = s->bucket;
     }
 }
 
@@ -540,9 +543,7 @@ d4_invblock (D4Cache *c, int stacknum, D4StackNode *ptr)
     assert (ptr->valid != 0);
     ptr->valid = 0;
     d4movetobot (c, stacknum, ptr);
-    if (c->stack[stacknum].n > D4HASH_THRESH) {
-        d4_unhash (c, stacknum, ptr);
-    }
+    d4hash_remove (c, stacknum, ptr);
 }
 
 

@@ -440,6 +440,17 @@ extern void d4movetobot (D4Cache *, int stacknum, D4StackNode *);
 void d4hash_insert (D4Cache * c, int stacknum, D4StackNode * s);
 
 
+/**
+ * Remove the indicated node from the hash table
+ *
+ * @param[in, out] c the related cache instance
+ * @param[in] stacknum  set number
+ * @param[in] s the node needed to be hashed
+ */
+void d4hash_remove (D4Cache *c, int stacknum, D4StackNode *s);
+
+
+
 /*
  * Global declarations for internal Dinero IV use.
  */
